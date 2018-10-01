@@ -1,0 +1,77 @@
+NODE IS built on V8
+
+MACHINE CODE - computers understand 'machine code', looks more like 010101111100 than 'high level' languages.
+
+Interpreters
+	compiling + executing
+
+Compilers
+	-take source code & turn into 'machine code'
+	-create executables
+
+Transpilers
+	convert code types
+
+V8
+	a javascript engine.
+	interprets JS.
+	compiles it. optimizes it at run time.
+
+OTHER JS ENGINES
+	JavascriptCore (ios,Safari)
+	SpiderMonkey(Firefox)
+	Chakra(IE)
+
+Browsers take js files & pass them to engines to run
+
+Node looks @ js files, passes to an 'embedded' JS engine to be executed
+
+
+Node is a C++ application
+Node is 2 primary apps
+- a script processor.
+	ie 'node index.js'
+		opens index with node
+		initializes the event loop, processes the file
+
+
+Items that can be added to the event loop are tasks thaat shoudnlt nbe executed sync, 'non-blocking'.
+EVERYTHING is blocking in JS development, performing in order. Incapable of executing anything else 'at the same time'.
+
+
+Runtimes with blocking I/O demand perfect order. No drawback if that's the plan
+
+WEB-APPS usually process multiple things at once - fetching, charging, searching, etc. 
+
+
+Node is 'single-threaded' - -
+Node schedules events for later, constantly re-prioritizing its tasks for optimal execution... doesn't wait around till other apis are done.
+
+
+NODE RUNNING AN APP
+- only needs an 'entry file'
+- uses 'require', grabbing a resource from elsewhere
+
+node's Script processor:
+- reads in a file specified ('require "something"')
+- reads in all the sub-dependencies of included file
+- executes the sync tasks in those files
+- begins processing the 'event loop' over and over till nothign is left
+- executes event loop
+
+REPL
+Read Eval Print Loop
+-like a console in a browser
+-defines & executes js against the engine
+- in the cmd, 'node' starts the repl
+
+
+
+
+
+
+
+
+
+
+
