@@ -1,8 +1,8 @@
 //Dependency
 const http = require('http');
-const port = 3000;
 const url = require('url')
 const stringDecoder = require('string_decoder').StringDecoder;
+const envConfig = require('./config')
 
 const server = http.createServer((req, res) => {
 
@@ -80,7 +80,7 @@ const server = http.createServer((req, res) => {
 })
 
 //Start the server, listen on port 3000
-server.listen(port, () => console.log(`Server is listening on port ${port}!!`))
+server.listen(envConfig.port, () => console.log(`Server is listening on port ${envConfig.port} in environment ${envConfig.friendlyEnvName} mode!!`))
 
 let routeHandlers = {}
 
@@ -102,15 +102,10 @@ const myRouter = {
 /*
 NOTE: 
 
-	GOAL HERE
-	tell the user that we are returning them json
-	how? send header content-type app/json
+test this by 1.
+node index.js
+NODE_ENV=staging node index.js
+NODE_ENV=prod node index.js
 
-	TEST THIS with postman:
-	go to localhost:3000/something
-		see the error response
-	go to localhost:3000/default
-		content-type in headers
-		the response LOOKS nicer, because postman /browser 'knows' its json
 */
 

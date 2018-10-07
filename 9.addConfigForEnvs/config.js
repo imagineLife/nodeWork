@@ -8,9 +8,6 @@ staging will be default
 
 NODE_ENV works automagically, its a reguarly practiced convention
 
-index requires this, & uses this config
-
-
 */
 
 
@@ -33,6 +30,18 @@ envs.staging = {
 envs.prod = {
 
 	port: 5000,
-	friendlyEnvName: 'prod'
+	friendlyEnvName: 'production'
 
 };
+
+//Determines which env to export 
+//	by processing which was passed as a cmd line arg
+let requestedEnv = typeof(process.env.NODE_ENV ) == 'string' ? process.env.NODE_ENV.toLowerCase() : '';
+
+
+//check that requested env is available from above
+//	default to staging
+let envToExport = typeof(envs[requestedEnv]) == 'object' ? envs[requestedEnv] : envs.staging;
+
+
+module.exports = envToExport;
