@@ -125,9 +125,9 @@ const sharedServer = (req, res) => {
 			res.end(payloadStr);
 
 			//'log' the request path
-			console.log('returning statusCode & payloadStr')
-			console.log(statusCode)
-			console.log(payloadStr)
+			// console.log('returning statusCode & payloadStr')
+			// console.log(statusCode)
+			// console.log(payloadStr)
 
 		})
 
