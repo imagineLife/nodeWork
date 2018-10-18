@@ -36,22 +36,23 @@ let routeHandlers = {}
 // }
 
 //ping handler
-routeHandlers.ping = function(data, callback){
+routeHandlers.ping = (data, callback) => {
+	console.log('PING ROUTEHANDLER')
+	console.log(data)
+	console.log(callback)
 	callback(200)
 }
 
-routeHandlers.notFound = function(data, callback){
+routeHandlers.notFound = (data, callback) => {
 	callback(404)
 }
 
 const myRouter = {
-	//a default path
-	// 'default': routeHandlers.default
 	'ping': routeHandlers.ping
 }
 
 //Sharing logic to create http & https servers
-const sharedServer = function(req, res){
+const sharedServer = (req, res) => {
 
 	//get & parse the url
 	const parsedUrl = url.parse(req.url,true);
@@ -80,8 +81,8 @@ const sharedServer = function(req, res){
 	//when request objects emits event data, pass the data to a callback
 	//append the new incoming data to the curIncomingString with the decoder
 	req.on('data', data => {
-		console.log('incoming data')
-		console.log(data)
+		// console.log('incoming data')
+		// console.log(data)
 		curIncomingString += decoder.write(data)
 	})
 
@@ -103,7 +104,14 @@ const sharedServer = function(req, res){
 			payload: curIncomingString
 		}
 
-		chosenHandler(dataToReturn, function(statusCode, payload){
+		// console.log('dataToReturn')
+		// console.log(dataToReturn)
+
+		chosenHandler(dataToReturn, (statusCode, payload) =>{
+			// console.log('chosenHandler dataToReturn, statusCode & payload')
+			// console.log(dataToReturn)
+			// console.log(statusCode)
+			// console.log(payload)
 
 			//defaults if none given
 			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
