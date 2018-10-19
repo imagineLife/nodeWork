@@ -3,6 +3,7 @@
 **No NPM.**  
 **No Packages.**  
 **Just Node.**  
+This is a single endpoint, a post request at _localhost:3000/hello_, which returns a json object.
 
 ## Start the server
 Clone the directory,  
