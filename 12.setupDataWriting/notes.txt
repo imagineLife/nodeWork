@@ -1,0 +1,20 @@
+Storing some data
+setup a regime to write data to the filesystem & retrieve it back
+
+We need a library to get all that  setup
+
+setup a some directories
+mkdir .data
+	its 'hidden'
+	the things inside .data is not logic, just files
+
+mkdir lib
+	contains a library for working with data
+
+	make nested file 
+	this is where we'll spend some time
+	data.js
+		will be used for storing & editing data
+		will have 2 dependencies
+			fs
+			path - to normalize the path to different directories
