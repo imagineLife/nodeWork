@@ -6,6 +6,16 @@ const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
 
+//new require
+const _data = require('./lib/data')
+
+
+//testing adding some data
+_data.create('testAdding','testNewFile',{'test': 'testing adding a json object'}, (err) => {
+	console.log('this is the index.js err')
+	console.log(err)
+})
+
 //instantiating http server
 const httpServer = http.createServer((req, res) => {
 	sharedServer(req,res)
