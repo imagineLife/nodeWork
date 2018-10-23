@@ -73,6 +73,15 @@ routeHandlers.doUsers.post = (data,callback){
 				//included in dependencies
 				const hashedPW = helpers.hash(pw);
 
+				//create a user object
+				let userObj = {
+					firstName: fn,
+					lastName: ln,
+					phone: pn,
+					hashedPW: hashedPW,
+					tosAgreement: true
+				}
+
 
 			}else{
 				//User already exists
