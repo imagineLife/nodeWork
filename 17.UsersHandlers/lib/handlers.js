@@ -6,6 +6,11 @@
 //Dependencies
 
 
+//request data checker fn
+function checkForLengthAndType(data){
+	let res = typeof(data) == 'string' && data.trim().length > 0 ? data.trim() : false;
+	return res
+}
 
 //handlers
 let routeHandlers = {}
@@ -41,11 +46,13 @@ routeHandlers.doUsers.post = (data,callback){
 	const dataTos = data.payload.tosAgreement
 
 	//check that all req'd fields exist
-	const fn = typeof(dataFN) == 'string' && dataFN.trim().length > 0 ? dataFNdataFN.trim() : false;
-	const ln = typeof(dataLN) == 'string' && dataLN.trim().length > 0 ? dataLN.trim() : false;
+	const fn = checkForLengthAndType(dataFN)
+	const ln = checkForLengthAndType(dataLN)
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
-	const pw = typeof(dataPW) == 'string' && dataPW.trim().length > 0 ? dataPW.trim() : false;
+	const pw = checkForLengthAndType(dataPW)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
+
+
 }
 
 //Users PUT
