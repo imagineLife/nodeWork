@@ -5,6 +5,7 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
+const routeHandlers = require('./lib/handlers');
 
 //REMOVED from previous section
 // const _data = require('./lib/data')
