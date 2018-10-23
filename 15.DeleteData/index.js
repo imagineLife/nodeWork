@@ -9,7 +9,7 @@ const _data = require('./lib/data')
 
 
 //testing DELETING some data... this data MUST be present before deleting
-_data.update('testAdding','testNewFile', {'overWritten': 'OverWriting AGAIN'}, (err) => {
+_data.delete('testAdding','testNewFile', (err) => {
 	console.log('returned Error?!')
 	console.log(err)
 })

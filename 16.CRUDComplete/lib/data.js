@@ -124,6 +124,21 @@ lib.update = (dir, fileName, data, callback) => {
 	})
 }
 
+lib.delete = (dir, fileName, callback) => {
+	/*
+		'unlink' thie file...
+		https://nodejs.org/api/fs.html#fs_fs_unlink_path_callback
+		DOES NOT WORK ON DIRECTORIES
+	*/
+	fs.unlink(`${lib.baseDir}${dir}/${fileName}.json`, (err) => {
+		if(!err){
+			callback(false)
+		}else{
+			callback('Error deleting file')
+		}
+	})
+}
+
 
 //3.export the module
 module.exports = lib;

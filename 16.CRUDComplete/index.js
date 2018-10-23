@@ -5,14 +5,9 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
-const _data = require('./lib/data')
 
-
-//testing reading some data
-_data.update('testAdding','testNewFile', {'overWritten': 'OverWriting AGAIN'}, (err) => {
-	console.log('returned Error?!')
-	console.log(err)
-})
+//REMOVED from previous section
+// const _data = require('./lib/data')
 
 //instantiating http server
 const httpServer = http.createServer((req, res) => {
