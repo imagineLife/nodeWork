@@ -27,3 +27,23 @@ helpers.hash = function(str){
 		return false
 	}
 }
+
+
+//parses a json STRING to an object in all cases without throwing erro
+helpers.parseJsonToObject = function(str){
+	try{
+		let thisObj = JSON.parse(str);
+		return thisObj;
+	}catch(e){
+		return {}
+	}
+}
+
+
+
+
+
+
+
+
+
