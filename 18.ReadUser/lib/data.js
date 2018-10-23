@@ -75,7 +75,13 @@ lib.read = (dir, fileName,callback) => {
 	//uses utf8 encoding
 	//
 	fs.readFile(`${lib.baseDir}${dir}/${fileName}.json`,'utf8',(err, data) => {
-		callback(err,data)
+		if(!err && data){
+			let parsedData = helpers.parseJsonToObject(data)
+			callback(false,parsedData)
+		}else{
+			callback(err, data);
+		}
+		
 	})
 }
 
