@@ -1,5 +1,13 @@
-//HANLDERS - 
-//a lookup-table
+/*
+	HANLDERS - 
+	a lookup-table of request handlers
+*/
+
+//Dependencies
+
+
+
+//hanlders
 let routeHandlers = {}
 
 //ping handler
@@ -10,3 +18,5 @@ routeHandlers.ping = (data, callback) => {
 routeHandlers.notFound = (data, callback) => {
 	callback(404)
 }
+
+module.exports = routeHandlers;
