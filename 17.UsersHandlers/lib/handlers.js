@@ -19,7 +19,7 @@ let routeHandlers = {}
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.users = (data, callback) => {
-	const acceptableMethods('post','get','put','delete');
+	const acceptableMethods = ['post','get','put','delete'];
 
 	/*
 		if the method from the Front-End matches an acceptable method,
@@ -38,7 +38,7 @@ routeHandlers.doUsers = {}
 
 //Users POST
 //REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
-routeHandlers.doUsers.post = (data,callback){
+routeHandlers.doUsers.post = function(data,callback){
 	
 	//GET all req'd fields from request payload
 	const dataPhone = data.payload.phoneNumber
@@ -116,26 +116,26 @@ routeHandlers.doUsers.post = (data,callback){
 }
 
 //Users PUT
-routeHandlers.doUsers.put = (data,callback){
+routeHandlers.doUsers.put = function(data,callback){
 	
 }
 
 //Users GET
-routeHandlers.doUsers.get = (data,callback){
+routeHandlers.doUsers.get = function(data,callback){
 	
 }
 
 //Users DELETE
-routeHandlers.doUsers.delete = (data,callback){
+routeHandlers.doUsers.delete = function(data,callback){
 	
 }
 
 //ping handler
-routeHandlers.ping = (data, callback) => {
+routeHandlers.ping = function(data, callback){
 	callback(200)
 }
 
-routeHandlers.notFound = (data, callback) => {
+routeHandlers.notFound = function(data, callback){
 	callback(404)
 }
 
