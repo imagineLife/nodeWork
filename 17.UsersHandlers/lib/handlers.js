@@ -31,8 +31,21 @@ routeHandlers.users = (data, callback) => {
 routeHandlers.doUsers = {}
 
 //Users POST
+//REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
 routeHandlers.doUsers.post = (data,callback){
+	//GET all req'd fields from request payload
+	const dataFN = data.payload.firstName
+	const dataLN = data.payload.lastName
+	const dataPhone = data.payload.phoneNumber
+	const dataPW = data.payload.passWord
+	const dataTos = data.payload.tosAgreement
 
+	//check that all req'd fields exist
+	const fn = typeof(dataFN) == 'string' && dataFN.trim().length > 0 ? dataFNdataFN.trim() : false;
+	const ln = typeof(dataLN) == 'string' && dataLN.trim().length > 0 ? dataLN.trim() : false;
+	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const pw = typeof(dataPW) == 'string' && dataPW.trim().length > 0 ? dataPW.trim() : false;
+	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 }
 
 //Users PUT

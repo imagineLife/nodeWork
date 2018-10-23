@@ -6,4 +6,4 @@ REFACTORING
 	1. make lib/handlers
 	2. move EXISTING handlers from index.js to this new file
 	3. add 'users' to the router lookup table in index.js
-	4. 
+	4. build framework to handle users CRUD methods from req in handlers
