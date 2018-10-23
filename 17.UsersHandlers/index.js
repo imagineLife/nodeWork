@@ -33,7 +33,8 @@ httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on 
 httpsServer.listen(envConfig.httpsPort, () => console.log(`Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`))
 
 const myRouter = {
-	'ping': routeHandlers.ping
+	'ping': routeHandlers.ping,
+	'users': routeHandlers.users
 }
 
 //Sharing logic to create http & https servers
