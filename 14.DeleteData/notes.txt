@@ -1,0 +1,3 @@
+READING SOME DATA.
+Note there must be a file already present
+	in this case, the 'testNewFile' is present from previous step (setupDataWriting)
