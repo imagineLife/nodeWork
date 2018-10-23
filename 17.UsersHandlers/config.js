@@ -22,7 +22,8 @@ let envs = {};
 envs.staging = {
 	httpPort: 3000,
 	httpsPort: 3001,
-	friendlyEnvName: 'staging'
+	friendlyEnvName: 'staging',
+	hashingSecret: 'thisIsASecret'
 
 };
 
@@ -30,8 +31,8 @@ envs.staging = {
 envs.prod = {
 	httpPort: 5000,
 	httpsPort: 5001,
-	friendlyEnvName: 'production'
-
+	friendlyEnvName: 'production',
+	hashingSecret: 'thisIsASecret'
 };
 
 //Determines which env to export 
