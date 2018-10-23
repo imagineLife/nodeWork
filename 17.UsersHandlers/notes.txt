@@ -1,0 +1,7 @@
+Adding a USER service
+	CRUD users
+
+REFACTORING
+	moving handlers to their own file in the lib directory
+	1. make lib/handlers
+	2. move EXISTING handlers from index.js to this new file
