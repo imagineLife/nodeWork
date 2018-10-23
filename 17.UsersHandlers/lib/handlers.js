@@ -73,13 +73,31 @@ routeHandlers.doUsers.post = (data,callback){
 				//included in dependencies
 				const hashedPW = helpers.hash(pw);
 
-				//create a user object
-				let userObj = {
-					firstName: fn,
-					lastName: ln,
-					phone: pn,
-					hashedPW: hashedPW,
-					tosAgreement: true
+				//if the hashing succeeded save the user data
+				//else below
+				if(hashedPW){
+					//create a user object from user data
+					let userObj = {
+						firstName: fn,
+						lastName: ln,
+						phone: pn,
+						hashedPW: hashedPW,
+						tosAgreement: true
+					}
+
+					//STORE this user to disk
+					//create method takes dir,fileName,data,callback
+					dataLib.create('users',pn,userObj,(err) => {
+						if(!err){
+							callback(200)
+						}else{
+							console.log('create user error')
+							console.log(err)
+							callback(500, {'ERROR': 'Could not create the new user'})
+						}
+					})
+				}else{
+					callback(500, {'ERROR': 'Could not hash'})
 				}
 
 
