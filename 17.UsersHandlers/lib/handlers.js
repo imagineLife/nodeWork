@@ -4,7 +4,8 @@
 */
 
 //Dependencies
-
+const dataLib = require('./data')
+const helpers = require('./helpers')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -23,7 +24,7 @@ routeHandlers.users = (data, callback) => {
 	/*
 		if the method from the Front-End matches an acceptable method,
 		run it. use a NEW SET OF METHODS 'doUser'.
-		ELSE return 405
+		ELSE return 40
 	*/
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doUser[data.method](data,callback);
@@ -38,20 +39,52 @@ routeHandlers.doUsers = {}
 //Users POST
 //REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
 routeHandlers.doUsers.post = (data,callback){
+	
 	//GET all req'd fields from request payload
-	const dataFN = data.payload.firstName
-	const dataLN = data.payload.lastName
 	const dataPhone = data.payload.phoneNumber
-	const dataPW = data.payload.passWord
 	const dataTos = data.payload.tosAgreement
 
 	//check that all req'd fields exist
-	const fn = checkForLengthAndType(dataFN)
-	const ln = checkForLengthAndType(dataLN)
+	const fn = checkForLengthAndType(data.payload.firstName)
+	const ln = checkForLengthAndType(data.payload.lastName)
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
-	const pw = checkForLengthAndType(dataPW)
+	const pw = checkForLengthAndType(data.payload.passWord)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
+
+	//continue is fall reqd fields are present
+	if(fn && ln && pn && pw && tosAg){
+
+		/*
+			make sure that user doesn't already exist
+			USING the CRUD handlers from the data directory as a dependence above
+			READ from users data using this data
+		*/
+
+		//check if user phoneNumber already exists
+		//takes dir, fileName,callback
+		dataLib.read('users', phoneNumber, (err,result) => {
+
+			//if it comes back with an error,
+			// that means there IS no phone number
+			if(err){
+				//Hash the password using built in library called crypto,
+				//created in HELPERS file,
+				//included in dependencies
+				const hashedPW = helpers.hash(pw);
+
+
+			}else{
+				//User already exists
+				callback(400,{'Error': 'A User with that number already exists'})
+			}
+		})
+
+	
+	}else{
+	//THROW ERROR if payload doesn't contain req'd fields
+		callback(400,{'Error': 'Missing Reqd fields'})
+	}
 
 }
 
