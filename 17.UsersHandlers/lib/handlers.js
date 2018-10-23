@@ -63,7 +63,7 @@ routeHandlers.doUsers.post = function(data,callback){
 
 		//check if user phoneNumber already exists
 		//takes dir, fileName,callback
-		dataLib.read('users', phoneNumber, (err,result) => {
+		dataLib.read('users', pn, (err,result) => {
 
 			//if it comes back with an error,
 			// that means there IS no phone number
@@ -89,7 +89,7 @@ routeHandlers.doUsers.post = function(data,callback){
 					//create method takes dir,fileName,data,callback
 					dataLib.create('users',pn,userObj,(err) => {
 						if(!err){
-							callback(200)
+							callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
 						}else{
 							console.log('create user error')
 							console.log(err)

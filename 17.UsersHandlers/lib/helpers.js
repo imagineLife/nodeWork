@@ -20,7 +20,7 @@ helpers.hash = function(str){
 	if(typeof(str) == 'string' && str.length > 0){
 		
 		//uses a hashingSecret!! from dependency config  file
-		let hashed = cryptop.createHmac('sha256', config.hashingSecret).update(str).digest('hex');
+		let hashed = crypto.createHmac('sha256', config.hashingSecret).update(str).digest('hex');
 		return hashed;
 
 	}else{
@@ -31,6 +31,8 @@ helpers.hash = function(str){
 
 //parses a json STRING to an object in all cases without throwing erro
 helpers.parseJsonToObject = function(str){
+	console.log('parsing string')
+	console.log(str)
 	try{
 		let thisObj = JSON.parse(str);
 		return thisObj;
