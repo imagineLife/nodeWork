@@ -121,6 +121,8 @@ routeHandlers.doUsers.put = function(data,callback){
 }
 
 //Users GET
+// TODO - - - - NOTE: only let an authenticated users access their obj.
+//	
 routeHandlers.doUsers.get = function(data,callback){
 	
 }

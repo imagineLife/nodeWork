@@ -5,6 +5,7 @@ Library for storing & editing data to the file-system
 //1.dependencies
 const fs = require('fs')
 const path = require('path')
+const helpers = require('./helpers')
 
 //2.Container for this module to be exported
 let lib = {}; 

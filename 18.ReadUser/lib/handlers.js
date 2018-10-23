@@ -121,7 +121,34 @@ routeHandlers.doUsers.put = function(data,callback){
 }
 
 //Users GET
+// TODO - - - - NOTE: only let an authenticated users access their obj.
+//	
 routeHandlers.doUsers.get = function(data,callback){
+
+	//check that the phoneNumber is value
+	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+
+	//if phone is valid
+	if(phoneNumber){
+
+		//lookup the user from the filesystem
+		dataLib.read('users',phoneNumber, (err, storedUserData) => {
+			if(!err && storedUserData){
+
+				//REMOVE hashed pw from the user object before showing the user
+				delete storedUserData.hashedPW;
+				callback(200, storedUserData);
+
+			}else{
+
+				//NOT FOUND USER
+				callback(404)
+			}
+		})
+
+	}else{	
+		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+	}
 	
 }
 

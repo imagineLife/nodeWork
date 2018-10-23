@@ -92,8 +92,8 @@ const sharedServer = (req, res) => {
 			payload: helpers.parseJsonToObject(curIncomingString)
 		}
 
-		// console.log('dataToReturn')
-		// console.log(dataToReturn)
+		console.log('dataToReturn')
+		console.log(dataToReturn)
 
 		chosenHandler(dataToReturn, (statusCode, payload) =>{
 			// console.log('chosenHandler dataToReturn, statusCode & payload')
