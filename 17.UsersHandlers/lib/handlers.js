@@ -27,7 +27,7 @@ routeHandlers.users = (data, callback) => {
 		ELSE return 40
 	*/
 	if(acceptableMethods.indexOf(data.method) > -1){
-		routeHandlers.doUser[data.method](data,callback);
+		routeHandlers.doUsers[data.method](data,callback);
 	}else{
 		callback(405)
 	}

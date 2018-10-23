@@ -39,8 +39,7 @@ helpers.parseJsonToObject = function(str){
 	}
 }
 
-
-
+module.exports = helpers;
 
 
 
