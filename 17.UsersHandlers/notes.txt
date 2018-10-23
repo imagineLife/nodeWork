@@ -7,3 +7,7 @@ REFACTORING
 	2. move EXISTING handlers from index.js to this new file
 	3. add 'users' to the router lookup table in index.js
 	4. build framework to handle users CRUD methods from req in handlers
+	- make helpers file
+		here adding pw hashing as a method in helpers for hashing pwds
+	- make new USERS directory in the hidden .data folder
+		this is where user data will get stored
