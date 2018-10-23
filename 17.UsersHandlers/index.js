@@ -6,6 +6,7 @@ const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
 const routeHandlers = require('./lib/handlers');
+const helpers = require('./lib/helpers')
 
 //REMOVED from previous section
 // const _data = require('./lib/data')
@@ -87,7 +88,8 @@ const sharedServer = (req, res) => {
 			queryStrObj: queryString,
 			method: reqMethod,
 			headers: hdrs,
-			payload: curIncomingString
+			//PARSING the paload data with helpers method
+			payload: helpers.parseJsonToObject(curIncomingString)
 		}
 
 		// console.log('dataToReturn')
