@@ -118,8 +118,73 @@ routeHandlers.doUsers.post = function(data,callback){
 //Users PUT
 //req phonenumber
 //OPTIONAL - firstName, lastName, pw (at least ONE MUST be specified)
+//@TODO only let auth user update their own obj. don't let them update others
+
 routeHandlers.doUsers.put = function(data,callback){
 	
+	//check that the phoneNumber is value
+	const phoneNumber = typeof(data.payload.phoneNumber) == 'string' && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
+	console.log('phoneNumber')
+	console.log(phoneNumber)
+
+	//check for optional fields
+	const fn = checkForLengthAndType(data.payload.firstName)
+	const ln = checkForLengthAndType(data.payload.lastName)
+	const pw = checkForLengthAndType(data.payload.passWord)
+
+	//if phone number exists, keep going
+	if(phoneNumber){
+
+		//if at least one other field exists to update
+		if(fn || ln || pw){
+
+			//lookup the user
+			dataLib.read('users', phoneNumber, (err, userData) => {
+				
+				//check if file is error-less AND has userdata
+				if(!err && userData){
+
+					//update the field in the userData 
+					if(fn){
+						userData.firstName = fn;
+					}
+					if(ln){
+						userData.lastName = ln;
+					}
+					if(pw){
+						userData.passWord = helpers.hash(pw);
+					}
+
+					//Store the newly updated userData obj
+					dataLib.update('users', phoneNumber, userData, (err) => {
+
+						if(!err){
+							callback(200)
+						}else{
+							console.log('err!')
+							console.log(err)
+							ccallback(500, {'Error': 'Couldnt update this user with this info'})
+						}
+
+					})
+
+
+				//if error or no data for that file
+				}else{
+					callback(400, {'Error': 'No data or file exists for that'})
+				}
+			})
+
+		//if no other field is present to update
+		}else{
+			callback(400, {'Error': 'Missing updatable field'})
+		}
+
+
+	//if phone is invalid, Error 
+	}else{
+		callback(400, {'Error': 'Missing reqd field'})
+	}
 }
 
 //Users GET
