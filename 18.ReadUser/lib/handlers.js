@@ -125,6 +125,10 @@ routeHandlers.doUsers.put = function(data,callback){
 //	
 routeHandlers.doUsers.get = function(data,callback){
 
+	//TEST this by using postman with
+	// http://localhost:3000/users?phoneNumber=1238675309
+	// should return the user object
+
 	//check that the phoneNumber is value
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
