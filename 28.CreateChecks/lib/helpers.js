@@ -31,12 +31,12 @@ helpers.hash = function(str){
 
 //parses a json STRING to an object in all cases without throwing erro
 helpers.parseJsonToObject = function(str){
-	console.log('parsing string')
-	console.log(str)
 	try{
 		let thisObj = JSON.parse(str);
 		return thisObj;
 	}catch(e){
+		console.log('ERROR parsing to str')
+		console.log(e)
 		return {}
 	}
 }

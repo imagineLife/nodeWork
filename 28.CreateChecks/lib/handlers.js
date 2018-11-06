@@ -6,6 +6,7 @@
 //Dependencies
 const dataLib = require('./data')
 const helpers = require('./helpers')
+const config = require('./config')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -180,11 +181,11 @@ routeHandlers.doUsers.put = function(data,callback){
 					callback(403, {'Error': 'Missing required token in header, or token invalid'})
 				}
 
-		//if no other field is present to update
+			})
+
 		}else{
 			callback(400, {'Error': 'Missing updatable field'})
 		}
-
 
 	//if phone is invalid, Error 
 	}else{
@@ -286,6 +287,7 @@ routeHandlers.doUsers.delete = function(data,callback){
 			}else{
 				callback(403, {'Error': 'Missing required token in header, or token invalid'})
 			}
+		})
 
 	}else{	
 		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
@@ -570,13 +572,25 @@ routeHandlers.doChecks = {};
 */
 routeHandlers.doChecks.post = (data, callback) => {
 
+	console.log('data.payload')
+	console.log(data)
 	//check if protocall is in post data
 	var sentProtocol = typeof(data.payload.protocol) == 'string' && ['http','https'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
 	var sentUrl = typeof(data.payload.url) == 'string' && data.payload.url.length > 0 ? data.payload.url : false;
 	var sentMethod = typeof(data.payload.method) == 'string' && ['post','get','put','delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
 	var sentSuccessCodes = typeof(data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length > 0 ? data.payload.successCodes : false;
-	var sentTimeout = typeof(data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds.length > 1 && data.payload.timeoutSeconds.length <= 5 ? data.payload.timeoutSeconds : false;
+	var sentTimeout = typeof(data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
 
+	console.log('sentProtocol')
+	console.log(sentProtocol)
+	console.log('sentUrl')
+	console.log(sentUrl)
+	console.log('sentMethod')
+	console.log(sentMethod)
+	console.log('sentSuccessCodes')
+	console.log(sentSuccessCodes)
+	console.log('data.payload.timeoutSeconds')
+	console.log(data.payload.timeoutSeconds)
 	if(sentProtocol && sentUrl && sentMethod && sentSuccessCodes && sentTimeout){
 
 		//get & check if user sent a valid token
