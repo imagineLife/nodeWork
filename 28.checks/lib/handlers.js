@@ -534,4 +534,42 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenPhoneNumber,call
 	})
 }
 
+//checks handler
+//FIGURES OUT wthe req method, & passes it to sub-handlers
+routeHandlers.checks = (data, callback) => {
+	const acceptableMethods = ['post','get','put','delete'];
+
+	/*
+		if the method from the Front-End matches an acceptable method,
+		run it. use a NEW SET OF METHODS 'doUser'.
+		ELSE return 40
+	*/
+	if(acceptableMethods.indexOf(data.method) > -1){
+		routeHandlers.doChecks[data.method](data,callback);
+	}else{
+		callback(405)
+	}
+}
+
+
+//CHECKS methods container
+routeHandlers.doChecks = {};
+
+
+/*
+	CHECKS post
+	reqd: 
+		PROTOCOL (http/https), 
+		URL to check, 
+		METHOD to check,
+		successCodes -> arr of #s to treat as success (200 or 201)
+		reqd timeout in sec. before considered down
+	optional:
+		none
+
+*/
+routeHandlers.doChecks.post = (data, callback) => {
+	
+}
+
 module.exports = routeHandlers;
