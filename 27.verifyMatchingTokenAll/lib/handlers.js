@@ -91,8 +91,6 @@ routeHandlers.doUsers.post = function(data,callback){
 						if(!err){
 							callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
 						}else{
-							console.log('create user error')
-							console.log(err)
 							callback(500, {'ERROR': 'Could not create the new user'})
 						}
 					})
@@ -136,42 +134,51 @@ routeHandlers.doUsers.put = function(data,callback){
 		//if at least one other field exists to update
 		if(fn || ln || pw){
 
-			//lookup the user
-			dataLib.read('users', phoneNumber, (err, userData) => {
-				
-				//check if file is error-less AND has userdata
-				if(!err && userData){
+			//GET token from headers
+			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-					//update the field in the userData 
-					if(fn){
-						userData.firstName = fn;
-					}
-					if(ln){
-						userData.lastName = ln;
-					}
-					if(pw){
-						userData.passWord = helpers.hash(pw);
-					}
+			//verify that token is valid for passed phoneNumber
+			routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+				if(tokenIsValid){
 
-					//Store the newly updated userData obj
-					dataLib.update('users', phoneNumber, userData, (err) => {
+					//lookup the user
+					dataLib.read('users', phoneNumber, (err, userData) => {
+						
+						//check if file is error-less AND has userdata
+						if(!err && userData){
 
-						if(!err){
-							callback(200)
+							//update the field in the userData 
+							if(fn){
+								userData.firstName = fn;
+							}
+							if(ln){
+								userData.lastName = ln;
+							}
+							if(pw){
+								userData.passWord = helpers.hash(pw);
+							}
+
+							//Store the newly updated userData obj
+							dataLib.update('users', phoneNumber, userData, (err) => {
+
+								if(!err){
+									callback(200)
+								}else{
+									callback(500, {'Error': 'Couldnt update this user with this info'})
+								}
+
+							})
+
+
+						//if error or no data for that file
 						}else{
-							console.log('err!')
-							console.log(err)
-							ccallback(500, {'Error': 'Couldnt update this user with this info'})
+							callback(400, {'Error': 'No data or file exists for that'})
 						}
-
 					})
 
-
-				//if error or no data for that file
 				}else{
-					callback(400, {'Error': 'No data or file exists for that'})
+					callback(403, {'Error': 'Missing required token in header, or token invalid'})
 				}
-			})
 
 		//if no other field is present to update
 		}else{
@@ -203,8 +210,6 @@ routeHandlers.doUsers.get = function(data,callback){
 		//GET token from headers
 		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		console.log('passedToken')
-		console.log(passedToken)
 		//verify that token is valid for passed phoneNumber
 		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
 
@@ -249,34 +254,38 @@ routeHandlers.doUsers.delete = function(data,callback){
 
 	//if phone is valid
 	if(phoneNumber){
-		console.log('IS phone Number')
 
-		//lookup the user from the filesystem
-		dataLib.read('users',phoneNumber, (err, storedUserData) => {
-			console.log('READ userData')
-			console.log(storedUserData)
-			
-			if(!err && storedUserData){
+		//GET token from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-				//REMOVE user
-				dataLib.delete('users', phoneNumber, (err) => {
-					console.log('IN err fn of dataLib.delete')
-					console.log('the err...')
-					console.log(err)
-					console.log('- - - - -')
+		//verify that token is valid for passed phoneNumber
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+			if(tokenIsValid){
 
-					if(!err){
-						callback(200, {'DELETED': 'Successfully'})
+				//lookup the user from the filesystem
+				dataLib.read('users',phoneNumber, (err, storedUserData) => {
+					
+					if(!err && storedUserData){
+
+						//REMOVE user
+						dataLib.delete('users', phoneNumber, (err) => {
+
+							if(!err){
+								callback(200, {'DELETED': 'Successfully'})
+							}else{
+								callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+							}
+
+						})
 					}else{
-						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+						//NOT FOUND USER
+						callback(400, {'Error': 'Couldnt Find user'})
 					}
-
 				})
+
 			}else{
-				//NOT FOUND USER
-				callback(400, {'Error': 'Couldnt Find user'})
+				callback(403, {'Error': 'Missing required token in header, or token invalid'})
 			}
-		})
 
 	}else{	
 		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
@@ -321,8 +330,6 @@ routeHandlers.doTokens = {};
 //a user creating a  token to use later
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
-	console.log('doTokens data')
-	console.log(data)
 	let dataPhone = data.payload.phoneNumber
 	//parse phone & pw
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
@@ -429,9 +436,6 @@ routeHandlers.doTokens.put = (data, callback) => {
 	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
-	console.log('put data')
-	console.log(id)
-	console.log(extend)
 	if(id && (extend == true)){
 
 		//lookup token based on id
@@ -517,11 +521,6 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenPhoneNumber,call
 
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
-		console.log('STORED storedTokenData.phone...')
-		console.log(storedTokenData.phone)
-		console.log('givenPhoneNumber')
-		console.log(givenPhoneNumber)
-		console.log(storedTokenData.phone == givenPhoneNumber)
 		if(!err && storedTokenData){
 			//Check that the tokenID MATCHES the given user AND has not expired
 			if(storedTokenData.phone == givenPhoneNumber && storedTokenData.expires > Date.now()){
