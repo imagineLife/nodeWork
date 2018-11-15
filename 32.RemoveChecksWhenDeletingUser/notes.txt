@@ -1,0 +1,16 @@
+a service called checks
+
+the MEAT of this app
+
+a task that tells this system to...
+	check a url
+	every x seconds
+	tell us if the page is UP or DOWN
+
+can create up to 5 checks
+
+allow a user
+	that is logged in
+	has a token
+
+to CRUD up to 5 checks
