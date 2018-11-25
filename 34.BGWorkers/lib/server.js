@@ -11,14 +11,18 @@ const routeHandlers = require('./handlers');
 const helpers = require('./helpers')
 const path = require('path');
 
+//instantiates a server module Obj
+let serverObj = {};
+
+
 //instantiating http server
-const httpServer = http.createServer((req, res) => {
+serverObj.httpServer = http.createServer((req, res) => {
 	sharedServer(req,res)
 })
 
 //create httpsServerOptions
 //read in key & cert from https file directory
-const httpsServerOptions = {
+serverObj.httpsServerOptions = {
 	'key' : fs.readFileSync('./https/key.pem'),
 	'cert' : fs.readFileSync('./https/cert.pem')
 }
@@ -27,11 +31,6 @@ const httpsServerOptions = {
 const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
 	sharedServer(req,res)
 })
-
-//Start the server, listen on port 3000
-httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`))
-
-httpsServer.listen(envConfig.httpsPort, () => console.log(`Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`))
 
 const myRouter = {
 	'ping': routeHandlers.ping,
@@ -121,3 +120,15 @@ const sharedServer = (req, res) => {
 	})
 
 }
+
+//initialize server script
+serverObj.init = () => {
+	//Start the httpServer, listen on port 3000
+	serverObj.httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+
+	//Start the httpsServer, listen on port 3001
+	serverObj.httpsServer.listen(envConfig.httpsPort, () => console.log(`Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+}
+
+
+module.exports = serverObj;
