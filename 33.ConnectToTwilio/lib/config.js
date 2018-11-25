@@ -28,8 +28,6 @@ envs.staging = {
 	twilioVars: {
 		'accountSid': 'ACb32d411ad7fe886aac54c665d25e5c5d',
 		'authToken': '9455e3eb3109edc12e3d8c92768f7a67',
-		// 'accountSid': 'AC8d757a49924f3eada82b3f1f6086115f',
-		// 'authToken': '65f5746112109e2011ec4b0c4de636ea',
 		'fromPhoneNumber': '+15005550006'	
 	}
 };
@@ -44,8 +42,6 @@ envs.prod = {
 	twilioVars: {
 		'accountSid': 'ACb32d411ad7fe886aac54c665d25e5c5d',
 		'authToken': '9455e3eb3109edc12e3d8c92768f7a67',
-		// 'accountSid': 'AC8d757a49924f3eada82b3f1f6086115f',
-		// 'authToken': '65f5746112109e2011ec4b0c4de636ea',
 		'fromPhoneNumber': '+15005550006'
 	}
 };

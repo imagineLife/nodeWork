@@ -113,6 +113,11 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 			//grab status of the request
 			let resStatus = res.statusCode;
 
+			res.on('data', (chunk) => {
+				console.log('chunk!')
+				console.log(chunk.toString())
+			})
+
 			//callback the success
 			if(resStatus == 200 || resStatus == 201){
 				callback(false)
