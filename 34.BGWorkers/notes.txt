@@ -14,4 +14,9 @@ index.js will be SMALLER
 		starts the server
 	calling a workers file
 		starts the workers file
-		
+
+WORK
+1. make lib/server.js
+2. MOVE all index.js to lib/server
+
+3. MAKE lib/workers.js
