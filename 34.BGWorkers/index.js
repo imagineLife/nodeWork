@@ -7,7 +7,7 @@ let appObj = {};
 
 //init function
 //calls server & workers file
-app.init = () => {
+appObj.init = () => {
 
 	//start server
 	server.init();
@@ -18,7 +18,7 @@ app.init = () => {
 }
 
 //Executes init fn
-app.init();
+appObj.init();
 
 //exports app for testing later on
 module.exports = appObj;
