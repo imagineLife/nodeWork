@@ -17,7 +17,7 @@ let serverObj = {};
 
 //instantiating http server
 serverObj.httpServer = http.createServer((req, res) => {
-	sharedServer(req,res)
+	serverObj.sharedServer(req,res)
 })
 
 //create httpsServerOptions
@@ -29,10 +29,10 @@ serverObj.httpsServerOptions = {
 
 //start https server
 serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, res) => {
-	sharedServer(req,res)
+	serverObj.sharedServer(req,res)
 })
 
-const myRouter = {
+serverObj.myRouter = {
 	'ping': routeHandlers.ping,
 	'users': routeHandlers.users,
 	'tokens' : routeHandlers.tokens,
@@ -40,7 +40,7 @@ const myRouter = {
 }
 
 //Sharing logic to create http & https servers
-const sharedServer = (req, res) => {
+serverObj.sharedServer = (req, res) => {
 
 	//get & parse the url
 	const parsedUrl = url.parse(req.url,true);
@@ -81,7 +81,7 @@ const sharedServer = (req, res) => {
 		curIncomingString += decoder.end();
 
 		//choose the handler this request should go to
-		let chosenHandler = typeof(myRouter[trimmedPathTxt]) !== 'undefined' ? myRouter[trimmedPathTxt] : routeHandlers.notFound;
+		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
 
 		// object to send to the handler
 		let dataToReturn = {
