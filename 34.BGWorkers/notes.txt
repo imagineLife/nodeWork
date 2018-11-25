@@ -1,0 +1,17 @@
+Perform checks the user creates
+NEED BG workers & process
+
+FROM a server that starts & listens on a port
+TO an app taht starts a server AND starts BG workers
+OLD way starts server
+WONT work any more
+WILL
+	start a server
+	start bg workers
+
+index.js will be SMALLER
+	calling a server file
+		starts the server
+	calling a workers file
+		starts the workers file
+		
