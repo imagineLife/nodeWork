@@ -9,6 +9,7 @@ const envConfig = require('./config');
 const fs = require('fs');
 const routeHandlers = require('./handlers');
 const helpers = require('./helpers')
+const path = require('path');
 
 //instantiating http server
 const httpServer = http.createServer((req, res) => {
