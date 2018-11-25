@@ -23,12 +23,12 @@ serverObj.httpServer = http.createServer((req, res) => {
 //create httpsServerOptions
 //read in key & cert from https file directory
 serverObj.httpsServerOptions = {
-	'key' : fs.readFileSync('./https/key.pem'),
-	'cert' : fs.readFileSync('./https/cert.pem')
+	'key' : fs.readFileSync(path.join(__dirname,'/../https/key.pem')),
+	'cert' : fs.readFileSync(path.join(__dirname,'/../https/cert.pem'))
 }
 
 //start https server
-const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, res) => {
 	sharedServer(req,res)
 })
 
