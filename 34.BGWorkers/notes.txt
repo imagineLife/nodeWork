@@ -19,3 +19,11 @@ WORK
 1. make lib/server.js
 2. MOVE all index.js to lib/server
 see git commit notes...
+
+
+WORKERS
+gather all checks
+	the stored checks are stored as separate files in the checks dir
+
+	NEED to add a 'list all docs in dir' in the lib directory
+	see data.js

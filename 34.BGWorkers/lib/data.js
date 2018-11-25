@@ -143,5 +143,22 @@ lib.delete = (dir, fileName, callback) => {
 }
 
 
+//LIST all items in a directior
+lib.listFiles = (dir,callback) => {
+
+	//read directory
+	fs.readdir(`${lib.baseDir}dir/`, (err, data) => {
+		if(!err && data && data.length > 0){
+
+			//get arr of filenames
+			let trimmedFileNames = data.map(d => d.replace('.json',''))
+			callback(false, trimmedFileNames);
+
+		}else{
+			callback(err, data)
+		}
+	})
+}
+
 //3.export the module
 module.exports = lib;
