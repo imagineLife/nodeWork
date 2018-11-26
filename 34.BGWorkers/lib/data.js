@@ -147,7 +147,7 @@ lib.delete = (dir, fileName, callback) => {
 lib.listFiles = (dir,callback) => {
 
 	//read directory
-	fs.readdir(`${lib.baseDir}dir/`, (err, data) => {
+	fs.readdir(`${lib.baseDir}${dir}/`, (err, data) => {
 		if(!err && data && data.length > 0){
 
 			//get arr of filenames

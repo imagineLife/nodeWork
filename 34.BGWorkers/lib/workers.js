@@ -133,7 +133,7 @@ workersObj.performCheck = (originalCheckData) => {
 
 	//parse host & path out from origCheckData
 	//THIS is needed for sending to the twilio API
-	let parsedUrl = url.parse(`${originalCheckData.protocol}://${originalCheckData.url}`,true)
+	let parsedUrl = url.parse(`${originalCheckData.protocol}:${originalCheckData.url}`,true)
 
 	let hostName = parsedUrl.hostname;
 
@@ -152,7 +152,7 @@ workersObj.performCheck = (originalCheckData) => {
 	//get module to use
 	let modToUse = originalCheckData.protocol == 'http' ? http : https;
 
-	let finishedReq = modToUse.request(reqObj, res => {
+	let finishedReq = modToUse.request(reqObj, function(res){
 
 		//get status of sent obj
 		let reqStatus = res.statusCode;
@@ -169,6 +169,8 @@ workersObj.performCheck = (originalCheckData) => {
 
 	//bind to the err event SO THAT the err doesn't get thrown
 	finishedReq.on('error', e => {
+		console.log('REQUEST ERROR')
+		console.log(e)
 
 		//update the checkOutcome & pass data along
 		checkOutcome.error = {
@@ -209,9 +211,12 @@ workersObj.performCheck = (originalCheckData) => {
 //SPECIAL logic for accommodating a check that has not been tested yet
 //	DONT want to alert on the first check
 workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
+	console.log('processCheckOutcome checkOutcome')
+	console.log(checkOutcome)
+	console.log('* * * * * ')
 
 	//decide if check is considered up or down
-	let upOrDown = !checkOutcome.error && checkOutcome.responseCode  && !checkOutcome.successCodes.indexOf(checkOutcome.responseCode > -1) ? 'up' : 'down';
+	let upOrDown = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
 
 	//checking if alert should happen
 	let alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== upOrDown ? true : false;
@@ -262,6 +267,7 @@ workersObj.init = () => {
 
 //Alert the user to a change in their check status
 workersObj.alertUserToCheckStatusChange = (checkData) => {
+
 	const alertMsg = `ALERT: your check for ${checkData.method.toUpperCase()} ${checkData.protocol}://${checkData.url} is currently ${checkData.state}`
 	helpersLib.sendTwilioSms(checkData.userPhone, alertMsg, (err, callback) => {
 		if(!err){
@@ -269,6 +275,9 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 			console.log(alertMsg)
 		}else{
 			console.log('ERROR sending sms to user who had a state change in their check')
+			console.log('checkData')
+			console.log(checkData)
+			console.log('- - - - -')
 		}
 	})
 }
