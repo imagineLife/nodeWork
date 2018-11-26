@@ -233,6 +233,7 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 	//4. was an alert warranted
 	//5. time of check
 
+	workersObj.writeToLog(originalCheckData, checkOutcome, upOrDown, alertWarranted, timeOfCheck);
 	// console.log('Logging checkOutcome')
 	// console.log(`checkOutcome`)
 	// console.log(checkOutcome)
@@ -287,6 +288,7 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 		if(!err){
 			console.log(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
 			console.log(alertMsg)
+
 		}else{
 			console.log('ERROR sending sms to user who had a state change in their check')
 			console.log('checkData')
@@ -297,7 +299,7 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 }
 
 //Writes check status to filesystem log file
-workersObj.writeToLog = (originalCheckData, checkOutcome,upOrDownStatus,alertWarranted,timeOfCheck){
+workersObj.writeToLog = (originalCheckData, checkOutcome,upOrDownStatus,alertWarranted,timeOfCheck) => {
 
 	//form the log data
 	const logObj = {
