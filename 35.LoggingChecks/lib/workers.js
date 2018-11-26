@@ -12,6 +12,7 @@ const https = require('https');
 const http = require('http');
 const helpersLib = require('./helpers');
 const url = require('url');
+const logsLib = require('./logs')
 
 let workersObj = {};
 
@@ -293,6 +294,40 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 			console.log('- - - - -')
 		}
 	})
+}
+
+//Writes check status to filesystem log file
+workersObj.writeToLog = (originalCheckData, checkOutcome,upOrDownStatus,alertWarranted,timeOfCheck){
+
+	//form the log data
+	const logObj = {
+		'checkData': originalCheckData,
+		'checkOutcome': checkOutcome,
+		'state':upOrDownStatus,
+		'alert': alertWarranted,
+		'time': timeOfCheck	
+	}
+
+	//convert obj to string
+	const logStr = JSON.stringify(logObj)
+
+	/*
+		DETERMINE the name of the log file
+		Different logs for different checks at different times
+	*/
+
+	const logFileName = originalCheckData.id;
+
+	// append log string to the log file
+	logsLib.append(logFileName, logStr, err => {
+		if(!err){
+			console.log('Logging to the file succeeded!')
+		}else{
+			console.log('LOGGING FAILED')
+		}
+	})
+
+
 }
 
 //export the workersObj
