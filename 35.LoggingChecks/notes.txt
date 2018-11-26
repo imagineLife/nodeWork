@@ -1,0 +1,71 @@
+Perform checks the user creates
+NEED BG workers & process
+
+FROM a server that starts & listens on a port
+TO an app taht starts a server AND starts BG workers
+OLD way starts server
+WONT work any more
+WILL
+	start a server
+	start bg workers
+
+index.js will be SMALLER
+	calling a server file
+		starts the server
+	calling a workers file
+		starts the workers file
+
+WORK
+1. make lib/server.js
+2. MOVE all index.js to lib/server
+see git commit notes...
+
+
+WORKERS
+gather all checks
+	the stored checks are stored as separate files in the checks dir
+
+	NEED to add a 'list all docs in dir' in the lib directory
+	see data.js
+
+
+TESTING
+go to postman
+create a few checks with a user
+start app up and see if checks are getting processed normally
+
+1. created new user
+2. created new token for new user
+	using phone # & PW in POST to tokens with phone# and pw in req body
+3. get token 
+	2nbl88d21cfoa47ipuq
+
+4. make a check
+	post to /checks
+	body payload is...
+	{
+	"protocol":"http",
+	"url":"http://say-what.netlify.com",
+	"method":"get",
+	"successCodes": [200,201],
+	"timeoutSeconds":10
+}
+	headers are
+		contentType - app/json
+		token - theNewTokenHere
+
+	RETURNS
+	{
+	    "id": "", //removed from these notes
+	    "userPhone": "", //removed from these notes
+	    "protocol": "http",
+	    "url": "http://say-what.netlify.com",
+	    "method": "get",
+	    "successCodes": [
+	        200,
+	        201
+	    ],
+	    "timeoutSeconds": 5
+	}
+
+	CAN VALIDATE by running GET user data, should show the check in user checks arr
