@@ -47,6 +47,38 @@ logsLib.append = (fileName, stringToAppend, callback) => {
 	})
 }
 
+//list all the logs and OPTIONALLY include compressed logs
+logsLib.listLogs = (includeCompressedLogs, callback) => {
+	
+
+	fs.readdir(logsLib.baseDir, (err, res) => {
+		if(!err && res && res.length > 0){
+			
+			//collector of file names
+			const trimmedFileNames = [];
+
+			//
+			res.forEach(fileName => {
+
+				//collect existing log files
+				if(fileName.indexOf('.log') > -1){
+					trimmedFileNames.push(fileName.replace('.log',''));
+				}
+
+				//add on a gz filename to compressed file(s)
+				if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
+					trimmedFileNames.push(fileName.replace('.gz.b64',''));	
+				}
+
+			})
+
+			callback(false, trimmedFileNames);
+
+		}else{
+			callback(err,data)
+		}
+	})
+}
 
 
 
