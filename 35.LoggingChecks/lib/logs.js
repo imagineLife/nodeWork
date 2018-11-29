@@ -109,9 +109,9 @@ logsLib.compress = (logID, newFileID, callback) => {
 								if(!err){
 
 									//close the destFile
-									fs.close(fileDesc, err => {
+									fs.close(fileDesc, (err) => {
 										if(!err){
-											calback(false)
+											callback(false)
 										}else{
 											callback(err)
 										}
@@ -171,7 +171,7 @@ logsLib.decompress =(fileID, callback) => {
 //Truncates a log file
 logsLib.truncate = (logID, callback) => {
 	fs.truncate(`${logsLib.baseDir}${logID}.log`,0,(err) => {
-		if!(err){
+		if(!err){
 			callback(false)
 		}else{
 			callback(err)
