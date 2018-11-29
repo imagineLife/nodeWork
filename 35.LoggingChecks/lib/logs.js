@@ -168,6 +168,16 @@ logsLib.decompress =(fileID, callback) => {
 	})
 }
 
+//Truncates a log file
+logsLib.truncate = (logID, callback) => {
+	fs.truncate(`${logsLib.baseDir}${logID}.log`,0,(err) => {
+		if!(err){
+			callback(false)
+		}else{
+			callback(err)
+		}
+	})
+}
 
 //export the module
 module.exports = logsLib;
