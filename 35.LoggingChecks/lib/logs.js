@@ -82,6 +82,64 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 	})
 }
 
+//Compresses the contents of a single .log file
+//into a .gz.b64 file within the same directory
+logsLib.compress = (logID, newFileID, callback) => {
+
+	const srcFile = `${logID}.log`;
+	const destFile = `${newFileID}.gz.b64`;
+
+	//read the src file
+	fs.readFile(`${logsLib.baseDir}${srcFile}`,'utf8',(err, inputStr) => {
+
+		if(!err && inputStr){
+
+			//compress the data using gzip
+			zlib.gzip(inputStr, (err,resBuffer) => {
+				
+				if(!err && resBuffer){
+
+					//SEND compressed data to dest file
+					fs.open(`${logsLib.baseDir}${destFile}`,'wx',(err, fileDesc) => {
+						
+						//WRITE to the destFile with base64 encoding
+						if(!err && fileDesc){
+
+							fs.writeFile(fileDesc, resBuffer.toString('base64'), err => {
+								if(!err){
+
+									//close the destFile
+									fs.close(fileDesc, err => {
+										if(!err){
+											calback(false)
+										}else{
+											callback(err)
+										}
+									})
+
+								}else{
+									callback(err)
+								}
+							})
+
+						}else{
+							callback(err)
+						}
+					})
+
+				}else{
+					callback(err)
+				}
+			})
+
+		}else{
+			callback(error)
+		}
+
+	})
+
+}
+
 
 
 //export the module
