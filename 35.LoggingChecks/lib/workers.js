@@ -269,6 +269,55 @@ workersObj.startLoop = () => {
 	},(1000 * 60)) //once-per-minute
 }
 
+//compress 'rotate' logFiles
+workersObj.rotateLogs = () => {
+
+	//list all non-compressed log files in the logs folder
+	logsLib.listLogs(false, (err, logFiles) => {
+
+		if(!err && logFiles && logFiles.length > 0){
+
+
+			logFiles.forEach(logName => {
+
+				//prep new log filename with date
+				const logID = logName.replace('.log', '');
+				const newFileID = `${logID}-${Date.now()}`;
+
+				logsLib.compress(logID,newFileID, err => {
+					if(!err){
+
+						//compress/trunc the log
+						logsLib.truncate(logID, err => {
+							if(!err){
+								console.log('SUCCESS truncating log file')
+							}else{
+								console.log('err truncing log file')
+							}
+						})
+
+					}else{
+						console.log('error compressing log file')
+						console.log(err)
+					}
+				})
+			})
+
+		}else{
+			console.log('ERROR: couldnt find any logs to rotate/compress')
+		}
+	})
+
+}
+
+//Timer to execute log rotation process
+//1x per day
+workersObj.logRotationLoop = () => {
+	setInterval(() => {
+		workersObj.rotateLogs();
+	},(1000 * 60 * 60 * 24)) //once-per-day
+}
+
 //init script
 workersObj.init = () => {
 	
@@ -277,6 +326,12 @@ workersObj.init = () => {
 
 	//Call a loop so that the checks continue on their own
 	workersObj.startLoop();
+
+	//compress all the logs immediately
+	workersObj.rotateLogs();
+
+	//Call the compression loop, compressing every 24 hours
+	workersObj.logRotationLoop();
 
 }
 
@@ -328,7 +383,6 @@ workersObj.writeToLog = (originalCheckData, checkOutcome,upOrDownStatus,alertWar
 			console.log('LOGGING FAILED')
 		}
 	})
-
 
 }
 

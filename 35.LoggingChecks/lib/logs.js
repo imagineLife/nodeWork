@@ -57,15 +57,17 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 			//collector of file names
 			const trimmedFileNames = [];
 
-			//
+			//loop through & deal with the log files
 			res.forEach(fileName => {
 
 				//collect existing log files
+				//remove log fileExtension
 				if(fileName.indexOf('.log') > -1){
 					trimmedFileNames.push(fileName.replace('.log',''));
 				}
 
-				//add on a gz filename to compressed file(s)
+				//add gz files to compressed file(s)
+				//remove .gz fileExtensions
 				if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
 					trimmedFileNames.push(fileName.replace('.gz.b64',''));	
 				}
