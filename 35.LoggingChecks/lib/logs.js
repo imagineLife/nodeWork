@@ -131,15 +131,42 @@ logsLib.compress = (logID, newFileID, callback) => {
 					callback(err)
 				}
 			})
-
 		}else{
 			callback(error)
 		}
-
 	})
-
 }
 
+//decompresses a .gz.b64 file into a str
+logsLib.decompress =(fileID, callback) => {
+	const fileNm = `${fileID}.gz.b64`;
+
+	//read the file
+	fs.readFile(`${logsLib.baseDir}${fileNm}`,'utf8',(err, resStr) => {
+
+		if(!err && resStr){
+
+			//Decompress the file data
+			const inputBuffer = Buffer.from(resStr,'base64');
+
+			//
+			zlib.unzip(inputBuffer, (err, outputBuffer) => {
+
+				if(!err && outputBuffer){
+
+					let str = outputBuffer.toString();
+					callback(false, str);
+				}else{
+					callback(err)
+				}
+			})
+
+		}else{
+
+		}
+
+	})
+}
 
 
 //export the module
