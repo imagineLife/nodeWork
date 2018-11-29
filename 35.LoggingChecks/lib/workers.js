@@ -320,6 +320,9 @@ workersObj.logRotationLoop = () => {
 
 //init script
 workersObj.init = () => {
+
+	//send to console in YELLOW!
+	console.log(`\x1b[33m%s\x1b[0m`,'BG workers are running!');
 	
 	//Execute all the CHECKS
 	workersObj.gatherAllChecks();
