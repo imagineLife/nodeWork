@@ -124,10 +124,16 @@ serverObj.sharedServer = (req, res) => {
 //initialize server script
 serverObj.init = () => {
 	//Start the httpServer, listen on port 3000
-	serverObj.httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+	serverObj.httpServer.listen(envConfig.httpPort, () => {
+		//send to console in YELLOW!
+		console.log(`\x1b[36m%s\x1b[0m`,`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`);
+	})
 
 	//Start the httpsServer, listen on port 3001
-	serverObj.httpsServer.listen(envConfig.httpsPort, () => console.log(`Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+	serverObj.httpsServer.listen(envConfig.httpsPort, () => {
+		//send to console in YELLOW!
+		console.log(`\x1b[35m%s\x1b[0m`,`Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`);
+	})
 }
 
 
