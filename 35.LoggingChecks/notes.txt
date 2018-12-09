@@ -1,71 +1,71 @@
-Perform checks the user creates
-NEED BG workers & process
+node libraries & modules used up to here
 
-FROM a server that starts & listens on a port
-TO an app taht starts a server AND starts BG workers
-OLD way starts server
-WONT work any more
-WILL
-	start a server
-	start bg workers
+Command Line Options
+	- NODE_DEBUG: logging by keyword
 
-index.js will be SMALLER
-	calling a server file
-		starts the server
-	calling a workers file
-		starts the workers file
+Console
+	- console.log: passing args to change the color
 
-WORK
-1. make lib/server.js
-2. MOVE all index.js to lib/server
-see git commit notes...
+Crypto
+	- hashing pw
+	- using sha256
+	- encrypting
+	- decrypting
 
+File System
+	- open files
+	- close files
+	- truncate files
+	- readFiles
 
-WORKERS
-gather all checks
-	the stored checks are stored as separate files in the checks dir
+Globals
+	- __dirname: creating a pathname
+	- module.exports: exporting file contents
+	- require: importing contents from another file
 
-	NEED to add a 'list all docs in dir' in the lib directory
-	see data.js
+HTTP
+HTTPS
+	- create servers
+	- lsiten on ports for connections
+		-with self-signed ssl certs
+	- create & craft requests
+	- modules
+		lots of 'default' features of node
 
+Path
+	- resolve a path
+	- normalize a path
+	- used to setup data & logging libs
 
-TESTING
-go to postman
-create a few checks with a user
-start app up and see if checks are getting processed normally
+Process
+	- .env
+		to set variables
 
-1. created new user
-2. created new token for new user
-	using phone # & PW in POST to tokens with phone# and pw in req body
-3. get token 
-	2nbl88d21cfoa47ipuq
+QueryStrings
+	- take a url that was complex & explode it into a more coherent project
+	- taking in a HTTP req on the server
 
-4. make a check
-	post to /checks
-	body payload is...
-	{
-	"protocol":"http",
-	"url":"http://say-what.netlify.com",
-	"method":"get",
-	"successCodes": [200,201],
-	"timeoutSeconds":10
-}
-	headers are
-		contentType - app/json
-		token - theNewTokenHere
+String Decoder
+	- get the payload parsed
 
-	RETURNS
-	{
-	    "id": "", //removed from these notes
-	    "userPhone": "", //removed from these notes
-	    "protocol": "http",
-	    "url": "http://say-what.netlify.com",
-	    "method": "get",
-	    "successCodes": [
-	        200,
-	        201
-	    ],
-	    "timeoutSeconds": 5
-	}
+Timers
+	- dont need to require explicitly
+		setInterval
+			making sure workers fire every x seconds
 
-	CAN VALIDATE by running GET user data, should show the check in user checks arr
+URL
+	- parsing the hostname, pathname from the url
+
+Utilities
+	- Debuglog
+
+Buffer
+	-no require necessary
+	- decompressing & compressing strings to/from a buffer
+	- How node thinks of / represents streaming or payload data
+
+Zlib
+	- used for log compression / decompression
+
+Stream
+	ie when an incoming payload when a client makes a request
