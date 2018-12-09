@@ -125,10 +125,21 @@ serverObj.sharedServer = (req, res) => {
 			res.writeHead(statusCode);
 			res.end(payloadStr);
 
+			/*
+			If response is 200, print green
+				else print red
+			*/
+
 			//'log' the request path
-			// debug('returning statusCode & payloadStr')
-			// debug(statusCode)
-			// debug(payloadStr)
+			if(statusCode == 200){
+				debug('server 200 response! reqMethod & payloadStr')
+				debug('\x1b[32m%s\x1b[0m',reqMethod.toUpperCase())
+				debug('\x1b[32m%s\x1b[0m',trimmedPathTxt.toUpperCase())
+			}else{
+				debug('server NON-200 response! reqMethod & payloadStr')
+				debug('\x1b[31m%s\x1b[0m',reqMethod.toUpperCase())
+				debug('\x1b[31m%s\x1b[0m',trimmedPathTxt.toUpperCase())
+			}
 
 		})
 
