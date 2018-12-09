@@ -11,6 +11,21 @@ const routeHandlers = require('./handlers');
 const helpers = require('./helpers')
 const path = require('path');
 
+const util =require('util')
+
+/*
+	BELOW -> instead of console.log
+	name that is passed as a startup arguement
+	used when starting app & seeing only debug messages in the console via
+	NODE_DEBUG=workers node index.js
+
+	THIS also makes logging in the server terminal
+	 CONDITIONAL based on the startup command
+	NODE_DEBUG=workers node index.js
+*/
+const debug = util.debuglog('server')
+
+
 //instantiates a server module Obj
 let serverObj = {};
 
