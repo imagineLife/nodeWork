@@ -84,8 +84,8 @@ serverObj.sharedServer = (req, res) => {
 	//when request objects emits event data, pass the data to a callback
 	//append the new incoming data to the curIncomingString with the decoder
 	req.on('data', data => {
-		// console.log('incoming data')
-		// console.log(data)
+		// debug('incoming data')
+		// debug(data)
 		curIncomingString += decoder.write(data)
 	})
 
@@ -109,10 +109,10 @@ serverObj.sharedServer = (req, res) => {
 		}
 
 		chosenHandler(dataToReturn, (statusCode, payload) =>{
-			// console.log('chosenHandler dataToReturn, statusCode & payload')
-			// console.log(dataToReturn)
-			// console.log(statusCode)
-			// console.log(payload)
+			// debug('chosenHandler dataToReturn, statusCode & payload')
+			// debug(dataToReturn)
+			// debug(statusCode)
+			// debug(payload)
 
 			//defaults if none given
 			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
@@ -126,9 +126,9 @@ serverObj.sharedServer = (req, res) => {
 			res.end(payloadStr);
 
 			//'log' the request path
-			// console.log('returning statusCode & payloadStr')
-			// console.log(statusCode)
-			// console.log(payloadStr)
+			// debug('returning statusCode & payloadStr')
+			// debug(statusCode)
+			// debug(payloadStr)
 
 		})
 
