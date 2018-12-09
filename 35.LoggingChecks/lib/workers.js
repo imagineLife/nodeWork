@@ -13,6 +13,19 @@ const http = require('http');
 const helpersLib = require('./helpers');
 const url = require('url');
 const logsLib = require('./logs')
+const util =require('util')
+
+/*
+	BELOW -> instead of console.log
+	name that is passed as a startup arguement
+	used when starting app & seeing only debug messages in the console via
+	NODE_DEBUG=workers node index.js
+
+	THIS also makes logging in the server terminal
+	 CONDITIONAL based on the startup command
+	NODE_DEBUG=workers node index.js
+*/
+const debug = util.debuglog('workers')
 
 let workersObj = {};
 
@@ -37,7 +50,7 @@ workersObj.gatherAllChecks = () => {
 						workersObj.validateCheckData(originalCheckData)
 
 					}else{
-						console.log('error reading one of the checks data...')
+						debug('error reading one of the checks data...')
 					}
 
 				})
@@ -45,7 +58,7 @@ workersObj.gatherAllChecks = () => {
 
 		}else{
 			//log because this is a BG worker, not a typical call & response
-			console.log('couldnt find any checks!!')
+			debug('couldnt find any checks!!')
 		}
 	})
 }
@@ -98,21 +111,21 @@ workersObj.validateCheckData = (origChData) => {
 	){
 		workersObj.performCheck(origChData)
 	}else{
-		console.log('error, ONE of the checks is not properly formatted...')
-		console.log('origChData.id')
-		console.log(origChData.id)
-		console.log('origChData.userPhone')
-		console.log(origChData.userPhone)
-		console.log('origChData.protocol')
-		console.log(origChData.protocol)
-		console.log('origChData.url')
-		console.log(origChData.url)
-		console.log('origChData.method')
-		console.log(origChData.method)
-		console.log('origChData.successCodes')
-		console.log(origChData.successCodes)
-		console.log('origChData.timeoutSeconds')
-		console.log(origChData.timeoutSeconds)
+		debug('error, ONE of the checks is not properly formatted...')
+		debug('origChData.id')
+		debug(origChData.id)
+		debug('origChData.userPhone')
+		debug(origChData.userPhone)
+		debug('origChData.protocol')
+		debug(origChData.protocol)
+		debug('origChData.url')
+		debug(origChData.url)
+		debug('origChData.method')
+		debug(origChData.method)
+		debug('origChData.successCodes')
+		debug(origChData.successCodes)
+		debug('origChData.timeoutSeconds')
+		debug(origChData.timeoutSeconds)
 	}
 
 }
@@ -170,8 +183,8 @@ workersObj.performCheck = (originalCheckData) => {
 
 	//bind to the err event SO THAT the err doesn't get thrown
 	finishedReq.on('error', e => {
-		console.log('REQUEST ERROR')
-		console.log(e)
+		debug('REQUEST ERROR')
+		debug(e)
 
 		//update the checkOutcome & pass data along
 		checkOutcome.error = {
@@ -234,12 +247,12 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 	//5. time of check
 
 	workersObj.writeToLog(originalCheckData, checkOutcome, upOrDown, alertWarranted, timeOfCheck);
-	// console.log('Logging checkOutcome')
-	// console.log(`checkOutcome`)
-	// console.log(checkOutcome)
-	// console.log(`upOrDown: ${upOrDown}`)
-	// console.log(`alertWarranted: ${alertWarranted}`)
-	// console.log('- - - - -')
+	// debug('Logging checkOutcome')
+	// debug(`checkOutcome`)
+	// debug(checkOutcome)
+	// debug(`upOrDown: ${upOrDown}`)
+	// debug(`alertWarranted: ${alertWarranted}`)
+	// debug('- - - - -')
 
 	//SAVE the new data
 	dataLib.update('checks', newCheckData.id, newCheckData, (err) => {
@@ -251,13 +264,13 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 				workersObj.alertUserToCheckStatusChange(newCheckData)
 			
 			}else{
-				console.log('Check outcome has NOT changed, not alert needed')
+				debug('Check outcome has NOT changed, not alert needed')
 			}
 
 		}else{
-			console.log('ERROR Trying to save updates to one of the checks...')
-			console.log(newCheckData)
-			console.log('- - - - -')
+			debug('ERROR Trying to save updates to one of the checks...')
+			debug(newCheckData)
+			debug('- - - - -')
 		}
 	})
 }
@@ -290,21 +303,21 @@ workersObj.rotateLogs = () => {
 						//compress/trunc the log
 						logsLib.truncate(logID, err => {
 							if(!err){
-								console.log('SUCCESS truncating log file')
+								debug('SUCCESS truncating log file')
 							}else{
-								console.log('err truncing log file')
+								debug('err truncing log file')
 							}
 						})
 
 					}else{
-						console.log('error compressing log file')
-						console.log(err)
+						debug('error compressing log file')
+						debug(err)
 					}
 				})
 			})
 
 		}else{
-			console.log('ERROR: couldnt find any logs to rotate/compress')
+			debug('ERROR: couldnt find any logs to rotate/compress')
 		}
 	})
 
@@ -344,14 +357,14 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 	const alertMsg = `ALERT: your check for ${checkData.method.toUpperCase()} ${checkData.protocol}://${checkData.url} is currently ${checkData.state}`
 	helpersLib.sendTwilioSms(checkData.userPhone, alertMsg, (err, callback) => {
 		if(!err){
-			console.log(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
-			console.log(alertMsg)
+			debug(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
+			debug(alertMsg)
 
 		}else{
-			console.log('ERROR sending sms to user who had a state change in their check')
-			console.log('checkData')
-			console.log(checkData)
-			console.log('- - - - -')
+			debug('ERROR sending sms to user who had a state change in their check')
+			debug('checkData')
+			debug(checkData)
+			debug('- - - - -')
 		}
 	})
 }
@@ -381,9 +394,9 @@ workersObj.writeToLog = (originalCheckData, checkOutcome,upOrDownStatus,alertWar
 	// append log string to the log file
 	logsLib.append(logFileName, logStr, err => {
 		if(!err){
-			console.log('Logging to the file succeeded!')
+			debug('Logging to the file succeeded!')
 		}else{
-			console.log('LOGGING FAILED')
+			debug('LOGGING FAILED')
 		}
 	})
 
