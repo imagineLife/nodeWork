@@ -23,9 +23,11 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 	- input payment method  
 	- API connects with Stripe API for payment processing  
 	- User recieves an emailed recipet with Mailgun integration  
-
-
-
+  
+  
+### API
+	/users  
+	
 
 
 
