@@ -26,8 +26,9 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
   
   
 ### API
+**USERS**  
 	/users
-CREATE (post)  
+***Create (post)***   
 requires:  
 - FirstName  
 - LastName  
@@ -36,7 +37,7 @@ requires:
 - streetAddress  
 - acceptedTOSAgreement (terms of service)
 
-UPDATE (put)  
+***UPDATE (put)***  
 requires:  
 - userName  
 - password  
@@ -48,11 +49,12 @@ requires:
 	- emailAddress  
 	- userName  
 
-DELETE  
+***DELETE***   
 
 
+**MENU ITEMS**  
 	/menuItems  
-GET  
+***GET***  
 requires:  
 - authToken  
 
