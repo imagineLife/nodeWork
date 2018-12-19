@@ -27,8 +27,10 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
   
 ### API
 **USERS**  
-	/users
-***Create (post)***   
+
+	/user  
+
+***CREATE (post)***   
 requires:  
 - FirstName  
 - LastName  
@@ -53,7 +55,9 @@ requires:
 
 
 **MENU ITEMS**  
+
 	/menuItems  
+
 ***GET***  
 requires:  
 - authToken  
