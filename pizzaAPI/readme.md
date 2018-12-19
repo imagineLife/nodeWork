@@ -26,7 +26,38 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
   
   
 ### API
-	/users  
+	/users
+CREATE (post)  
+requires:  
+- FirstName  
+- LastName  
+- userName  
+- emailAddress  
+- streetAddress  
+- acceptedTOSAgreement (terms of service)
+
+UPDATE (put)  
+requires:  
+- userName  
+- password  
+- authToken  
+- at least one of the following for editing:  
+	- firstName  
+	- lastName  
+	- streetAddress  
+	- emailAddress  
+	- userName  
+
+DELETE  
+
+
+	/menuItems  
+GET  
+requires:  
+- authToken  
+
+
+
 	
 
 
