@@ -2,7 +2,7 @@
 
 **No NPM.**  
 **No Packages.**  
-**Just Node.**
+**Just Node.**  
 This is an example API for a pizza-delivery company.  
   
 **3rd Party API Integration**  
