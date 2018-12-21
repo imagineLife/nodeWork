@@ -48,7 +48,8 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 })
 
 serverObj.myRouter = {
-	'users': routeHandlers.users
+	'users': routeHandlers.users,
+	'tokens' : routeHandlers.tokens
 }
 
 //Sharing logic to create http & https servers
@@ -94,7 +95,7 @@ serverObj.sharedServer = (req, res) => {
 
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
-		
+
 		// object to send to the handler
 		//PARSING the paload data with helpers method
 		let dataToReturn = {
