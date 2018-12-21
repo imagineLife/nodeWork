@@ -362,15 +362,18 @@ routeHandlers.doTokens = {};
 //a user creating a  token to use later
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
-	let dataPhone = data.payload.phoneNumber
+	let dataEmail = data.payload.email
 	//parse phone & pw
-	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
+	console.log('pw')
+	console.log(pw)
+	
 
-	if(pn && pw){
+	if(eml && pw){
 
 		//lookup user who matches the phoneNumber
-		dataLib.read('users', pn, (err, userData) => {
+		dataLib.read('users', eml, (err, userData) => {
 
 			if(!err && userData){
 
@@ -388,7 +391,7 @@ routeHandlers.doTokens.post = (data, callback) => {
 
 					//store the tokenId as a 'token Object'
 					const tokenObj = {
-						phone: pn,
+						email: eml,
 						tokenId: tokenId,
 						expires: expDate
 					}
