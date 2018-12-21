@@ -94,7 +94,7 @@ serverObj.sharedServer = (req, res) => {
 
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
-
+		
 		// object to send to the handler
 		//PARSING the paload data with helpers method
 		let dataToReturn = {

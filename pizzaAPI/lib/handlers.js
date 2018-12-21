@@ -42,19 +42,20 @@ routeHandlers.doUsers = {}
 routeHandlers.doUsers.post = function(data,callback){
 	
 	//GET all req'd fields from request payload
-	const dataPhone = data.payload.phoneNumber
+	const dataEmail = data.payload.email
 	const dataTos = data.payload.tosAgreement
 
 	//check that all req'd fields exist
 	const fn = checkForLengthAndType(data.payload.firstName)
 	const ln = checkForLengthAndType(data.payload.lastName)
-	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
 
 	//continue is fall reqd fields are present
-	if(fn && ln && pn && pw && tosAg){
+	if(fn && ln && eml && pw && tosAg){
+		console.log('passed test!');
 
 		/*
 			make sure that user doesn't already exist
@@ -64,10 +65,10 @@ routeHandlers.doUsers.post = function(data,callback){
 
 		//check if user phoneNumber already exists
 		//takes dir, fileName,callback
-		dataLib.read('users', pn, (err,result) => {
+		dataLib.read('users', eml, (err,result) => {
 
 			//if it comes back with an error,
-			// that means there IS no phone number
+			// that means there IS no email address
 			if(err){
 				//Hash the password using built in library called crypto,
 				//created in HELPERS file,
@@ -81,14 +82,14 @@ routeHandlers.doUsers.post = function(data,callback){
 					let userObj = {
 						firstName: fn,
 						lastName: ln,
-						phone: pn,
+						email: eml,
 						hashedPW: hashedPW,
 						tosAgreement: true
 					}
 
 					//STORE this user to disk
 					//create method takes dir,fileName,data,callback
-					dataLib.create('users',pn,userObj,(err) => {
+					dataLib.create('users',eml,userObj,(err) => {
 						if(!err){
 							callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
 						}else{
@@ -102,7 +103,7 @@ routeHandlers.doUsers.post = function(data,callback){
 
 			}else{
 				//User already exists
-				callback(400,{'Error': 'A User with that number already exists'})
+				callback(400,{'Error': 'A User with that email already exists'})
 			}
 		})
 
