@@ -1,8 +1,8 @@
 # A Pizza-Delivery API
 
-**No NPM.**  
-**No Packages.**  
-**Just Node.**  
+*No NPM.*  
+*No Packages.*  
+*Just Node.*  
 This is an example API for a pizza-delivery company.  
   
 **3rd Party API Integration**  
@@ -26,7 +26,7 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
   
   
 ### API
-**USERS**  
+*USERS*  
 
 	/user  
 
@@ -54,7 +54,7 @@ requires:
 ***DELETE***   
 
 
-**MENU ITEMS**  
+*MENU ITEMS*  
 
 	/menuItems  
 
@@ -75,8 +75,4 @@ run _node index.js_
 The terminal should print that the server is running on port 3000!
 
 ## Testing & 'Using' the API
-I recommend using [Postman](https://www.getpostman.com/)  
-
-Open postman  
-send a post request to  
-localhost:3000/hello
+Try using [Postman](https://www.getpostman.com/)  
