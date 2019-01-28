@@ -584,6 +584,9 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callba
 	})
 }
 
+/*
+	Get Menu Items Handling
+*/
 routeHandlers.doMenuItems = {};
 
 routeHandlers.doMenuItems.get = (data, callback) => {
@@ -621,7 +624,11 @@ routeHandlers.doMenuItems.get = (data, callback) => {
 	}else{
 		callback(400, {'Error': 'Specified token NOT there'})
 	}
-
 }
 
+
+/*
+	USER CART handling
+*/
+routeHandlers.cart = {}
 module.exports = routeHandlers;
