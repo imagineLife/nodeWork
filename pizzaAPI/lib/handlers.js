@@ -351,6 +351,26 @@ routeHandlers.tokens = (data, callback) => {
 }
 
 
+//Menu handler
+//FIGURES OUT wthe req method, & passes it to sub-handlers
+routeHandlers.menuItems = (data, callback) => {
+
+	//only allow GET of menu items
+	const acceptableMethods = ['get',];
+
+	/*
+		if the method from the Front-End matches an acceptable method,
+		run it. use a NEW SET OF METHODS 'doTokens'.
+		ELSE return 40
+	*/
+	if(acceptableMethods.indexOf(data.method) > -1){
+		routeHandlers.doMenuItems[data.method](data,callback);
+	}else{
+		callback(405)
+	}
+}
+
+
 //container for all tokens methods
 routeHandlers.doTokens = {};
 
@@ -364,12 +384,6 @@ routeHandlers.doTokens.post = (data, callback) => {
 	//parse phone & pw
 	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
-	console.log('pw')
-	console.log(pw)
-	console.log('eml')
-	console.log(eml)
-	
-	
 
 	if(eml && pw){
 
@@ -568,6 +582,12 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callba
 			callback(false)
 		}
 	})
+}
+
+routeHandlers.doMenuItems = (data, callback) => {
+	console.log('doingMenuItems data')
+	console.log(data)
+	console.log(callback)
 }
 
 module.exports = routeHandlers;
