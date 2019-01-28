@@ -603,13 +603,16 @@ routeHandlers.doMenuItems.get = (data, callback) => {
 
 			if(tokenIsValid){
 				console.log('token is valid!')
-				callback(200)	
-			}else{
-				console.log('passedToken')
-				console.log(passedToken)
-				console.log('email')
-				console.log(email)
 				
+				//lookup the menuItems from the filesystem
+				dataLib.read('menuItems','menuItems', (err, menuItems) => {
+					if(!err && menuItems){
+						callback(200, menuItems)
+					}else{
+						callback(403, {'Error' : 'no menu items OR error'})
+					}
+				})
+			}else{
 				callback(403, {'Error': 'Non-Matching user token'})
 			}
 		})
