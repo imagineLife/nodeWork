@@ -17,7 +17,7 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 - Delete account  
 - Login & Logout  
 	- Creating & Destroying an access token  
-- GET Pizza Menu items (when logged in)  
+- GET PizzaShop Menu items (when logged in)  
 - Fill a 'shopping cart' with menu items (when logged in)  
 - Create an Order (when logged in)  
 	- input payment method  
@@ -25,8 +25,8 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 	- User recieves an emailed recipet with Mailgun integration  
   
   
-### API
-## Users  
+# API
+## USERS  
 
 	/user  
 
@@ -55,7 +55,7 @@ requires:
 
 
 ## MENU ITEMS  
-***GET***  
+***READ (get)***  
 
 	/menuItems?email?userEmail@here.com  
 
