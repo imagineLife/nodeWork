@@ -53,10 +53,8 @@ routeHandlers.doUsers.post = function(data,callback){
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
 
-	//continue is fall reqd fields are present
+	//continue if all reqd fields are present
 	if(fn && ln && eml && pw && tosAg){
-		console.log('passed test!');
-
 		/*
 			make sure that user doesn't already exist
 			USING the CRUD handlers from the data directory as a dependence above
@@ -200,26 +198,26 @@ routeHandlers.doUsers.put = function(data,callback){
 routeHandlers.doUsers.get = function(data,callback){
 
 	//TEST this by using postman with
-	// http://localhost:3000/users?phoneNumber=1238675309
+	// http://localhost:3000/users?email=jajo@gmail.com
 	// should return the user object
 
-	//check that the phoneNumber is value
-	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
-
+	//check that the email is value
+	const email = typeof(data.queryStrObj.email) == 'string' && data.queryStrObj.email.includes('.com') && data.queryStrObj.email.includes('@') ? data.queryStrObj.email.trim() : false;
+	
 	//if phone is valid
-	if(phoneNumber){
+	if(email){
 
 		//GET token from headers
 		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed phoneNumber
-		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+		//verify that token is valid for passed email
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 
-			//IF token MATCHES phoneNumber
+			//IF token MATCHES email
 			if(tokenIsValid){
 
 				//lookup the user from the filesystem
-				dataLib.read('users',phoneNumber, (err, storedUserData) => {
+				dataLib.read('users',email, (err, storedUserData) => {
 					if(!err && storedUserData){
 
 						//REMOVE hashed pw from the user object before showing the user
@@ -240,7 +238,7 @@ routeHandlers.doUsers.get = function(data,callback){
 		})
 
 	}else{	
-		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+		callback(400, {'Error': 'Seems like Missing email field'})
 	}
 	
 }
@@ -368,6 +366,9 @@ routeHandlers.doTokens.post = (data, callback) => {
 	const pw = checkForLengthAndType(data.payload.passWord);
 	console.log('pw')
 	console.log(pw)
+	console.log('eml')
+	console.log(eml)
+	
 	
 
 	if(eml && pw){
@@ -552,13 +553,13 @@ routeHandlers.doTokens.delete = (data, callback) => {
 
 
 //VERIFY that a given tokenID MATCHES a given user
-routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenPhoneNumber,callback){
+routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callback){
 
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
 		if(!err && storedTokenData){
 			//Check that the tokenID MATCHES the given user AND has not expired
-			if(storedTokenData.phone == givenPhoneNumber && storedTokenData.expires > Date.now()){
+			if(storedTokenData.phone == givenEmailAddr && storedTokenData.expires > Date.now()){
 				callback(true)
 			}else{
 				callback(false)
