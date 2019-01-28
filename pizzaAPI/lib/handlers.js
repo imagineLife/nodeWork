@@ -356,7 +356,7 @@ routeHandlers.tokens = (data, callback) => {
 routeHandlers.menuItems = (data, callback) => {
 
 	//only allow GET of menu items
-	const acceptableMethods = ['get',];
+	const acceptableMethods = ['get'];
 
 	/*
 		if the method from the Front-End matches an acceptable method,
@@ -573,7 +573,7 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callba
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
 		if(!err && storedTokenData){
 			//Check that the tokenID MATCHES the given user AND has not expired
-			if(storedTokenData.phone == givenEmailAddr && storedTokenData.expires > Date.now()){
+			if(storedTokenData.email == givenEmailAddr && storedTokenData.expires > Date.now()){
 				callback(true)
 			}else{
 				callback(false)
@@ -584,10 +584,41 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callba
 	})
 }
 
-routeHandlers.doMenuItems = (data, callback) => {
-	console.log('doingMenuItems data')
-	console.log(data)
-	console.log(callback)
+routeHandlers.doMenuItems = {};
+
+routeHandlers.doMenuItems.get = (data, callback) => {
+	//TEST this by using postman with
+	// http://localhost:3000/menuItems?email=jajo@gmail.com
+	// should return the menuItem object
+	let dataEmail = data.queryStrObj.email;
+	//check that email is valid
+	const email = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+	if(email && passedToken){
+
+		//verify the token matches
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+
+			if(tokenIsValid){
+				console.log('token is valid!')
+				callback(200)	
+			}else{
+				console.log('passedToken')
+				console.log(passedToken)
+				console.log('email')
+				console.log(email)
+				
+				callback(403, {'Error': 'Non-Matching user token'})
+			}
+		})
+
+
+	}else{
+		callback(400, {'Error': 'Specified token NOT there'})
+	}
+
 }
 
 module.exports = routeHandlers;
