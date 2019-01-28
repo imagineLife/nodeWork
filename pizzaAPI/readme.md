@@ -26,7 +26,7 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
   
   
 ### API
-*USERS*  
+## Users  
 
 	/user  
 
@@ -54,7 +54,7 @@ requires:
 ***DELETE***   
 
 
-*MENU ITEMS*  
+## MENU ITEMS  
 
 	/menuItems  
 
