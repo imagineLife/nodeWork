@@ -32,10 +32,9 @@ helpers.hash = function(str){
 
 
 //parses a json STRING to an object in all cases without throwing erro
-helpers.parseJsonToObject = function(str){
+helpers.parseJsonToObject = function(str){	
 	try{
-		const thisObj = JSON.parse(str);
-		return thisObj;
+		return JSON.parse(str);
 	}catch(e){
 		return {'error':'nothing to do here'}
 	}
