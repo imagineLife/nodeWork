@@ -55,9 +55,6 @@ requires:
 
 
 ## MENU ITEMS  
-
-	/menuItems  
-
 ***GET***  
 
 	/menuItems?email?userEmail@here.com  
