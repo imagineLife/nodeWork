@@ -50,7 +50,8 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 serverObj.myRouter = {
 	'users': routeHandlers.users,
 	'tokens' : routeHandlers.tokens,
-	'menuItems' : routeHandlers.menuItems
+	'menuItems' : routeHandlers.menuItems,
+	'cart' : routeHandlers.cart
 }
 
 //Sharing logic to create http & https servers
