@@ -59,14 +59,12 @@ requires:
 	/menuItems  
 
 ***GET***  
+
+	/menuItems?email?userEmail@here.com  
+
 requires:  
-- authToken  
-
-
-
-	
-
-
+- authToken in the request body  
+- user email in request query string  
 
 ## Start the server
 Clone the directory,  
