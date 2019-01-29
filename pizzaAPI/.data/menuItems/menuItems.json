@@ -1,22 +1,27 @@
 [
 	{
 		"name": "Pepperoni",
-		"price": 10
+		"price": 10,
+		"id":1
 	},
 	{
 		"name": "Plain",
-		"price": 8
+		"price": 8,
+		"id":2
 	},
 	{
 		"name": "Mozz",
-		"price": 9
+		"price": 9,
+		"id":3
 	},
 	{
 		"name": "Hawaiian",
-		"price": 12
+		"price": 12,
+		"id":4
 	},
 	{
 		"name": "Grandma",
-		"price": 13
+		"price": 13,
+		"id":5
 	}
 ]
