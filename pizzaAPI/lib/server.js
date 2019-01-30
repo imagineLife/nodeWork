@@ -7,7 +7,7 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
-const routeHandlers = require('./handlers');
+const routeHandlers = require('./handlers/');
 const helpers = require('./helpers')
 const path = require('path');
 
