@@ -55,10 +55,10 @@ required in header:
 
 ***DELETE***   
 required in url:  
-	email  
+   - email  
 
 required in header:  
-	token  
+   - token  
 
 ## MENU ITEMS  
 ***READ (get)***  
