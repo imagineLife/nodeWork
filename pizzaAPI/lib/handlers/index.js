@@ -11,6 +11,7 @@ const config = require('../config')
 const doUsers = require('./users');
 const doTokens = require('./tokens')
 const doMenuItems = require('./menuItems')
+const doCart = require('./cart')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -23,6 +24,7 @@ let routeHandlers = {}
 routeHandlers.doUsers = doUsers;
 routeHandlers.doTokens = doTokens;
 routeHandlers.doMenuItems = doMenuItems;
+routeHandlers.doCart = doCart;
 
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
@@ -88,5 +90,12 @@ routeHandlers.menuItems = (data, callback) => {
 /*
 	USER CART handling
 */
-routeHandlers.cart = {}
+routeHandlers.cart = (data, callback) => {
+	const acceptableMethods = ['post', 'get', 'put', 'delete'];
+
+	if(acceptableMethods.indexOf(data.method) > -1){
+		routeHandlers.doCart[data.method](data, callback);
+	}
+
+}
 module.exports = routeHandlers;
