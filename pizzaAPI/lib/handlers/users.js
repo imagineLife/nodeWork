@@ -9,6 +9,8 @@ function checkForLengthAndType(data){
 	return res
 }
 
+const isEmailValid = str => typeof(str) == 'string' && str.includes('.com') && str.includes('@') ? str.trim() : false;
+
 //deals with users CRUD methods
 const doUsers = {}
 
@@ -96,7 +98,7 @@ doUsers.post = function(data,callback){
 doUsers.put = function(data,callback){
 	
 	//check that the email is value
-	const email = typeof(data.payload.email) == 'string' && data.queryStrObj.email.includes('.com') && data.queryStrObj.email.includes('@') ? data.payload.email.trim() : false;
+	const email = isEmailValid(data.queryStrObj.email)
 	
 	//check for optional fields
 	const fn = checkForLengthAndType(data.payload.firstName)
@@ -177,7 +179,7 @@ doUsers.get = function(data,callback){
 	// should return the user object
 
 	//check that the email is value
-	const email = typeof(data.queryStrObj.email) == 'string' && data.queryStrObj.email.includes('.com') && data.queryStrObj.email.includes('@') ? data.queryStrObj.email.trim() : false;
+	const email = isEmailValid(data.queryStrObj.email);
 	
 	//if phone is valid
 	if(email){
