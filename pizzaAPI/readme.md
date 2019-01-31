@@ -58,7 +58,7 @@ required in header:
 ## MENU ITEMS  
 ***READ (get)***  
 
-	/menuItems?email?userEmail@here.com  
+	/menuItems?email=userEmail@here.com  
 
 requires:  
 - authToken in the request body  
