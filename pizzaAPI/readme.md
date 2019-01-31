@@ -31,7 +31,7 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 	/user  
 
 ***CREATE (post)***   
-requires:  
+required in body:  
 - FirstName  
 - LastName  
 - userName  
@@ -40,10 +40,11 @@ requires:
 - acceptedTOSAgreement (terms of service)
 
 ***UPDATE (put)***  
-requires:  
-- userName  
+required in body:  
+- email
 - password  
-- authToken  
+required in header:  
+- token  
 - at least one of the following for editing:  
 	- firstName  
 	- lastName  
