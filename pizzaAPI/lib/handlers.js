@@ -322,16 +322,9 @@ routeHandlers.doUsers.delete = function(data,callback){
 	}
 }
 
-//ping handler
-routeHandlers.ping = function(data, callback){
-	callback(200)
-}
-
 routeHandlers.notFound = function(data, callback){
 	callback(404)
 }
-
-
 
 //TOKENS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
@@ -376,12 +369,12 @@ routeHandlers.doTokens = {};
 
 
 //Tokens post
-//REQd data - phone, pw
+//REQd data - email, pw
 //a user creating a  token to use later
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
 	let dataEmail = data.payload.email
-	//parse phone & pw
+	//parse email & pw
 	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
