@@ -20,6 +20,7 @@ doUsers.post = function(data,callback){
 	
 	//GET all req'd fields from request payload
 	const dataEmail = data.payload.email
+	const dataAddr = data.payload.address
 	const dataTos = data.payload.tosAgreement
 
 	//check that all req'd fields exist
@@ -31,7 +32,7 @@ doUsers.post = function(data,callback){
 
 
 	//continue if all reqd fields are present
-	if(fn && ln && eml && pw && tosAg){
+	if(fn && ln && eml && pw && tosAg && dataAddr){
 		/*
 			make sure that user doesn't already exist
 			USING the CRUD handlers from the data directory as a dependence above
@@ -58,6 +59,7 @@ doUsers.post = function(data,callback){
 						firstName: fn,
 						lastName: ln,
 						email: eml,
+						streetAddress: dataAddr,
 						hashedPW: hashedPW,
 						tosAgreement: true
 					}
