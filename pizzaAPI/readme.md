@@ -54,7 +54,11 @@ required in header:
 	- userName  
 
 ***DELETE***   
+required in url:  
+	email  
 
+required in header:  
+	token  
 
 ## MENU ITEMS  
 ***READ (get)***  
