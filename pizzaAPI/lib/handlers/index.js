@@ -8,16 +8,11 @@ const dataLib = require('../data')
 const helpers = require('../helpers')
 const config = require('../config')
 
+//handlers from sibling handler files
 const doUsers = require('./users');
 const doTokens = require('./tokens')
 const doMenuItems = require('./menuItems')
 const doCart = require('./cart')
-
-//request data checker fn
-function checkForLengthAndType(data){
-	let res = typeof(data) == 'string' && data.trim().length > 0 ? data.trim() : false;
-	return res
-}
 
 //handlers
 let routeHandlers = {}
@@ -54,11 +49,6 @@ routeHandlers.notFound = function(data, callback){
 routeHandlers.tokens = (data, callback) => {
 	const acceptableMethods = ['post','get','put','delete'];
 
-	/*
-		if the method from the Front-End matches an acceptable method,
-		run it. use a NEW SET OF METHODS 'doTokens'.
-		ELSE return 40
-	*/
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doTokens[data.method](data,callback);
 	}else{
@@ -74,11 +64,6 @@ routeHandlers.menuItems = (data, callback) => {
 	//only allow GET of menu items
 	const acceptableMethods = ['get'];
 
-	/*
-		if the method from the Front-End matches an acceptable method,
-		run it. use a NEW SET OF METHODS 'doTokens'.
-		ELSE return 40
-	*/
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doMenuItems[data.method](data,callback);
 	}else{
@@ -87,9 +72,8 @@ routeHandlers.menuItems = (data, callback) => {
 }
 
 
-/*
-	USER CART handling
-*/
+// USER CART handling
+//FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.cart = (data, callback) => {
 	const acceptableMethods = ['post', 'get', 'put', 'delete'];
 
