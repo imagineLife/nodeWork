@@ -43,6 +43,7 @@ required in body:
 required in body:  
 - email
 - password  
+
 required in header:  
 - token  
 - at least one of the following for editing:  
