@@ -89,22 +89,22 @@ doUsers.post = function(data,callback){
 }
 
 //Users PUT
-//req phonenumber
+//req email
 //OPTIONAL - firstName, lastName, pw (at least ONE MUST be specified)
 //@TODO only let auth user update their own obj. don't let them update others
 
 doUsers.put = function(data,callback){
 	
-	//check that the phoneNumber is value
-	const phoneNumber = typeof(data.payload.phoneNumber) == 'string' && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
-
+	//check that the email is value
+	const email = typeof(data.payload.email) == 'string' && data.queryStrObj.email.includes('.com') && data.queryStrObj.email.includes('@') ? data.payload.email.trim() : false;
+	
 	//check for optional fields
 	const fn = checkForLengthAndType(data.payload.firstName)
 	const ln = checkForLengthAndType(data.payload.lastName)
 	const pw = checkForLengthAndType(data.payload.passWord)
 
 	//if phone number exists, keep going
-	if(phoneNumber){
+	if(email){
 
 		//if at least one other field exists to update
 		if(fn || ln || pw){
@@ -113,11 +113,11 @@ doUsers.put = function(data,callback){
 			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
 			//verify that token is valid for passed phoneNumber
-			doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+			doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 				if(tokenIsValid){
 
 					//lookup the user
-					dataLib.read('users', phoneNumber, (err, userData) => {
+					dataLib.read('users', email, (err, userData) => {
 						
 						//check if file is error-less AND has userdata
 						if(!err && userData){
@@ -134,10 +134,10 @@ doUsers.put = function(data,callback){
 							}
 
 							//Store the newly updated userData obj
-							dataLib.update('users', phoneNumber, userData, (err) => {
+							dataLib.update('users', email, userData, (err) => {
 
 								if(!err){
-									callback(200)
+									callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
 								}else{
 									callback(500, {'Error': 'Couldnt update this user with this info'})
 								}
