@@ -10,6 +10,7 @@ const config = require('../config')
 
 const doUsers = require('./users');
 const doTokens = require('./tokens')
+const doMenuItems = require('./menuItems')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -21,6 +22,7 @@ function checkForLengthAndType(data){
 let routeHandlers = {}
 routeHandlers.doUsers = doUsers;
 routeHandlers.doTokens = doTokens;
+routeHandlers.doMenuItems = doMenuItems;
 
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
