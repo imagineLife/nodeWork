@@ -227,57 +227,28 @@ doUsers.get = function(data,callback){
 doUsers.delete = function(data,callback){
 	
 	//check that phone is valid
-	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+	const email = isEmailValid(data.queryStrObj.email);
 
 	//if phone is valid
-	if(phoneNumber){
+	if(email){
 
 		//GET token from headers
 		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed phoneNumber
-		doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+		//verify that token is valid for passed email
+		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 			if(tokenIsValid){
 
 				//lookup the user from the filesystem
-				dataLib.read('users',phoneNumber, (err, storedUserData) => {
+				dataLib.read('users',email, (err, storedUserData) => {
 					
 					if(!err && storedUserData){
 
 						//REMOVE user
-						dataLib.delete('users', phoneNumber, (err) => {
+						dataLib.delete('users', email, (err) => {
 
 							if(!err){
-								
-								//Delete users-associated checks
-								//get checks form userData
-								let userChecks = typeof(storedUserData.checks) == 'object' && storedUserData.checks instanceof Array ? storedUserData.checks : [];
-								const noOfChecks = userChecks.length;
-								
-								if(noOfChecks > 0){
-
-									let checksDeleted = 0;
-									let deleteErrs = false;
-									userChecks.forEach(check => {
-										dataLib.delete('checks', check, (err) => {
-											if(err){
-												deleteErrs = true;
-											}
-											checksDeleted++;
-											if(checksDeleted == noOfChecks){
-												if(!deleteErrs){
-													callback(200)
-												}else{
-													callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
-												}
-											}
-										})
-									})
-
-								}else{
-									callback(200)
-								}
-
+								callback(200, {'Success!' : 'User deleted successfully'})
 							}else{
 								callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
 							}
@@ -295,7 +266,7 @@ doUsers.delete = function(data,callback){
 		})
 
 	}else{	
-		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+		callback(400, {'Error': 'Seems like Missing email field'})
 	}
 }
 
