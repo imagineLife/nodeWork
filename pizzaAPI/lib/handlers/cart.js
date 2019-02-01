@@ -196,12 +196,12 @@ doCart.get = function(data,callback){
 			if(tokenIsValid){
 
 				//lookup the user from the filesystem
-				dataLib.read('users',email, (err, storedUserData) => {
-					if(!err && storedUserData){
+				dataLib.read('cart',email, (err, storedCartData) => {
+					if(!err && storedCartData){
 
 						//REMOVE hashed pw from the user object before showing the user
-						delete storedUserData.hashedPW;
-						callback(200, storedUserData);
+						delete storedCartData.hashedPW;
+						callback(200, storedCartData);
 
 					}else{
 
