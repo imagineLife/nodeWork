@@ -17,78 +17,69 @@ const doCart = {}
 //Users POST
 //REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
 doCart.post = function(data,callback){
-	
+
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;	
+
 	//GET all req'd fields from request payload
 	const dataEmail = data.payload.email
-	const dataAddr = data.payload.address
-	const dataTos = data.payload.tosAgreement
 
-	//check that all req'd fields exist
-	const fn = checkForLengthAndType(data.payload.firstName)
-	const ln = checkForLengthAndType(data.payload.lastName)
-	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
-	const pw = checkForLengthAndType(data.payload.passWord)
-	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
+	//verify that token is valid for passed phoneNumber
+	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
+		if(tokenIsValid){
+			console.log('VALID TOKEN in cart');
 
+			const cartFromUser = data.payload.cart
+			console.log('cartFromUser')
+			console.log(cartFromUser)
+			
 
-	//continue if all reqd fields are present
-	if(fn && ln && eml && pw && tosAg && dataAddr){
-		/*
-			make sure that user doesn't already exist
-			USING the CRUD handlers from the data directory as a dependence above
-			READ from users data using this data
-		*/
+			//check if user cart already exists
+			//takes dir, fileName,callback
+			dataLib.read('cart', dataEmail, (err, cartData) => {
+				console.log('READING cartData')
+				console.log(cartData)
+				console.log('dataEmail')
+				console.log(dataEmail)
 
-		//check if user phoneNumber already exists
-		//takes dir, fileName,callback
-		dataLib.read('users', eml, (err,result) => {
-
-			//if it comes back with an error,
-			// that means there IS no email address
-			if(err){
-				//Hash the password using built in library called crypto,
-				//created in HELPERS file,
-				//included in dependencies
-				const hashedPW = helpers.hash(pw);
-
-				//if the hashing succeeded save the user data
-				//else below
-				if(hashedPW){
+				//if it comes back with an error,
+				// that means there IS no cart for this user yet
+				if(err){
+					
 					//create a user object from user data
-					let userObj = {
-						firstName: fn,
-						lastName: ln,
-						email: eml,
-						streetAddress: dataAddr,
-						hashedPW: hashedPW,
-						tosAgreement: true
+					let dataObj = {
+						email: dataEmail,
+						cartData: cartFromUser
 					}
+
+					console.log('dataObj')
+					console.log(dataObj)
+					
 
 					//STORE this user to disk
 					//create method takes dir,fileName,data,callback
-					dataLib.create('users',eml,userObj,(err) => {
+					dataLib.create('cart',dataEmail,dataObj,(err) => {
 						if(!err){
-							callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
+							callback(200, {'Success!': `Cart for ${dataEmail} created successfully!`})
 						}else{
-							callback(500, {'ERROR': 'Could not create the new user'})
+							callback(500, {'ERROR': 'Could not create the new cart'})
+							console.log(err)
 						}
 					})
+
 				}else{
-					callback(500, {'ERROR': 'Could not hash'})
+					//User already exists
+					callback(400,{'Error': 'A cart under that user already exists'})
 				}
 
 
-			}else{
-				//User already exists
-				callback(400,{'Error': 'A User with that email already exists'})
-			}
-		})
+			})
 
-	
-	}else{
-	//THROW ERROR if payload doesn't contain req'd fields
-		callback(400,{'Error': 'Missing Reqd fields'})
-	}
+		}else{
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		}
+
+	})
 
 }
 
