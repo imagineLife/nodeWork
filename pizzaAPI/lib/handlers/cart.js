@@ -14,8 +14,12 @@ const isEmailValid = str => typeof(str) == 'string' && str.includes('.com') && s
 //deals with users CRUD methods
 const doCart = {}
 
-//Users POST
-//REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
+//cart POST
+//REQ FIELDS: 
+//	token in header
+//	email in payload
+//	cart in payload
+
 doCart.post = function(data,callback){
 
 	//GET token from headers
