@@ -51,7 +51,8 @@ serverObj.myRouter = {
 	'users': routeHandlers.users,
 	'tokens' : routeHandlers.tokens,
 	'menuItems' : routeHandlers.menuItems,
-	'cart' : routeHandlers.cart
+	'cart' : routeHandlers.cart,
+	'charge': routeHandlers.charge
 }
 
 //Sharing logic to create http & https servers
