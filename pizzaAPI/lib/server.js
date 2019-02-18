@@ -52,7 +52,8 @@ serverObj.myRouter = {
 	'tokens' : routeHandlers.tokens,
 	'menuItems' : routeHandlers.menuItems,
 	'cart' : routeHandlers.cart,
-	'charge': routeHandlers.charge
+	'charge': routeHandlers.charge,
+	'notFound' : function(data, callback){ callback(404) }
 }
 
 //Sharing logic to create http & https servers
