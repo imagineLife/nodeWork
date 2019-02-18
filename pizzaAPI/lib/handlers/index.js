@@ -13,6 +13,7 @@ const doUsers = require('./users');
 const doTokens = require('./tokens')
 const doMenuItems = require('./menuItems')
 const doCart = require('./cart')
+const doCharges = require('./charge')
 
 //handlers
 let routeHandlers = {}
@@ -20,6 +21,7 @@ routeHandlers.doUsers = doUsers;
 routeHandlers.doTokens = doTokens;
 routeHandlers.doMenuItems = doMenuItems;
 routeHandlers.doCart = doCart;
+routeHandlers.doCharges = doCharges;
 
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
@@ -79,6 +81,17 @@ routeHandlers.cart = (data, callback) => {
 
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doCart[data.method](data, callback);
+	}
+
+}
+
+// CHARGES handling
+//FIGURES OUT wthe req method, & passes it to sub-handlers
+routeHandlers.charge = (data, callback) => {
+	const acceptableMethods = ['post'];
+
+	if(acceptableMethods.indexOf(data.method) > -1){
+		routeHandlers.doCharges[data.method](data, callback);
 	}
 
 }
