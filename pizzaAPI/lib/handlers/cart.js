@@ -31,34 +31,22 @@ doCart.post = function(data,callback){
 	//verify that token is valid for passed phoneNumber
 	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
 		if(tokenIsValid){
-			console.log('VALID TOKEN in cart');
 
 			const cartFromUser = data.payload.cart
-			console.log('cartFromUser')
-			console.log(cartFromUser)
-			
 
 			//check if user cart already exists
 			//takes dir, fileName,callback
 			dataLib.read('cart', dataEmail, (err, cartData) => {
-				console.log('READING cartData')
-				console.log(cartData)
-				console.log('dataEmail')
-				console.log(dataEmail)
 
 				//if it comes back with an error,
 				// that means there IS no cart for this user yet
-				if(err){
+				if(!err){
 					
 					//create a user object from user data
 					let dataObj = {
 						email: dataEmail,
 						cartData: cartFromUser
 					}
-
-					console.log('dataObj')
-					console.log(dataObj)
-					
 
 					//STORE this user to disk
 					//create method takes dir,fileName,data,callback
@@ -75,7 +63,6 @@ doCart.post = function(data,callback){
 					//User already exists
 					callback(400,{'Error': 'A cart under that user already exists'})
 				}
-
 
 			})
 
