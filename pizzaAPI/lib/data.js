@@ -43,10 +43,8 @@ lib.create = (dir,fileName,data,callback) => {
 			//take data, convert to string so that the str can be written to the file
 			const stringData = JSON.stringify(data)
 
-			//write the data to the file & close the file
-			/*
-				takes fileDescriptor and data
-			*/
+			// write the data to the file & close the file
+			// takes fileDescriptor and data
 			fs.writeFile(fileDescriptor,stringData,(err) => {
 				if(!err){
 					fs.close(fileDescriptor, err => {
