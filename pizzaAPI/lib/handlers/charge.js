@@ -49,8 +49,13 @@ charge.post = function(data,callback){
 							callback(200, {'Error': 'No Cart for a user with this token'})
 						}
 
-						console.log('cartData')
-						console.log(cartData)
+						let cartCost = cartData.cartData.reduce((acc, curVal) => {
+							return acc + (curVal.price * curVal.count) 
+						}, 0)
+
+						console.log('cartCost')
+						console.log(cartCost)
+						
 						
 					})
 
