@@ -1,5 +1,6 @@
 //Dependencies
 const doTokens = require('./tokens')
+const dataLib = require('../data')
 
 //holder of charge methods
 let charge = {}
@@ -29,6 +30,17 @@ charge.post = function(data,callback){
 			if(!tokenIsValid){
 				callback(400, { Error: "non-matching token for this user" });
 			}else{
+
+				//look up the token data
+				dataLib.read('tokens',passedToken, (err,tokenData) => {
+					console.log('tokenData res')
+					console.log(tokenData)
+
+					if(!tokenData){
+						callback(400, { Error: "no tokenData" });
+					}
+				})
+
 				callback(200, {'Success': 'matching token here'})
 			}
 		})
