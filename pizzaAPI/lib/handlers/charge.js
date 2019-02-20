@@ -33,15 +33,29 @@ charge.post = function(data,callback){
 
 				//look up the token data
 				dataLib.read('tokens',passedToken, (err,tokenData) => {
-					console.log('tokenData res')
-					console.log(tokenData)
 
 					if(!tokenData){
 						callback(400, { Error: "no tokenData" });
 					}
-				})
 
-				callback(200, {'Success': 'matching token here'})
+					//get userEmail from token data
+					let userEmail = tokenData.email;
+
+					//get user CART data from cart library
+					//takes dir, fileName,callback
+					dataLib.read('cart', userEmail, (err, cartData) => {
+
+						if(!cartData){
+							callback(200, {'Error': 'No Cart for a user with this token'})
+						}
+
+						console.log('cartData')
+						console.log(cartData)
+						
+					})
+
+					callback(200, {'Success': 'matching token here'})
+				})
 			}
 		})
 	}
