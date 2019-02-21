@@ -1,6 +1,9 @@
 //Dependencies
 const doTokens = require('./tokens')
 const dataLib = require('../data')
+const helpers = require('../helpers')
+const queryString = require('querystring');
+const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('../../config')
 
 //holder of charge methods
 let charge = {}
@@ -49,17 +52,66 @@ charge.post = function(data,callback){
 							callback(200, {'Error': 'No Cart for a user with this token'})
 						}
 
+						//if there is user cart data, get the cart  total
 						let cartCost = cartData.cartData.reduce((acc, curVal) => {
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
 
-						console.log('cartCost')
-						console.log(cartCost)
-						
+							//Prepare stripe data object
+						let stripeData = {
+							path: `/v1/customers`,
+							method: 'GET'
+						}
+
+						/* 
+							interact with stripe API
+							- customer lookup
+							- customer creation
+							- customer charging
+						*/
+
+						//prep the email for stripe consumption
+						const emailStr = queryString.stringify({email: userEmail});
+
+						let stripeReqObj = {
+					        host: STRIPE_API_HOST,
+					        // port: STRIPE_PORT,
+					        path: stripeData.path,
+					        method: stripeData.method,
+					        headers: {
+					            Authorization: `Bearer ${STRIPE_API_TOKEN}`,
+					            Accept: "application/json",
+					            "Content-Type": "application/x-www-form-urlencoded",
+					            "Content-Length": Buffer.byteLength(emailStr)
+					        }
+					    };
+					    console.log('stripeReqObj')
+					    console.log(stripeReqObj)
+					    callback(200, {'Success': 'prepared reqObj'})
+
+					    /*
+					    	{
+					        reqData = {
+					            email: userData.email
+					        };
+					        reqOptions = {
+					            path: "/v1/customers",
+					            method: "GET"
+					        };
+					    	helpers.stripe(reqOptions, reqData)
+
+					    	const reqDataStr = querystring.stringify(reqData);
+
+					    	reqOptions uses reqOptions && reqDataStr to build the big obj above
+
+					    	passes reqObject to helpers.request
+					    	helpers.request takes reqObj(bigObj) && emailStr(queryString.stringified email)
+
+					    */
 						
 					})
 
-					callback(200, {'Success': 'matching token here'})
+					// callback(200, {'Success': 'matching token here'})
 				})
 			}
 		})
