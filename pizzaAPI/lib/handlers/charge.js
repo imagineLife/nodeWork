@@ -97,14 +97,15 @@ charge.post = function(data,callback){
 
 					    	stripeCustomerList = res.data;
 
-					    	// If we find customer data with the given email,
-					    	// set this person as the customer. 
-					    	//If not, create a new customer.
+					    	// If there is customer data for the given email,
+					    	// set this customer from result 
 						    if (stripeCustomerList.length >= 1) {
 						        thisCustomer = stripeCustomerList[0];
-						        console.log('thisCustomer')
-						    	console.log(thisCustomer)
-						    	callback(200, {'Success': 'FOUND the customer!!'})
+
+						    	// callback(200, {'Success': 'FOUND the customer!!'})
+
+							// If no customer from strip matches this email, 
+							// create a new customer						    	
 						    } else {
 						        stripeReqObj.method = "POST";
 
@@ -113,15 +114,17 @@ charge.post = function(data,callback){
 						            	console.log('res')
 						            	console.log(res)
 						            	
-						            	callback(200, {'Success': 'Made new customer!!'})
+						            	// callback(200, {'Success': 'Made new customer!!'})
 						            });
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
 						            return;
 						        }
 						    }
+					    	console.log('thisCustomer')
+					    	console.log(thisCustomer)
 					    	
-					    	// callback(200, {'Success': 'Stripe request sucessfull!'})
+					    	callback(200, {'Success': 'Stripe request sucessfull!'})
 					    })	
 					})
 				})
