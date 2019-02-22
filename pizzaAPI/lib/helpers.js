@@ -81,13 +81,13 @@ helpers.request = function(reqOptions, reqData) {
                 response = chunk;
             });
 
-            // res.on("end", () => {
-            //     try {
-            //         resolve(JSON.parse(response));
-            //     } catch (e) {
-            //         resolve(response);
-            //     }
-            // });
+            res.on("end", () => {
+                try {
+                    resolve(JSON.parse(response));
+                } catch (e) {
+                    resolve(response);
+                }
+            });
         });
 
         req.on("error", e => {
