@@ -4,6 +4,7 @@ const dataLib = require('../data')
 const helpers = require('../helpers')
 const queryString = require('querystring');
 const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('../../config')
+const https = require('https');
 
 //holder of charge methods
 let charge = {}
@@ -45,7 +46,6 @@ charge.post = function(data,callback){
 					let userEmail = tokenData.email;
 
 					//get user CART data from cart library
-					//takes dir, fileName,callback
 					dataLib.read('cart', userEmail, (err, cartData) => {
 
 						if(!cartData){
@@ -57,7 +57,7 @@ charge.post = function(data,callback){
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
 
-							//Prepare stripe data object
+						//Prepare stripe communication object
 						let stripeData = {
 							path: `/v1/customers`,
 							method: 'GET'
@@ -70,9 +70,10 @@ charge.post = function(data,callback){
 							- customer charging
 						*/
 
-						//prep the email for stripe consumption
+						//prep the email string for stripe consumption
 						const emailStr = queryString.stringify({email: userEmail});
 
+						//prepare stripe communication object
 						let stripeReqObj = {
 					        host: STRIPE_API_HOST,
 					        // port: STRIPE_PORT,
@@ -85,38 +86,63 @@ charge.post = function(data,callback){
 					            "Content-Length": Buffer.byteLength(emailStr)
 					        }
 					    };
-					    console.log('stripeReqObj')
-					    console.log(stripeReqObj)
-					    callback(200, {'Success': 'prepared reqObj'})
 
-					    /*
-					    	{
-					        reqData = {
-					            email: userData.email
-					        };
-					        reqOptions = {
-					            path: "/v1/customers",
-					            method: "GET"
-					        };
-					    	helpers.stripe(reqOptions, reqData)
-
-					    	const reqDataStr = querystring.stringify(reqData);
-
-					    	reqOptions uses reqOptions && reqDataStr to build the big obj above
-
-					    	passes reqObject to helpers.request
-					    	helpers.request takes reqObj(bigObj) && emailStr(queryString.stringified email)
-
+					    /* 
+					    	lookup stripe customer with user emailString
 					    */
-						
-					})
+					    let stripeCustomerList = null;
+					    let thisCustomer = null;
 
-					// callback(200, {'Success': 'matching token here'})
+					    charge.makeStripeReq(stripeReqObj, emailStr).then(res =>{
+
+					    	stripeCustomerList = res.data;
+
+					    	// If we find customer data with the given email,
+					    	// set this person as the customer. 
+					    	//If not, create a new customer.
+						    if (stripeCustomerList.length >= 1) {
+						        thisCustomer = stripeCustomerList[0];
+						        console.log('thisCustomer')
+						    	console.log(thisCustomer)
+						    	callback(200, {'Success': 'FOUND the customer!!'})
+						    } else {
+						        stripeReqObj.method = "POST";
+
+						        try {
+						            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
+						            	console.log('res')
+						            	console.log(res)
+						            	
+						            	callback(200, {'Success': 'Made new customer!!'})
+						            });
+						        } catch (error) {
+						            callback(400, { Error: "Could not create a new customer" });
+						            return;
+						        }
+						    }
+					    	
+					    	// callback(200, {'Success': 'Stripe request sucessfull!'})
+					    })	
+					})
 				})
 			}
 		})
 	}
 	
 }
+
+charge.makeStripeReq = (reqObj, reqStr) => {
+
+	let stripeAPIResultData = null;
+	return new Promise(async function(resolve, reject) {
+        try {
+            stripeAPIResultData = await helpers.request(reqObj, reqStr);
+        } catch (error) {
+            reject("Error calling to Stripe");
+            return;
+        }
+        resolve(stripeAPIResultData);
+    });	
+} 
 
 module.exports = charge;
