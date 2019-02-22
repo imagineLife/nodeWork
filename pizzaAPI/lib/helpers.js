@@ -72,20 +72,18 @@ helpers.createRandomString = (strLength) => {
 helpers.request = function(reqOptions, reqData) {
     return new Promise((resolve, reject) => {
         const req = https.request(reqOptions, res => {
-            let response;
+            let responseData;
             res.setEncoding("utf-8");
 
             res.on("data", chunk => {
-                console.log('res data chunk');
-                console.log(chunk)
-                response = chunk;
+                responseData = chunk;
             });
 
             res.on("end", () => {
                 try {
-                    resolve(JSON.parse(response));
+                    resolve(JSON.parse(responseData));
                 } catch (e) {
-                    resolve(response);
+                    resolve(responseData);
                 }
             });
         });
