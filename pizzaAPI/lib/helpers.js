@@ -68,6 +68,36 @@ helpers.createRandomString = (strLength) => {
 	}
 }
 
+//We send a request to either Mailgun or Stripe
+helpers.request = function(reqOptions, reqData) {
+    return new Promise((resolve, reject) => {
+        const req = https.request(reqOptions, res => {
+            let response;
+            res.setEncoding("utf-8");
+
+            res.on("data", chunk => {
+                console.log('res data chunk');
+                console.log(chunk)
+                response = chunk;
+            });
+
+            // res.on("end", () => {
+            //     try {
+            //         resolve(JSON.parse(response));
+            //     } catch (e) {
+            //         resolve(response);
+            //     }
+            // });
+        });
+
+        req.on("error", e => {
+            reject({ Error: `There was an error sending the request ${e}` });
+        });
+        req.write(reqData);
+        req.end();
+    });
+};
+
 module.exports = helpers;
 
 
