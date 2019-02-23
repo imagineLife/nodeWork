@@ -33,6 +33,7 @@ charge.post = function(data,callback){
 			//if non-matching token
 			if(!tokenIsValid){
 				callback(400, { Error: "non-matching token for this user" });
+				return;
 			}else{
 
 				//look up the token data
@@ -40,6 +41,7 @@ charge.post = function(data,callback){
 
 					if(!tokenData){
 						callback(400, { Error: "no tokenData" });
+						return;
 					}
 
 					//get userEmail from token data
@@ -48,10 +50,11 @@ charge.post = function(data,callback){
 					//get user CART data from cart library
 					dataLib.read('cart', userEmail, (err, cartData) => {
 
-						if(!cartData){
+						if(!cartData || cartData == undefined){
 							callback(200, {'Error': 'No Cart for a user with this token'})
+							return;
 						}
-
+						
 						//if there is user cart data, get the cart  total
 						let cartCost = cartData.cartData.reduce((acc, curVal) => {
 							return acc + (curVal.price * curVal.count) 
@@ -91,7 +94,8 @@ charge.post = function(data,callback){
 					    	lookup stripe customer with user emailString
 					    */
 					    let stripeCustomerList = null;
-					    let thisCustomer = null;
+					    let thisCustomerID = null;
+					    let stripeCartID = null;
 
 					    charge.makeStripeReq(stripeReqObj, emailStr).then(res =>{
 
@@ -100,19 +104,21 @@ charge.post = function(data,callback){
 					    	// If there is customer data for the given email,
 					    	// set this customer from result 
 						    if (stripeCustomerList.length >= 1) {
-						        thisCustomer = stripeCustomerList[0];
 
-						    	// callback(200, {'Success': 'FOUND the customer!!'})
+						        thisCustomerID = stripeCustomerList[0].id;
 
 							// If no customer from strip matches this email, 
 							// create a new customer						    	
 						    } else {
+
 						        stripeReqObj.method = "POST";
 
 						        try {
+
 						            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
-						            	console.log('res')
-						            	console.log(res)
+						            	
+
+						            	thisCustomerID = res.id;
 						            	
 						            	// callback(200, {'Success': 'Made new customer!!'})
 						            });
@@ -121,8 +127,6 @@ charge.post = function(data,callback){
 						            return;
 						        }
 						    }
-					    	console.log('thisCustomer')
-					    	console.log(thisCustomer)
 					    	
 					    	callback(200, {'Success': 'Stripe request sucessfull!'})
 					    })	
