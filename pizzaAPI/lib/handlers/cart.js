@@ -36,11 +36,11 @@ doCart.post = function(data,callback){
 
 			//check if user cart already exists
 			//takes dir, fileName,callback
-			dataLib.read('cart', dataEmail, (err, cartData) => {
-
+			dataLib.read('cart', dataEmail, (err, cartData) => {				
+				
 				//if it comes back with an error,
 				// that means there IS no cart for this user yet
-				if(!err){
+				if(cartData == undefined && err){
 					
 					//create a user object from user data
 					let dataObj = {
@@ -60,7 +60,7 @@ doCart.post = function(data,callback){
 					})
 
 				}else{
-					//User already exists
+					//Cart already exists
 					callback(400,{'Error': 'A cart under that user already exists'})
 				}
 
