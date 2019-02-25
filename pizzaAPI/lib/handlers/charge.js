@@ -51,7 +51,7 @@ charge.post = function(data,callback){
 					dataLib.read('cart', userEmail, (err, cartData) => {
 
 						if(!cartData || cartData == undefined){
-							callback(200, {'Error': 'No Cart for a user with this token'})
+							callback(400, {'Error': 'No Cart for a user with this token'})
 							return;
 						}
 						
@@ -117,18 +117,48 @@ charge.post = function(data,callback){
 
 						            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
 						            	
-
 						            	thisCustomerID = res.id;
-						            	
-						            	// callback(200, {'Success': 'Made new customer!!'})
+
 						            });
+
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
 						            return;
 						        }
 						    }
+
+						     /*
+			            	 	 Create a stripe SOURCE for the customer
+			            	 */
+						    
+
+					    	//Prepare stripe communication object
+					        stripeData = {
+					            path: `/v1/customers/${thisCustomerID}/sources`,
+					            method: "POST"
+					        };
+
+					        let reqStrData = queryString.stringify({source: "tok_visa"})
+					        
+					        try {
+
+					            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
+					            	
+					            	console.log('res')
+					            	console.log(res)
+					            	callback(200, {'Success': `made stripe SOURCE!`})
+					            	
+
+					            });
+
+					        } catch (error) {
+					        	console.log('error')
+					        	console.log(error)
+					        	
+					            callback(400, { Error: 'Stripe SOURCE made successfully!' });
+					            return;
+					        }
 					    	
-					    	callback(200, {'Success': 'Stripe request sucessfull!'})
 					    })	
 					})
 				})
