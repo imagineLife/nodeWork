@@ -76,20 +76,6 @@ charge.post = function(data,callback){
 						//prep the email string for stripe consumption
 						const emailStr = queryString.stringify({email: userEmail});
 
-						//prepare stripe communication object
-						let stripeReqObj = {
-					        host: STRIPE_API_HOST,
-					        // port: STRIPE_PORT,
-					        path: stripeData.path,
-					        method: stripeData.method,
-					        headers: {
-					            Authorization: `Bearer ${STRIPE_API_TOKEN}`,
-					            Accept: "application/json",
-					            "Content-Type": "application/x-www-form-urlencoded",
-					            "Content-Length": Buffer.byteLength(emailStr)
-					        }
-					    };
-
 					    /* 
 					    	lookup stripe customer with user emailString
 					    */
@@ -97,30 +83,22 @@ charge.post = function(data,callback){
 					    let thisCustomerID = null;
 					    let stripeCartID = null;
 
-					    charge.makeStripeReq(stripeReqObj, emailStr).then(res =>{
-
-					    	stripeCustomerList = res.data;
+					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res =>{
 
 					    	// If there is customer data for the given email,
 					    	// set this customer from result 
-						    if (stripeCustomerList.length >= 1) {
-
+						    if (res.data.length >= 1) {
 						        thisCustomerID = stripeCustomerList[0].id;
-
-							// If no customer from strip matches this email, 
-							// create a new customer						    	
+							// If no customer from strip matches this email,
+							// create a new customer
 						    } else {
 
 						        stripeReqObj.method = "POST";
 
 						        try {
-
 						            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
-						            	
 						            	thisCustomerID = res.id;
-
 						            });
-
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
 						            return;
@@ -146,7 +124,7 @@ charge.post = function(data,callback){
 					            	
 					            	console.log('res')
 					            	console.log(res)
-					            	callback(200, {'Success': `made stripe SOURCE!`})
+					            	callback(200, {'Success': `made stripe source!`})
 					            	
 
 					            });
@@ -155,7 +133,7 @@ charge.post = function(data,callback){
 					        	console.log('error')
 					        	console.log(error)
 					        	
-					            callback(400, { Error: 'Stripe SOURCE made successfully!' });
+					            callback(400, { Error: 'Stripe SOURCE NOT successfull!' });
 					            return;
 					        }
 					    	
@@ -166,6 +144,22 @@ charge.post = function(data,callback){
 		})
 	}
 	
+}
+
+//prepare stripe communication object
+charge.prepRequestObj = (bufferData, pathMethod) => {
+	return {
+        host: STRIPE_API_HOST,
+        // port: STRIPE_PORT,
+        path: pathMethod.path,
+        method: pathMethod.method,
+        headers: {
+            Authorization: `Bearer ${STRIPE_API_TOKEN}`,
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Content-Length": Buffer.byteLength(bufferData)
+        }
+    };
 }
 
 charge.makeStripeReq = (reqObj, reqStr) => {
