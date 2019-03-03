@@ -85,18 +85,22 @@ charge.post = function(data,callback){
 
 					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res =>{
 
+					    	console.log('res')
+					    	console.log(res)
+					    	
+
 					    	// If there is customer data for the given email,
 					    	// set this customer from result 
 						    if (res.data.length >= 1) {
-						        thisCustomerID = stripeCustomerList[0].id;
+						        thisCustomerID = res.data[0].id;
 							// If no customer from strip matches this email,
 							// create a new customer
 						    } else {
 
-						        stripeReqObj.method = "POST";
+						        stripeData.method = "POST";
 
 						        try {
-						            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
+						            charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res => {
 						            	thisCustomerID = res.id;
 						            });
 						        } catch (error) {
@@ -120,9 +124,9 @@ charge.post = function(data,callback){
 					        
 					        try {
 
-					            charge.makeStripeReq(stripeReqObj, emailStr).then(res => {
+					            charge.makeStripeReq(charge.prepRequestObj(reqStrData, stripeData), reqStrData).then(res => {
 					            	
-					            	console.log('res')
+					            	console.log('SOURCES')
 					            	console.log(res)
 					            	callback(200, {'Success': `made stripe source!`})
 					            	
@@ -148,6 +152,9 @@ charge.post = function(data,callback){
 
 //prepare stripe communication object
 charge.prepRequestObj = (bufferData, pathMethod) => {
+	console.log('pathMethod')
+	console.log(pathMethod)
+	
 	return {
         host: STRIPE_API_HOST,
         // port: STRIPE_PORT,
