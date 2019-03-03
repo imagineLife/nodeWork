@@ -82,17 +82,24 @@ charge.post = function(data,callback){
 					    let stripeCustomerList = null;
 					    let thisCustomerID = null;
 					    let stripeCartID = null;
+					    let stripeSource = null;
 
 					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res =>{
-
-					    	console.log('res')
-					    	console.log(res)
 					    	
-
 					    	// If there is customer data for the given email,
 					    	// set this customer from result 
 						    if (res.data.length >= 1) {
 						        thisCustomerID = res.data[0].id;
+
+						       	//Look for a source, if so, save source to var
+						    	if(res.data[0].sources.length > 0){
+						    		console.log('IS as source in stripe');
+						    		stripeSource = res.data[0].sources[0]
+						    		console.log('stripeSource')
+						    		console.log(stripeSource)					    		
+						    	}
+
+
 							// If no customer from strip matches this email,
 							// create a new customer
 						    } else {
@@ -102,6 +109,7 @@ charge.post = function(data,callback){
 						        try {
 						            charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res => {
 						            	thisCustomerID = res.id;
+						            	callback(400, { Error: "Got here :) " });
 						            });
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
@@ -113,34 +121,37 @@ charge.post = function(data,callback){
 			            	 	 Create a stripe SOURCE for the customer
 			            	 */
 						    
+			            	 if(stripeSource == null){
 
-					    	//Prepare stripe communication object
-					        stripeData = {
-					            path: `/v1/customers/${thisCustomerID}/sources`,
-					            method: "POST"
-					        };
+		            	 		//Prepare stripe communication object
+						        stripeData = {
+						            path: `/v1/customers/${thisCustomerID}/sources`,
+						            method: "POST"
+						        };
+						        let reqStrData = queryString.stringify({source: "tok_visa"})
+						        
+						        try {
 
-					        let reqStrData = queryString.stringify({source: "tok_visa"})
-					        
-					        try {
+						            charge.makeStripeReq(charge.prepRequestObj(reqStrData, stripeData), reqStrData).then(res => {
+						            	
+						            	console.log('SOURCES res')
+						            	console.log(res)
+						            	console.log('// - - - - - //')
+						            	
+						            	callback(200, {'Success': `made stripe source!`})
+						            	
 
-					            charge.makeStripeReq(charge.prepRequestObj(reqStrData, stripeData), reqStrData).then(res => {
-					            	
-					            	console.log('SOURCES')
-					            	console.log(res)
-					            	callback(200, {'Success': `made stripe source!`})
-					            	
+						            });
 
-					            });
+						        } catch (error) {
+						        	console.log('error')
+						        	console.log(error)
+						        	
+						            callback(400, { Error: 'Stripe SOURCE NOT successfull!' });
+						            return;
+						        }
 
-					        } catch (error) {
-					        	console.log('error')
-					        	console.log(error)
-					        	
-					            callback(400, { Error: 'Stripe SOURCE NOT successfull!' });
-					            return;
-					        }
-					    	
+			            	 }
 					    })	
 					})
 				})
