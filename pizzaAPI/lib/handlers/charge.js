@@ -60,12 +60,6 @@ charge.post = function(data,callback){
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
 
-						//Prepare stripe communication object
-						let stripeData = {
-							path: `/v1/customers`,
-							method: 'GET'
-						}
-
 						/* 
 							interact with stripe API
 							- customer lookup
@@ -73,81 +67,84 @@ charge.post = function(data,callback){
 							- customer charging
 						*/
 
-						//prep the email string for stripe consumption
-						const emailStr = queryString.stringify({email: userEmail});
-
 					    /* 
 					    	lookup stripe customer with user emailString
 					    */
-					    let stripeCustomerList = null;
-					    let thisCustomerID = null;
-					    let stripeCartID = null;
-					    let stripeSource = null;
+					    const emailStr = queryString.stringify({email: userEmail});
 
-					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res =>{
+					    //Prepare stripe communication object
+						let stripeAPIPrepData = {
+							path: `/v1/customers`,
+							method: 'GET'
+						}
+
+						//prep holder for stripe customer data
+						let stripeCustomerData = {
+							id: null,
+							source: null
+						}
+
+					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr).then(res =>{
 					    	
 					    	// If there is customer data for the given email,
 					    	// set this customer from result 
 						    if (res.data.length >= 1) {
-						        thisCustomerID = res.data[0].id;
-
+						        stripeCustomerData.id = res.data[0].id;
+						        
 						       	//Look for a source, if so, save source to var
-						    	if(res.data[0].sources.length > 0){
-						    		console.log('IS as source in stripe');
-						    		stripeSource = res.data[0].sources[0]
-						    		console.log('stripeSource')
-						    		console.log(stripeSource)					    		
-						    	}
+						    	stripeCustomerData.source = (res.data[0].sources.data.length > 0 ) ? res.data[0].sources.data[0] : null
 
+						    	//if no source, make a source
+						    	//then charge the customer
+						    	if(stripeCustomerData.source == null){
+						    		console.log('IS customer id from stripe')
+						    		console.log('NO customer SOURCE yet');
+
+						    		// callback(400, { Error: "hmm" });
+						    		
+							    	//Update stripe communication object
+							        stripeAPIPrepData = {
+							            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+							            method: "POST"
+							        };
+						    		//updated stripe api data
+						    		charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+						    			stripeCustomerData.source = stripeSource
+
+						    			// charge.chargeCustomer
+						    		})
+						    	}
 
 							// If no customer from strip matches this email,
 							// create a new customer
 						    } else {
 
-						        stripeData.method = "POST";
+						    	console.log('No customer, making customer')
+
+						        stripeAPIPrepData.method = "POST";
 
 						        try {
-						            charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeData), emailStr).then(res => {
-						            	thisCustomerID = res.id;
-						            	callback(400, { Error: "Got here :) " });
+						            charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr).then(res => {
+						            	stripeCustomerData.id = res.id;
+						            	console.log('stripeCustomerData')
+						            	console.log(stripeCustomerData)
+						            	
+						            	//Update stripe communication object
+								        stripeAPIPrepData = {
+								            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+								            method: "POST"
+								        };
+						            	
+						            	charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+						            		strupeCustomerData.source = stripeSource;
+						            		
+						            	})
+
+						            	
+						            	// callback(400, { Success: "Got here :) " });
 						            });
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
-						            return;
-						        }
-						    }
-
-						     /*
-			            	 	 Create a stripe SOURCE for the customer
-			            	 */
-						    
-			            	 if(stripeSource == null){
-
-		            	 		//Prepare stripe communication object
-						        stripeData = {
-						            path: `/v1/customers/${thisCustomerID}/sources`,
-						            method: "POST"
-						        };
-						        let reqStrData = queryString.stringify({source: "tok_visa"})
-						        
-						        try {
-
-						            charge.makeStripeReq(charge.prepRequestObj(reqStrData, stripeData), reqStrData).then(res => {
-						            	
-						            	console.log('SOURCES res')
-						            	console.log(res)
-						            	console.log('// - - - - - //')
-						            	
-						            	callback(200, {'Success': `made stripe source!`})
-						            	
-
-						            });
-
-						        } catch (error) {
-						        	console.log('error')
-						        	console.log(error)
-						        	
-						            callback(400, { Error: 'Stripe SOURCE NOT successfull!' });
 						            return;
 						        }
 
@@ -159,6 +156,25 @@ charge.post = function(data,callback){
 		})
 	}
 	
+}
+
+/*
+ 	 Create a stripe SOURCE for the customer
+*/
+charge.makeStripeSource = (stripeID, stripeAPIData) => {
+	console.log('making StripeSource!')
+	
+	let reqStrData = queryString.stringify({source: "tok_visa"})
+    
+	return new Promise(async function(resolve, reject) {
+	    try {
+	        charge.makeStripeReq(charge.prepRequestObj(reqStrData, stripeAPIData), reqStrData).then(res => {
+	        	resolve(res.id)
+	        });
+	    } catch (error) {
+	        reject("Error creating stripe source");
+	    }
+	})
 }
 
 //prepare stripe communication object
