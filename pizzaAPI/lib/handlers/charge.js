@@ -66,10 +66,7 @@ charge.post = function(data,callback){
 						stripeCustomerData.cartTotal = cartData.cartData.reduce((acc, curVal) => {
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
-
-						console.log('JUST SET stripeCustomerData.cartTotal')
-						console.log(stripeCustomerData.cartTotal)
-						
+						stripeCustomerData.cartTotal = stripeCustomerData.cartTotal * 100
 
 						/* 
 							interact with stripe API
@@ -143,7 +140,7 @@ charge.post = function(data,callback){
 
 										try {
 								            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
-								            	callback(200, { Success: "Got here :) " });
+								            	callback(200, { Success: "CHARGED! :) " });
 								            });
 								        } catch (error) {
 								            callback(400, { Error: "Could not create a new customer" });
@@ -177,10 +174,15 @@ charge.post = function(data,callback){
 							            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
 							            	console.log('CHARGE res')
 							            	console.log(res)
-							            	callback(200, { Success: "Got here :) " });
+							            	callback(200, { Success: "CHARGED! :) " });
+							            })
+							            .catch(err => {
+							            	console.log('error charging :( =>')
+							            	console.log(err)
+							            	
 							            });
 							        } catch (error) {
-							            callback(400, { Error: "Could not create a new customer" });
+							            callback(400, { Error: "Could not charge" });
 							            return;
 							        }
 						    	}
@@ -211,7 +213,7 @@ charge.post = function(data,callback){
 						            	})
 
 						            	
-						            	// callback(400, { Success: "Got here :) " });
+						            	callback(200, { Success: "Made source :) " });
 						            });
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
