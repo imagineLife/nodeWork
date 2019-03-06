@@ -62,7 +62,12 @@ charge.post = function(data,callback){
 							return;
 						}
 						
-						//if there is user cart data, get the cart  total
+
+						/*
+							get the cart  total
+							if there is user cart data
+							NOTE: must be in pennies for stripe ($10 gets translated to 1000 for stripe)
+						*/
 						stripeCustomerData.cartTotal = cartData.cartData.reduce((acc, curVal) => {
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
@@ -177,7 +182,7 @@ charge.post = function(data,callback){
 							            	callback(200, { Success: "CHARGED! :) " });
 							            })
 							            .catch(err => {
-							            	console.log('error charging :( =>')
+							            	console.log('error charging =>')
 							            	console.log(err)
 							            	
 							            });
@@ -208,12 +213,52 @@ charge.post = function(data,callback){
 								        };
 						            	
 						            	charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
-						            		strupeCustomerData.source = stripeSource;
+						            		stripeCustomerData.source = stripeSource;
 						            		
-						            	})
+						            	
 
 						            	
-						            	callback(200, { Success: "Made source :) " });
+							            	// callback(200, { Success: "Made source :) " });
+
+							            	console.log('Made source');
+
+							            	stripeAPIPrepData = {
+												path: "/v1/charges",
+												method: "POST"
+											};
+											
+											reqData = {
+												amount: stripeCustomerData.cartTotal,
+												currency: "usd",
+												customer: stripeCustomerData.id,
+												description: "Ordering pizza"
+											};
+
+											let dataInString = queryString.stringify(reqData);
+
+											try {
+									            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+									            	console.log('CHARGE res')
+									            	console.log(res)
+
+									            	//DOES NOT CATCH res.error's ... ?! odd
+
+									            	callback(200, { Success: "CHARGED! :) " });
+									            })
+									            //Why not this instead of try/catch?! 
+									            //Try catch seems like it can look pretty clean
+									            // .catch(err => {
+									            // 	console.log('error charging =>')
+									            // 	console.log(err)
+									            	
+									            // });
+									        } catch (error) {
+									            callback(400, { Error: "Could not charge" });
+									            return;
+									        }
+									    })
+
+
 						            });
 						        } catch (error) {
 						            callback(400, { Error: "Could not create a new customer" });
