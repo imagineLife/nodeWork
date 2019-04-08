@@ -26,7 +26,23 @@ doCart.post = function(data,callback){
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;	
 
 	//GET all req'd fields from request payload
-	const dataEmail = data.payload.email
+	const dataEmail = typeof(data.payload.email) == 'string' 
+		&& data.payload.email.includes('@') 
+		&& data.payload.email.includes('.com') 
+		? data.payload.email.trim() : false;
+	
+	if(dataEmail == false){
+		callback(500, {'ERROR': 'Error in user email'})
+		return;
+	}
+
+	let validCartPrices = data.payload.cart.map(itm => (itm.price && itm.price !== 0) ? true : false);
+	validCartPrices = (validCartPrices.some(itm => itm == false)) ? false : true
+
+	if(validCartPrices == false){
+		callback(500, {'ERROR': 'Error in cart prices'})
+		return;
+	}
 
 	//verify that token is valid for passed phoneNumber
 	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
