@@ -26,12 +26,13 @@ charge.post = function(data,callback){
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 	
+	//if no token return 400
 	if(!passedToken){
 		callback(400, { Error: "Missing token" });
         return;
 	}else{
 
-		//GET all req'd fields from request payload
+		//GET email from request payload
 		const dataEmail = data.payload.email
 
 		//verify that token is valid for passed phoneNumber
@@ -41,21 +42,20 @@ charge.post = function(data,callback){
 			if(!tokenIsValid){
 				callback(400, { Error: "non-matching token for this user" });
 				return;
+			
 			}else{
 
 				//look up the token data
-				dataLib.read('tokens',passedToken, (err,tokenData) => {
+				dataLib.read('tokens', passedToken, (err,tokenData) => {
 
+					//if no token
 					if(!tokenData){
 						callback(400, { Error: "no tokenData" });
 						return;
 					}
 
-					//get userEmail from token data
-					let userEmail = tokenData.email;
-
 					//get user CART data from cart library
-					dataLib.read('cart', userEmail, (err, cartData) => {
+					dataLib.read('cart', dataEmail, (err, cartData) => {
 
 						if(!cartData || cartData == undefined){
 							callback(400, {'Error': 'No Cart for a user with this token'})
@@ -68,71 +68,71 @@ charge.post = function(data,callback){
 							if there is user cart data
 							NOTE: must be in pennies for stripe ($10 gets translated to 1000 for stripe)
 						*/
-						stripeCustomerData.cartTotal = cartData.cartData.reduce((acc, curVal) => {
+						let thisCartTotal = cartData.cartData.reduce((acc, curVal) => {
 							return acc + (curVal.price * curVal.count) 
 						}, 0)
-						stripeCustomerData.cartTotal = stripeCustomerData.cartTotal * 100
+
+						stripeCustomerData.cartTotal = thisCartTotal * 100
 
 						/* 
-							interact with stripe API
+							interact with STRIPE API
 							- customer lookup
 							- customer creation
 							- customer charging
 						*/
 
-					    /* 
-					    	lookup stripe customer with user emailString
-					    */
-					    const emailStr = queryString.stringify({email: userEmail});
+					   	//lookup stripe customer with user emailString
+					    const emailStr = queryString.stringify({email: dataEmail});
 
-					    //Prepare stripe communication object
+					    //Prepare stripe communication details
 						let stripeAPIPrepData = {
 							path: `/v1/customers`,
 							method: 'GET'
 						}
 
+						//check for stripe customer
 					    charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr).then(res =>{
 					    	
 					    	
 					    	// If there is customer data for the given email,
-					    	// set this customer from result 
+					    	// set this customer from stripe result 
 						    if (res.data.length >= 1) {
 						    	console.log('IS customer')
 						    	
-						        stripeCustomerData.id = res.data[0].id;
+						    	let resData = res.data[0]
+						    	
+						    	//set id
+						        stripeCustomerData.id = resData.id;
 						        
-						       	//Look for a source, if so, save source to var
-						    	stripeCustomerData.source = (res.data[0].sources.data.length > 0 ) ? res.data[0].sources.data[0] : null
-
-						    	// console.log('stripeCustomerData.source')
-						    	// console.log(stripeCustomerData.source)
+						       	//Look for a source from stripe, if so, save source to var
+						    	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
 						    	
 						    	//if no source, make a source
-						    	//then charge the customer
+						    	//THEN charge the customer
 						    	if(stripeCustomerData.source == null){
-						    		console.log('IS customer id from stripe')
-						    		console.log('NO customer SOURCE yet');
+						    		console.log('NO customer SOURCE yet, need to MAKE one');
 						    		
 							    	//Update stripe communication object
 							        stripeAPIPrepData = {
 							            path: `/v1/customers/${stripeCustomerData.id}/sources`,
 							            method: "POST"
 							        };
-						    		//updated stripe api data
+
+						    		//post a source for this customer
 						    		charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
 
-						    			console.log('POST to sources stripeSource => ')
+						    			console.log('POST to sources stripeSource result => ')
 						    			console.log(stripeSource)
 						    			
 						    			stripeCustomerData.source = stripeSource
 
-						    			// charge.chargeCustomer(stripeCustomerData.id, stripeAPIPrepData)
-
+						    			//update stripe connecting details
 										stripeAPIPrepData = {
 											path: "/v1/charges",
 											method: "POST"
 										};
 
+										//setup order request details
 										reqData = {
 											amount: stripeCustomerData.cartTotal,
 											currency: "usd",
@@ -143,11 +143,15 @@ charge.post = function(data,callback){
 
 										let dataInString = queryString.stringify(reqData);
 
+
 										try {
 								            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
 								            	callback(200, { Success: "CHARGED! :) " });
 								            });
 								        } catch (error) {
+								        	console.log('error charging :(')
+								        	console.log(error)
+								        	
 								            callback(400, { Error: "Could not create a new customer" });
 								            return;
 									    }
@@ -155,6 +159,7 @@ charge.post = function(data,callback){
 						    		})
 						    	}
 
+						    	//if there IS a source, charge the customer
 						    	if(stripeCustomerData.source !== null) {
 						    		stripeAPIPrepData = {
 										path: "/v1/charges",
@@ -193,7 +198,7 @@ charge.post = function(data,callback){
 						    	}
 
 							// If no customer from strip matches this email,
-							// create a new customer
+							// create a new stripe customer
 						    } else {
 
 						    	console.log('No customer, making customer')
@@ -301,7 +306,6 @@ charge.prepRequestObj = (bufferData, pathMethod) => {
 	
 	return {
         host: STRIPE_API_HOST,
-        // port: STRIPE_PORT,
         path: pathMethod.path,
         method: pathMethod.method,
         headers: {
