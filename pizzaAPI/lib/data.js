@@ -84,6 +84,13 @@ lib.read = (dir, fileName,callback) => {
 	})
 }
 
+//read data from a file
+lib.readSync = (dir, fileName) => {
+	//read the contents
+	//uses utf8 encoding
+	return fs.readFileSync(`${lib.baseDir}${dir}/${fileName}.json`,'utf8')
+}
+
 //Update data inside a file
 lib.update = (dir, fileName, data, callback) => {
 
