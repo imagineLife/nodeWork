@@ -25,16 +25,19 @@ doMenuItems.get = (data, callback) => {
 		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 
 			if(tokenIsValid){
-			
-				//lookup the menuItems from the filesystem
-				dataLib.read('menuItems','menuItems', (err, menuItems) => {
-			
-					if(!err && menuItems){
-						callback(200, menuItems)
-					}else{
-						callback(403, {'Error' : 'no menu items OR error'})
-					}
-				})
+				let items;
+				try{
+					//lookup the menuItems from the filesystem
+					items = dataLib.readSync('menuItems','menuItems');
+					console.log('items')
+					console.log(items)
+					callback(200, {'MenuItems': JSON.parse(items)})
+					
+				}
+				catch(err){
+					callback(403, {'Error': err.code})
+					return;
+				}
 			}else{
 				callback(403, {'Error': 'Non-Matching user token'})
 			}
