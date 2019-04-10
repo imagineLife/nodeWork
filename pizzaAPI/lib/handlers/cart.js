@@ -220,11 +220,12 @@ doCart.get = function(data,callback){
 	
 }
 
-//Users DELETE
+//cart DELETE
 //ONLY let auth'd users delete
-//DONT let them delete OTHERS' accts
+//DONT let them delete OTHERS' carts
 //CLEANUP other data files associated with this user
 doCart.delete = function(data,callback){
+	console.log('delete CART?!');
 	
 	//check that phone is valid
 	const email = isEmailValid(data.queryStrObj.email);
@@ -245,15 +246,16 @@ doCart.delete = function(data,callback){
 					if(!err && storedUserData){
 
 						//REMOVE user
-						dataLib.delete('users', email, (err) => {
-
-							if(!err){
-								callback(200, {'Success!' : 'User deleted successfully'})
-							}else{
-								callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-							}
-
-						})
+						let deleteRes;
+						try{
+							//on success, returns undefined
+							deleteRes = dataLib.deleteSync('cart', email);	
+							callback(200, {'Success!' : 'Cart deleted successfully'})
+						}catch(err){
+							console.log('err')
+							console.log(err)
+							callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+						}
 					}else{
 						//NOT FOUND USER
 						callback(400, {'Error': 'Couldnt Find user'})
