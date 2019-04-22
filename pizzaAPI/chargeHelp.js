@@ -180,8 +180,16 @@ charge.proceedWithStripeUser = (res) => {
    	//Look for a source from stripe, if so, save source to var
 	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
 	
-	//if no source, make a source
-	//THEN charge the customer
+	//IF NO SOURCE
+
+	/*
+		could this turn into... something like... ?
+		charge.makeSource()
+			.then(chargeCustomer)
+	*/
+
+	//	 make a source
+	//	 THEN charge the customer
 	if(stripeCustomerData.source == null){
 		console.log('// - - - 5 - - //')
 		console.log('NO customer SOURCE yet, need to MAKE one');
@@ -208,13 +216,7 @@ charge.proceedWithStripeUser = (res) => {
 			};
 
 			//setup order request details
-			reqData = {
-				amount: stripeCustomerData.cartTotal,
-				currency: "usd",
-				customer: stripeSource.customer,
-				description: "Ordering pizza"
-			};
-
+			reqData = charge.prepChargeReqObj(stripeCustomerData)
 
 			let dataInString = queryString.stringify(reqData);
 
@@ -236,7 +238,8 @@ charge.proceedWithStripeUser = (res) => {
 		})
 	}
 
-	//if there IS a source, charge the customer
+	//if there IS a source
+	//	 charge the customer
 	if(stripeCustomerData.source !== null) {
 		stripeAPIPrepData = {
 			path: "/v1/charges",
@@ -247,14 +250,7 @@ charge.proceedWithStripeUser = (res) => {
 		console.log('ALREADY SOURCES stripeCustomerData.cartTotal')
 		console.log(stripeCustomerData.cartTotal)
 		
-
-		reqData = {
-			amount: stripeCustomerData.cartTotal,
-			currency: "usd",
-			customer: stripeCustomerData.source.customer,
-			description: "Ordering pizza"
-		};
-
+		reqData = reqData = charge.prepChargeReqObj(stripeCustomerData);
 
 		let dataInString = queryString.stringify(reqData);
 
@@ -351,6 +347,15 @@ charge.createNewStripUser(){
         return;
     }
 
- }
+}
+
+charge.prepChargeReqObj = (data) => {
+	return {
+		amount: data.cartTotal,
+		currency: "usd",
+		customer: data.source.customer,
+		description: "Ordering pizza"
+	}
+}
 
 module.exports = charge;
