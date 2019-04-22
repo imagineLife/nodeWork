@@ -110,7 +110,7 @@ charge.post = function(data,callback){
 /*
  	 Create a stripe SOURCE for the customer
 */
-charge.makeStripeSource = (stripeID, stripeAPIData) => {
+charge.makeStripeSource = (stripeAPIData) => {
 	console.log('making StripeSource!')
 	
 	let reqStrData = queryString.stringify({source: "tok_visa"})
@@ -181,19 +181,19 @@ charge.proceedWithStripeUser = (res) => {
 	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
 	
 	//IF NO SOURCE
-
-	/*
-		could this turn into... something like... ?
-		charge.makeSource()
-			.then(chargeCustomer)
-	*/
-
 	//	 make a source
 	//	 THEN charge the customer
 	if(stripeCustomerData.source == null){
 		console.log('// - - - 5 - - //')
 		console.log('NO customer SOURCE yet, need to MAKE one');
 		
+
+			/*
+				could this turn into... something like... ?
+				charge.makeSource()
+					.then(chargeCustomer)
+			*/
+
     	//Update stripe communication object
         stripeAPIPrepData = {
             path: `/v1/customers/${stripeCustomerData.id}/sources`,
@@ -201,7 +201,7 @@ charge.proceedWithStripeUser = (res) => {
         };
 
 		//post a source for this customer
-		charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+		charge.makeStripeSource(stripeAPIPrepData).then(stripeSource => {
 
 			console.log('// - - - 6 - - //')
 			console.log('POST to sources stripeSource result => ')
@@ -294,7 +294,7 @@ charge.createNewStripUser(){
 	            method: "POST"
 	        };
         	
-        	charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+        	charge.makeStripeSource(stripeAPIPrepData).then(stripeSource => {
         		stripeCustomerData.source = stripeSource;
 
 				console.log('// - - - 10 - - //')
