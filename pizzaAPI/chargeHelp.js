@@ -44,17 +44,6 @@ charge.post = function(data,callback){
 			return;
 		}
 
-		//look up the token data
-		dataLib.read('tokens', passedToken, (err,tokenData) => {
-			console.log('// - - - 1 - - //')
-			console.log('read user TOKEN data');
-
-			//if no token
-			if(!tokenData){
-				callback(400, { Error: "no tokenData" });
-				return;
-			}
-
 			//get user CART data from cart library
 			dataLib.read('cart', dataEmail, (err, cartData) => {
 				console.log('// - - - 2 - - //')
@@ -98,7 +87,11 @@ charge.post = function(data,callback){
 
 				//check for stripe customer
 				try{
-					charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr)
+					// WAS
+					// charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr)
+
+					charge.makeStripeReq(stripeAPIPrepData, emailStr)
+
 						.then(res => {
 							res.data.length >= 1 ? proceedWithStripeUser(res) : createNewStripUser()
 						})
@@ -111,13 +104,17 @@ charge.post = function(data,callback){
 		            return;
 				}
 
-				//check for stripe customer
-				//dont forget ELSE below
-		    	console.log('// - - - 3 - - //')
-		    	console.log('checked for stripe customer');
+			/*
+				can I make this a method on the charge object? 
+				see below
+			*/
+			//check for stripe customer
+			//dont forget ELSE below
+	    	// console.log('// - - - 3 - - //')
+	    	// console.log('checked for stripe customer');
 			    	
-			    	// If there is customer data for the given email,
-			    	// set this customer from stripe result 
+	    	// If there is customer data for the given email,
+	    	// set this customer from stripe result 
 		    function proceedWithStripeUser(res){
 
 		    	console.log('// - - - 4 - - //')
@@ -171,7 +168,9 @@ charge.post = function(data,callback){
 
 
 						try {
-				            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+							// WAS
+				            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+				            charge.makeStripeReq(stripeAPIPrepData dataInString).then(res => {
 				            	callback(200, { Success: "CHARGED! :) " });
 				            });
 				        } catch (error) {
@@ -208,7 +207,9 @@ charge.post = function(data,callback){
 					let dataInString = queryString.stringify(reqData);
 
 					try {
-			            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+						//  WAS
+			            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+			            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
 			            	console.log('// - - - 8 - - //')
 			            	console.log('CHARGED!')
 			            	// console.log(res)
@@ -225,9 +226,9 @@ charge.post = function(data,callback){
 			        }
 		    	}
 
-			// If no customer from strip matches this email,
-			// create a new stripe customer
-		}
+				// If no customer from strip matches this email,
+				// create a new stripe customer
+				// }
 
 			function createNewStripUser(){
 			    	console.log('// - - - 9 - - //')
@@ -236,7 +237,7 @@ charge.post = function(data,callback){
 			        stripeAPIPrepData.method = "POST";
 
 			        try {
-			            charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr).then(res => {
+			            charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
 			            	stripeCustomerData.id = res.id;
 			            	
 			            	//Update stripe communication object
@@ -269,7 +270,7 @@ charge.post = function(data,callback){
 								let dataInString = queryString.stringify(reqData);
 
 								try {
-						            charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+						            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
 						            	console.log('// - - - 11 - - //')
 						            	console.log('CHARGE res')
 						            	console.log(res)
@@ -300,7 +301,6 @@ charge.post = function(data,callback){
 
             	 }	
 			})
-		})
 	})
 }
 
@@ -314,7 +314,10 @@ charge.makeStripeSource = (stripeID, stripeAPIData) => {
     
 	return new Promise(async function(resolve, reject) {
 	    try {
-	        charge.makeStripeReq( charge.prepRequestObj(reqStrData, stripeAPIData), reqStrData)
+	        // WAS
+	        // charge.makeStripeReq( charge.prepRequestObj(reqStrData, stripeAPIData), reqStrData)
+
+	        charge.makeStripeReq(stripeAPIData, reqStrData)
 	        	.then(res => {
 	        		resolve(res.id)
 	        	});
@@ -359,6 +362,10 @@ charge.makeStripeReq = (reqObj, reqStr) => {
         }
         resolve(stripeAPIResultData);
     });
+}
+
+charge.proceedWithStripeUser = () => {
+
 }
 
 module.exports = charge;
