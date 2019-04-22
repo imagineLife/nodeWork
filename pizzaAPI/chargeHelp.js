@@ -27,7 +27,13 @@ charge.post = function(data,callback){
 
 	//verify that token is valid for passed phoneNumber
 	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
-	
+
+		//if non-matching token
+		if(!tokenIsValid){
+			callback(400, { Error: "non-matching token for this user" });
+			return;
+		}
+
 		//GET email from request payload
 		const dataEmail = data.payload.email
 
@@ -36,12 +42,6 @@ charge.post = function(data,callback){
 			id: null,
 			source: null,
 			cartTotal: null
-		}
-
-		//if non-matching token
-		if(!tokenIsValid){
-			callback(400, { Error: "non-matching token for this user" });
-			return;
 		}
 
 		//get user CART data from cart library
@@ -76,7 +76,7 @@ charge.post = function(data,callback){
 				- customer charging
 			*/
 
-		   	//lookup stripe customer with user emailString
+		   	//prepare stripe customer user emailString string
 		    const emailStr = queryString.stringify({email: dataEmail});
 
 		    //Prepare stripe communication details
@@ -91,9 +91,8 @@ charge.post = function(data,callback){
 				// charge.makeStripeReq(charge.prepRequestObj(emailStr, stripeAPIPrepData), emailStr)
 
 				charge.makeStripeReq(stripeAPIPrepData, emailStr)
-
-					.then(res => {
-						res.data.length >= 1 ? proceedWithStripeUser(res) : createNewStripUser()
+					.then(stripeCustomerRes => {
+						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes) : charge.createNewStripUser()
 					})
 
 			}catch(e){
@@ -104,202 +103,6 @@ charge.post = function(data,callback){
 	            return;
 			}
 
-		/*
-			can I make this a method on the charge object? 
-			see below
-		*/
-		//check for stripe customer
-		//dont forget ELSE below
-    	// console.log('// - - - 3 - - //')
-    	// console.log('checked for stripe customer');
-		    	
-    	// If there is customer data for the given email,
-    	// set this customer from stripe result 
-	    function proceedWithStripeUser(res){
-
-	    	console.log('// - - - 4 - - //')
-	    	console.log('IS customer')
-	    	
-	    	let resData = res.data[0]
-	    	
-	    	//set id
-	        stripeCustomerData.id = resData.id;
-	        
-	       	//Look for a source from stripe, if so, save source to var
-	    	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
-	    	
-	    	//if no source, make a source
-	    	//THEN charge the customer
-	    	if(stripeCustomerData.source == null){
-	    		console.log('// - - - 5 - - //')
-	    		console.log('NO customer SOURCE yet, need to MAKE one');
-	    		
-		    	//Update stripe communication object
-		        stripeAPIPrepData = {
-		            path: `/v1/customers/${stripeCustomerData.id}/sources`,
-		            method: "POST"
-		        };
-
-	    		//post a source for this customer
-	    		charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
-
-	    			console.log('// - - - 6 - - //')
-	    			console.log('POST to sources stripeSource result => ')
-	    			console.log(stripeSource)
-	    			
-	    			stripeCustomerData.source = stripeSource
-
-	    			//update stripe connecting details
-					stripeAPIPrepData = {
-						path: "/v1/charges",
-						method: "POST"
-					};
-
-					//setup order request details
-					reqData = {
-						amount: stripeCustomerData.cartTotal,
-						currency: "usd",
-						customer: stripeSource.customer,
-						description: "Ordering pizza"
-					};
-
-
-					let dataInString = queryString.stringify(reqData);
-
-
-					try {
-						// WAS
-			            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
-			            charge.makeStripeReq(stripeAPIPrepData dataInString).then(res => {
-			            	callback(200, { Success: "CHARGED! :) " });
-			            });
-			        } catch (error) {
-			        	console.log('error charging :(')
-			        	console.log(error)
-			        	
-			            callback(400, { Error: "Could not create a new customer" });
-			            return;
-				    }
-
-	    		})
-	    	}
-
-	    	//if there IS a source, charge the customer
-	    	if(stripeCustomerData.source !== null) {
-	    		stripeAPIPrepData = {
-					path: "/v1/charges",
-					method: "POST"
-				};
-
-				console.log('// - - - 7 - - //')
-				console.log('ALREADY SOURCES stripeCustomerData.cartTotal')
-				console.log(stripeCustomerData.cartTotal)
-				
-
-				reqData = {
-					amount: stripeCustomerData.cartTotal,
-					currency: "usd",
-					customer: stripeCustomerData.source.customer,
-					description: "Ordering pizza"
-				};
-
-
-				let dataInString = queryString.stringify(reqData);
-
-				try {
-					//  WAS
-		            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
-		            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
-		            	console.log('// - - - 8 - - //')
-		            	console.log('CHARGED!')
-		            	// console.log(res)
-		            	callback(200, { Success: "CHARGED! :) " });
-		            })
-		            .catch(err => {
-		            	console.log('error charging =>')
-		            	console.log(err)
-		            	
-		            });
-		        } catch (error) {
-		            callback(400, { Error: "Could not charge" });
-		            return;
-		        }
-	    	}
-
-			// If no customer from strip matches this email,
-			// create a new stripe customer
-			// }
-
-		function createNewStripUser(){
-		    	console.log('// - - - 9 - - //')
-		    	console.log('No customer yet, making stripe customer')
-
-		        stripeAPIPrepData.method = "POST";
-
-		        try {
-		            charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-		            	stripeCustomerData.id = res.id;
-		            	
-		            	//Update stripe communication object
-				        stripeAPIPrepData = {
-				            path: `/v1/customers/${stripeCustomerData.id}/sources`,
-				            method: "POST"
-				        };
-		            	
-		            	charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
-		            		stripeCustomerData.source = stripeSource;
-
-							console.log('// - - - 10 - - //')
-			            	console.log('Made source');
-			            	console.log('stripeCustomerData')
-			            	console.log(stripeCustomerData)
-			            	
-
-			            	stripeAPIPrepData = {
-								path: "/v1/charges",
-								method: "POST"
-							};
-							
-							reqData = {
-								amount: stripeCustomerData.cartTotal,
-								currency: "usd",
-								customer: stripeCustomerData.id,
-								description: "Ordering pizza"
-							};
-
-							let dataInString = queryString.stringify(reqData);
-
-							try {
-					            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
-					            	console.log('// - - - 11 - - //')
-					            	console.log('CHARGE res')
-					            	console.log(res)
-
-					            	//DOES NOT CATCH res.error's ... ?! odd
-
-					            	callback(200, { Success: "CHARGED! :) " });
-					            })
-					            //Why not this instead of try/catch?! 
-					            //Try catch seems like it can look pretty clean
-					            // .catch(err => {
-					            // 	console.log('error charging =>')
-					            // 	console.log(err)
-					            	
-					            // });
-					        } catch (error) {
-					            callback(400, { Error: "Could not charge" });
-					            return;
-					        }
-					    })
-
-
-		            });
-		        } catch (error) {
-		            callback(400, { Error: "Could not create a new customer" });
-		            return;
-		        }
-
-        	 }	
 		})
 	})
 }
@@ -364,8 +167,190 @@ charge.makeStripeReq = (reqObj, reqStr) => {
     });
 }
 
-charge.proceedWithStripeUser = () => {
+charge.proceedWithStripeUser = (res) => {
 
+	console.log('// - - - 4 - - //')
+	console.log('proceedWithStripeUser, IS customer')
+	
+	let resData = res.data[0]
+	
+	//set id
+    stripeCustomerData.id = resData.id;
+    
+   	//Look for a source from stripe, if so, save source to var
+	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
+	
+	//if no source, make a source
+	//THEN charge the customer
+	if(stripeCustomerData.source == null){
+		console.log('// - - - 5 - - //')
+		console.log('NO customer SOURCE yet, need to MAKE one');
+		
+    	//Update stripe communication object
+        stripeAPIPrepData = {
+            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+            method: "POST"
+        };
+
+		//post a source for this customer
+		charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+
+			console.log('// - - - 6 - - //')
+			console.log('POST to sources stripeSource result => ')
+			console.log(stripeSource)
+			
+			stripeCustomerData.source = stripeSource
+
+			//update stripe connecting details
+			stripeAPIPrepData = {
+				path: "/v1/charges",
+				method: "POST"
+			};
+
+			//setup order request details
+			reqData = {
+				amount: stripeCustomerData.cartTotal,
+				currency: "usd",
+				customer: stripeSource.customer,
+				description: "Ordering pizza"
+			};
+
+
+			let dataInString = queryString.stringify(reqData);
+
+
+			try {
+				// WAS
+	            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+	            charge.makeStripeReq(stripeAPIPrepData dataInString).then(res => {
+	            	callback(200, { Success: "CHARGED! :) " });
+	            });
+	        } catch (error) {
+	        	console.log('error charging :(')
+	        	console.log(error)
+	        	
+	            callback(400, { Error: "Could not create a new customer" });
+	            return;
+		    }
+
+		})
+	}
+
+	//if there IS a source, charge the customer
+	if(stripeCustomerData.source !== null) {
+		stripeAPIPrepData = {
+			path: "/v1/charges",
+			method: "POST"
+		};
+
+		console.log('// - - - 7 - - //')
+		console.log('ALREADY SOURCES stripeCustomerData.cartTotal')
+		console.log(stripeCustomerData.cartTotal)
+		
+
+		reqData = {
+			amount: stripeCustomerData.cartTotal,
+			currency: "usd",
+			customer: stripeCustomerData.source.customer,
+			description: "Ordering pizza"
+		};
+
+
+		let dataInString = queryString.stringify(reqData);
+
+		try {
+			//  WAS
+            // charge.makeStripeReq(charge.prepRequestObj(dataInString, stripeAPIPrepData), dataInString).then(res => {
+            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
+            	console.log('// - - - 8 - - //')
+            	console.log('CHARGED!')
+            	// console.log(res)
+            	callback(200, { Success: "CHARGED! :) " });
+            })
+            .catch(err => {
+            	console.log('error charging =>')
+            	console.log(err)
+            	
+            });
+        } catch (error) {
+            callback(400, { Error: "Could not charge" });
+            return;
+        }
+	}
+
+	// If no customer from strip matches this email,
+	// create a new stripe customer
 }
+
+charge.createNewStripUser(){
+	console.log('// - - - 9 - - //')
+	console.log('No customer yet, making stripe customer')
+
+    stripeAPIPrepData.method = "POST";
+
+    try {
+        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
+        	stripeCustomerData.id = res.id;
+        	
+        	//Update stripe communication object
+	        stripeAPIPrepData = {
+	            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+	            method: "POST"
+	        };
+        	
+        	charge.makeStripeSource(stripeCustomerData.id, stripeAPIPrepData).then(stripeSource => {
+        		stripeCustomerData.source = stripeSource;
+
+				console.log('// - - - 10 - - //')
+            	console.log('Made source');
+            	console.log('stripeCustomerData')
+            	console.log(stripeCustomerData)
+            	
+
+            	stripeAPIPrepData = {
+					path: "/v1/charges",
+					method: "POST"
+				};
+				
+				reqData = {
+					amount: stripeCustomerData.cartTotal,
+					currency: "usd",
+					customer: stripeCustomerData.id,
+					description: "Ordering pizza"
+				};
+
+				let dataInString = queryString.stringify(reqData);
+
+				try {
+		            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
+		            	console.log('// - - - 11 - - //')
+		            	console.log('CHARGE res')
+		            	console.log(res)
+
+		            	//DOES NOT CATCH res.error's ... ?! odd
+
+		            	callback(200, { Success: "CHARGED! :) " });
+		            })
+		            //Why not this instead of try/catch?! 
+		            //Try catch seems like it can look pretty clean
+		            // .catch(err => {
+		            // 	console.log('error charging =>')
+		            // 	console.log(err)
+		            	
+		            // });
+		        } catch (error) {
+		            callback(400, { Error: "Could not charge" });
+		            return;
+		        }
+		    })
+
+
+        });
+    } catch (error) {
+        callback(400, { Error: "Could not create a new customer" });
+        return;
+    }
+
+ }
 
 module.exports = charge;
