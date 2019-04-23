@@ -38,7 +38,7 @@ charge.post = function(data,callback){
 		const dataEmail = data.payload.email
 
 		//prep holder for stripe customer data
-		let stripeCustomerData = {
+		let stripeCustomerDataObj = {
 			id: null,
 			source: null,
 			cartTotal: null
@@ -67,7 +67,7 @@ charge.post = function(data,callback){
 				return acc + (curVal.price * curVal.count) 
 			}, 0)
 
-			stripeCustomerData.cartTotal = thisCartTotal * 100
+			stripeCustomerDataObj.cartTotal = thisCartTotal * 100
 
 			/* 
 				interact with STRIPE API
@@ -92,7 +92,7 @@ charge.post = function(data,callback){
 
 				charge.makeStripeReq(stripeAPIPrepData, emailStr)
 					.then(stripeCustomerRes => {
-						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes) : charge.createNewStripUser()
+						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj) : charge.createNewStripUser()
 					})
 
 			}catch(e){
@@ -109,7 +109,10 @@ charge.post = function(data,callback){
 
 /*
  	 Create a stripe SOURCE for the customer
+
+ 	 HELP REMOVE THIS. seems redundant repetitive
 */
+
 charge.makeStripeSource = (stripeAPIData) => {
 	console.log('making StripeSource!')
 	
@@ -167,7 +170,7 @@ charge.makeStripeReq = (reqObj, reqStr) => {
     });
 }
 
-charge.proceedWithStripeUser = (res) => {
+charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
@@ -175,15 +178,15 @@ charge.proceedWithStripeUser = (res) => {
 	let resData = res.data[0]
 	
 	//set id
-    stripeCustomerData.id = resData.id;
+    stripeCustDataObj.id = resData.id;
     
    	//Look for a source from stripe, if so, save source to var
-	stripeCustomerData.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
+	stripeCustDataObj.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
 	
 	//IF NO SOURCE
 	//	 make a source
 	//	 THEN charge the customer
-	if(stripeCustomerData.source == null){
+	if(stripeCustDataObj.source == null){
 		console.log('// - - - 5 - - //')
 		console.log('NO customer SOURCE yet, need to MAKE one');
 		
@@ -196,7 +199,7 @@ charge.proceedWithStripeUser = (res) => {
 
     	//Update stripe communication object
         stripeAPIPrepData = {
-            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+            path: `/v1/customers/${stripeCustDataObj.id}/sources`,
             method: "POST"
         };
 
@@ -207,7 +210,7 @@ charge.proceedWithStripeUser = (res) => {
 			console.log('POST to sources stripeSource result => ')
 			console.log(stripeSource)
 			
-			stripeCustomerData.source = stripeSource
+			stripeCustDataObj.source = stripeSource
 
 			//update stripe connecting details
 			stripeAPIPrepData = {
@@ -215,10 +218,8 @@ charge.proceedWithStripeUser = (res) => {
 				method: "POST"
 			};
 
-			//setup order request details
-			reqData = charge.prepChargeReqObj(stripeCustomerData)
-
-			let dataInString = queryString.stringify(reqData);
+			//setup order request details in string
+			let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
 
 
 			try {
@@ -240,19 +241,19 @@ charge.proceedWithStripeUser = (res) => {
 
 	//if there IS a source
 	//	 charge the customer
-	if(stripeCustomerData.source !== null) {
+	if(stripeCustDataObj.source !== null) {
 		stripeAPIPrepData = {
 			path: "/v1/charges",
 			method: "POST"
 		};
 
 		console.log('// - - - 7 - - //')
-		console.log('ALREADY SOURCES stripeCustomerData.cartTotal')
-		console.log(stripeCustomerData.cartTotal)
+		console.log('ALREADY SOURCES stripeCustDataObj.cartTotal')
+		console.log(stripeCustDataObj.cartTotal)
 		
-		reqData = reqData = charge.prepChargeReqObj(stripeCustomerData);
+		 
 
-		let dataInString = queryString.stringify(reqData);
+		let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
 
 		try {
 			//  WAS
@@ -286,36 +287,29 @@ charge.createNewStripUser(){
 
     try {
         charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-        	stripeCustomerData.id = res.id;
+        	stripeCustomerDataObj.id = res.id;
         	
         	//Update stripe communication object
 	        stripeAPIPrepData = {
-	            path: `/v1/customers/${stripeCustomerData.id}/sources`,
+	            path: `/v1/customers/${stripeCustomerDataObj.id}/sources`,
 	            method: "POST"
 	        };
         	
         	charge.makeStripeSource(stripeAPIPrepData).then(stripeSource => {
-        		stripeCustomerData.source = stripeSource;
+        		stripeCustomerDataObj.source = stripeSource;
 
 				console.log('// - - - 10 - - //')
             	console.log('Made source');
-            	console.log('stripeCustomerData')
-            	console.log(stripeCustomerData)
+            	console.log('stripeCustomerDataObj')
+            	console.log(stripeCustomerDataObj)
             	
 
             	stripeAPIPrepData = {
 					path: "/v1/charges",
 					method: "POST"
 				};
-				
-				reqData = {
-					amount: stripeCustomerData.cartTotal,
-					currency: "usd",
-					customer: stripeCustomerData.id,
-					description: "Ordering pizza"
-				};
 
-				let dataInString = queryString.stringify(reqData);
+				let dataInString = charge.prepChargeReqStr(stripeCustomerDataObj);
 
 				try {
 		            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
@@ -323,17 +317,9 @@ charge.createNewStripUser(){
 		            	console.log('CHARGE res')
 		            	console.log(res)
 
-		            	//DOES NOT CATCH res.error's ... ?! odd
-
 		            	callback(200, { Success: "CHARGED! :) " });
 		            })
-		            //Why not this instead of try/catch?! 
-		            //Try catch seems like it can look pretty clean
-		            // .catch(err => {
-		            // 	console.log('error charging =>')
-		            // 	console.log(err)
 		            	
-		            // });
 		        } catch (error) {
 		            callback(400, { Error: "Could not charge" });
 		            return;
@@ -349,13 +335,15 @@ charge.createNewStripUser(){
 
 }
 
-charge.prepChargeReqObj = (data) => {
-	return {
+charge.prepChargeReqStr = (data) => {
+	let obj =  {
 		amount: data.cartTotal,
 		currency: "usd",
 		customer: data.source.customer,
 		description: "Ordering pizza"
 	}
+
+	return queryString.stringify(obj);
 }
 
 module.exports = charge;
