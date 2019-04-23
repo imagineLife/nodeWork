@@ -94,10 +94,41 @@ charge.callback = callback;
 						console.log('GET ALL CUSTOMERS result...')
 						console.log(stripeCustomerRes)
 
-						//check for matching customer email form stripe
-
 						
-						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj) : charge.createNewStripUser(stripeAPIPrepData, emailStr, stripeCustomerDataObj)
+
+						/*
+							check for matching customer email form stripe
+							IF matching, proceed
+							ELSE make stripe customer acct THEN proceed
+						*/
+						if(stripeCustomerRes.data.length >= 1){
+							charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj)
+						}else{
+
+							stripeAPIPrepData.method = "POST";
+
+						    try {
+
+						    	//Create New Stripe User
+						        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
+						        	// console.log('Created Stripe User')
+						        	// console.log('// - - - - - //')
+						        	
+						        	stripeCustomerDataObj.id = res.id;
+						        	// console.log('stripeCustomerDataObj')
+						        	// console.log(stripeCustomerDataObj)
+
+						        	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
+
+						        });
+						    } catch (error) {
+						    	console.log('TRIED to make stripe user, error')
+						    	console.log(error)
+						    	
+						       charge.callback(400, { Error: "Could not create a new customer" });
+						        return;
+						    }
+						} 
 					})
 					.catch(err => {
 						console.log('makeStripeReq err on v1/cust GET')
@@ -296,39 +327,6 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
             return;
         }
 	}
-
-	// If no customer from strip matches this email,
-	// create a new stripe customer
-}
-
-charge.createNewStripUser = (stripeAPIPrepData, emailStr, stripeCustomerDataObj) => {
-	console.log('// - - - 9 - - //')
-	console.log('No customer yet, making stripe customer')
-
-    stripeAPIPrepData.method = "POST";
-
-    try {
-        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-        	console.log('Created Stripe User')
-        	console.log('// - - - - - //')
-        	
-        	
-        	stripeCustomerDataObj.id = res.id;
-        	console.log('stripeCustomerDataObj')
-        	console.log(stripeCustomerDataObj)
-        	
-
-        	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
-
-        });
-    } catch (error) {
-    	console.log('TRIED to make stripe user, error')
-    	console.log(error)
-    	
-       charge.callback(400, { Error: "Could not create a new customer" });
-        return;
-    }
-
 }
 
 charge.prepChargeReqStr = (data) => {
