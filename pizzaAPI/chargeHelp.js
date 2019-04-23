@@ -268,27 +268,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 			
 			stripeCustDataObj.source = stripeSource
 
-			//update stripe connecting details
-			stripeAPIPrepData = {
-				path: "/v1/charges",
-				method: "POST"
-			};
-
-			//setup order request details in string
-			let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
-
-			try {
-
-	            charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
-	            	charge.callback(200, { Success: "CHARGED! :) " });
-	            });
-	        } catch (error) {
-	        	console.log('error charging :(')
-	        	console.log(error)
-	        	
-	            charge.callback(400, { Error: "Could not create a new customer" });
-	            return;
-		    }
+			charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj)
 
 		})
 	}
@@ -297,7 +277,23 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 	//if there IS a source
 	//	 charge the customer
 	if(stripeCustDataObj.source !== null) {
-		stripeAPIPrepData = {
+		charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj);
+	}
+}
+
+charge.prepChargeReqStr = (data) => {
+	let obj =  {
+		amount: data.cartTotal,
+		currency: "usd",
+		customer: data.source.customer,
+		description: "Ordering pizza"
+	}
+
+	return queryString.stringify(obj);
+}
+
+charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
+	stripeAPIPrepData = {
 			path: "/v1/charges",
 			method: "POST"
 		};
@@ -326,18 +322,6 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
             charge.callback(400, { Error: "Could not charge" });
             return;
         }
-	}
-}
-
-charge.prepChargeReqStr = (data) => {
-	let obj =  {
-		amount: data.cartTotal,
-		currency: "usd",
-		customer: data.source.customer,
-		description: "Ordering pizza"
-	}
-
-	return queryString.stringify(obj);
 }
 
 module.exports = charge;
