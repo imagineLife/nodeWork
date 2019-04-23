@@ -91,13 +91,13 @@ charge.callback = callback;
 
 				charge.makeStripeReq(stripeAPIPrepData, emailStr)
 					.then(stripeCustomerRes => {
-						console.log('stripeCustomerRes')
+						console.log('GET ALL CUSTOMERS result...')
 						console.log(stripeCustomerRes)
 
 						//check for matching customer email form stripe
 
 						
-						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj) : charge.createNewStripUser(stripeAPIPrepData)
+						stripeCustomerRes.data.length >= 1 ? charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj) : charge.createNewStripUser(stripeAPIPrepData, emailStr, stripeCustomerDataObj)
 					})
 					.catch(err => {
 						console.log('makeStripeReq err on v1/cust GET')
@@ -125,7 +125,7 @@ charge.callback = callback;
 charge.makeStripeSource = (stripeAPIData) => {
 	console.log('making StripeSource!')
 	
-	// let reqStrData = queryString.stringify({source: "tok_visa"})
+	let reqStrData = queryString.stringify({source: "tok_visa"})
     
 	return new Promise(async function(resolve, reject) {
 	    try {
@@ -133,8 +133,13 @@ charge.makeStripeSource = (stripeAPIData) => {
 	        charge.makeStripeReq(stripeAPIData, reqStrData)
 	        	.then(res => {
 	        		resolve(res.id)
+	        	})
+	        	.catch(err => {
+	        		charge.callback(400, {"make stripe rep CATCH Error": err})
+	        		reject("Error creating stripe source");
 	        	});
 	    } catch (error) {
+	    	charge.callback(400, {"Error": error})
 	        reject("Error creating stripe source");
 	    }
 	})
@@ -191,8 +196,10 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
+	console.log('res.data')
+	console.log(res.data)
 	
-	let resData = res.data[0]
+	let resData = (res.data && res.data.length > 0) ? res.data[0] : res
 	
 	//set id
     stripeCustDataObj.id = resData.id;
@@ -220,12 +227,13 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
             method: "POST"
         };
 
+        let sourceString = queryString.stringify({source: "tok_visa"})
+
 		//post a source for this customer
-		charge.makeStripeSource(stripeAPIPrepData).then(stripeSource => {
+		charge.makeStripeReq(stripeAPIPrepData, sourceString).then(stripeSource => {
 
 			console.log('// - - - 6 - - //')
-			console.log('POST to sources stripeSource result => ')
-			console.log(stripeSource)
+			console.log('POSTing to sources stripeSource')
 			
 			stripeCustDataObj.source = stripeSource
 
@@ -284,7 +292,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
             	
             });
         } catch (error) {
-            callback(400, { Error: "Could not charge" });
+            charge.callback(400, { Error: "Could not charge" });
             return;
         }
 	}
@@ -293,7 +301,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 	// create a new stripe customer
 }
 
-charge.createNewStripUser = () => {
+charge.createNewStripUser = (stripeAPIPrepData, emailStr, stripeCustomerDataObj) => {
 	console.log('// - - - 9 - - //')
 	console.log('No customer yet, making stripe customer')
 
@@ -301,18 +309,23 @@ charge.createNewStripUser = () => {
 
     try {
         charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-        	console.log('Created Stripe User res -->')
-        	console.log(res)
+        	console.log('Created Stripe User')
         	console.log('// - - - - - //')
         	
         	
         	stripeCustomerDataObj.id = res.id;
+        	console.log('stripeCustomerDataObj')
+        	console.log(stripeCustomerDataObj)
+        	
 
         	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
 
         });
     } catch (error) {
-        callback(400, { Error: "Could not create a new customer" });
+    	console.log('TRIED to make stripe user, error')
+    	console.log(error)
+    	
+       charge.callback(400, { Error: "Could not create a new customer" });
         return;
     }
 
