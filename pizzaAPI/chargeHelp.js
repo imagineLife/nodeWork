@@ -92,7 +92,6 @@ charge.callback = callback;
 				charge.makeStripeReq(stripeAPIPrepData, emailStr)
 					.then(stripeCustomerRes => {
 						console.log('GET ALL CUSTOMERS result...')
-						console.log(stripeCustomerRes)
 
 						
 
@@ -102,15 +101,14 @@ charge.callback = callback;
 							ELSE make stripe customer acct THEN proceed
 						*/
 						if(stripeCustomerRes.data.length >= 1){
-							console.log('CHECKING stripeCustomerRes.data')
 							// console.log(stripeCustomerRes.data)
-							let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)
+							let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)[0]
 							console.log('thisCust')
 							console.log(thisCust)
 							console.log('// - - - - - //')
 							console.log('// - - - - - //')
 							
-							charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj)
+							charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj)
 						}else{
 
 							stripeAPIPrepData.method = "POST";
@@ -118,9 +116,8 @@ charge.callback = callback;
 						    try {
 
 						    	//Create New Stripe User
+						    	//returns customer object
 						        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-						        	// console.log('Created Stripe User')
-						        	// console.log('// - - - - - //')
 						        	
 						        	stripeCustomerDataObj.id = res.id;
 						        	// console.log('stripeCustomerDataObj')
@@ -212,7 +209,7 @@ charge.makeStripeReq = (reqObj, reqStr) => {
 	console.log(reqStr)
 	
 
-	reqObj.source = "tok_visa"
+	// reqObj.source = "tok_visa"
 
 	let stripeAPIResultData = null;
 	return new Promise(async function(resolve, reject) {
@@ -235,16 +232,14 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
-	console.log('res.data')
-	console.log(res.data)
-	
-	let resData = (res.data && res.data.length > 0) ? res.data[0] : res
+	console.log('res')
+	console.log(res)
 	
 	//set id
-    stripeCustDataObj.id = resData.id;
+    stripeCustDataObj.id = res.id;
     
    	//Look for a source from stripe, if so, save source to var
-	stripeCustDataObj.source = (resData.sources.data.length > 0 ) ? resData.sources.data[0] : null
+	stripeCustDataObj.source = (res.sources.data.length > 0 ) ? res.sources.data[0] : null
 	
 	//IF NO SOURCE
 	//	 make a source
