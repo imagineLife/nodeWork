@@ -16,6 +16,12 @@ let charge = {}
 
 charge.post = function(data,callback){
 
+	//Prepare stripe communication details
+	let stripeAPIPrepData = {
+		path: `/v1/customers`,
+		method: 'GET'
+	}
+
 	//log the DURATION of this charge post method
 	console.time('charge POST')
 
@@ -86,15 +92,12 @@ charge.post = function(data,callback){
 		   	//prepare stripe customer user emailString string
 		    const emailStr = queryString.stringify({email: data.payload.email});
 
-		    //Prepare stripe communication details
-			let stripeAPIPrepData = {
-				path: `/v1/customers`,
-				method: 'GET'
-			}
-
 			//check for stripe customer
+			console.log('BEFORE TRY CATCH stripeAPIPrepData')
+			console.log(stripeAPIPrepData)
+			
 			try{
-
+				
 				charge.makeStripeReq(stripeAPIPrepData, emailStr).then(stripeCustomerRes => {
 					console.log('GET ALL CUSTOMERS result...')
 
@@ -138,8 +141,7 @@ charge.post = function(data,callback){
 					        return;
 					    }
 					} 
-				})
-				.catch(err => {
+				}).catch(err => {
 					console.log('makeStripeReq err on v1/cust GET')
 					console.log(err)
 					console.timeEnd('charge POST')
@@ -238,6 +240,16 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
+	console.log('customer DATA ->')
+	console.log(res)
+	console.log('// - - - - - //')
+
+	/*
+
+		NEEDS UPDATING, when there IS a customer
+		returns a SOURCES object
+
+	*/	
 	
 	//set id
     stripeCustDataObj.id = res.id;
