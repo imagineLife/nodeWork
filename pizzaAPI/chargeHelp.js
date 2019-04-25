@@ -232,8 +232,6 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
-	console.log('res')
-	console.log(res)
 	
 	//set id
     stripeCustDataObj.id = res.id;
@@ -247,13 +245,6 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 	if(stripeCustDataObj.source == null){
 		console.log('// - - - 5 - - //')
 		console.log('NO customer SOURCE yet, need to MAKE one');
-		
-
-			/*
-				could this turn into... something like... ?
-				charge.makeSource()
-					.then(chargeCustomer)
-			*/
 
     	//Update stripe communication object
         stripeAPIPrepData = {
@@ -319,7 +310,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             .catch(err => {
             	console.log('error charging =>')
             	console.log(err)
-            	
+            	charge.callback(400, { Error: "Error charging" });	
             });
         } catch (error) {
             charge.callback(400, { Error: "Could not charge" });
