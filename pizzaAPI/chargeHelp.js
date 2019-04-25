@@ -16,15 +16,19 @@ let charge = {}
 
 charge.post = function(data,callback){
 
-//store callback for easier access
-// in related fns
-charge.callback = callback;
+	//log the DURATION of this charge post method
+	console.time('charge POST')
+
+	//store callback for easier access
+	// in related fns
+	charge.callback = callback;
 	
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 	
 	//if no token return 400
 	if(!passedToken){
+		console.timeEnd('charge POST')
 		callback(400, { Error: "Missing token" });
         return;
 	}
@@ -34,6 +38,7 @@ charge.callback = callback;
 
 		//if non-matching token
 		if(!tokenIsValid){
+			console.timeEnd('charge POST')
 			callback(400, { Error: "non-matching token for this user" });
 			return;
 		}
@@ -54,6 +59,7 @@ charge.callback = callback;
 			
 
 			if(!cartData || cartData == undefined){
+				console.timeEnd('charge POST')
 				callback(400, {'Error': 'No Cart for a user with this token'})
 				return;
 			}
@@ -89,61 +95,61 @@ charge.callback = callback;
 			//check for stripe customer
 			try{
 
-				charge.makeStripeReq(stripeAPIPrepData, emailStr)
-					.then(stripeCustomerRes => {
-						console.log('GET ALL CUSTOMERS result...')
+				charge.makeStripeReq(stripeAPIPrepData, emailStr).then(stripeCustomerRes => {
+					console.log('GET ALL CUSTOMERS result...')
 
+					/*
+						check for matching customer email from stripe
+						IF matching, proceed
+						ELSE make stripe customer acct THEN proceed
+					*/
+					//
+					let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)
+
+					if(stripeCustomerRes.data.length >= 1 && thisCust && thisCust.length > 0){
+						thisCust = thisCust[0]
+						console.log('thisCust')
+						console.log(thisCust)
+						console.log('// - - - - - //')
+						console.log('// - - - - - //')
 						
+						charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj)
+					}else{
 
-						/*
-							check for matching customer email form stripe
-							IF matching, proceed
-							ELSE make stripe customer acct THEN proceed
-						*/
-						if(stripeCustomerRes.data.length >= 1){
-							// console.log(stripeCustomerRes.data)
-							let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)[0]
-							console.log('thisCust')
-							console.log(thisCust)
-							console.log('// - - - - - //')
-							console.log('// - - - - - //')
-							
-							charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj)
-						}else{
+						stripeAPIPrepData.method = "POST";
 
-							stripeAPIPrepData.method = "POST";
+					    try {
 
-						    try {
+					    	//Create New Stripe User
+					    	//returns customer object
+					        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
+					        	
+					        	//store customer ID
+					        	stripeCustomerDataObj.id = res.id;
 
-						    	//Create New Stripe User
-						    	//returns customer object
-						        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-						        	
-						        	stripeCustomerDataObj.id = res.id;
-						        	// console.log('stripeCustomerDataObj')
-						        	// console.log(stripeCustomerDataObj)
+					        	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
 
-						        	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
-
-						        });
-						    } catch (error) {
-						    	console.log('TRIED to make stripe user, error')
-						    	console.log(error)
-						    	
-						       charge.callback(400, { Error: "Could not create a new customer" });
-						        return;
-						    }
-						} 
-					})
-					.catch(err => {
-						console.log('makeStripeReq err on v1/cust GET')
-						console.log(err)
-						callback(400, {'error': err})
-					})
+					        });
+					    } catch (error) {
+					    	console.log('TRIED to make stripe user, error')
+					    	console.log(error)
+					    	console.timeEnd('charge POST')
+					       charge.callback(400, { Error: "Could not create a new customer" });
+					        return;
+					    }
+					} 
+				})
+				.catch(err => {
+					console.log('makeStripeReq err on v1/cust GET')
+					console.log(err)
+					console.timeEnd('charge POST')
+					callback(400, {'error': err})
+				})
 
 			}catch(e){
 				console.log('error charging :(')
 	        	console.log(error)	        	
+	        	console.timeEnd('charge POST')
 	            callback(400, { Error: "No Customer present" });
 	            return;
 			}
@@ -305,6 +311,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
             	console.log('// - - - 8 - - //')
             	console.log('CHARGED!')
+            	console.timeEnd('charge POST')
             	charge.callback(200, { Success: "CHARGED! :) " });
             })
             .catch(err => {
@@ -313,6 +320,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             	charge.callback(400, { Error: "Error charging" });	
             });
         } catch (error) {
+        	console.timeEnd('charge POST')
             charge.callback(400, { Error: "Could not charge" });
             return;
         }
