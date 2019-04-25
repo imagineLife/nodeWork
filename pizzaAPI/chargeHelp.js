@@ -102,6 +102,14 @@ charge.callback = callback;
 							ELSE make stripe customer acct THEN proceed
 						*/
 						if(stripeCustomerRes.data.length >= 1){
+							console.log('CHECKING stripeCustomerRes.data')
+							// console.log(stripeCustomerRes.data)
+							let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)
+							console.log('thisCust')
+							console.log(thisCust)
+							console.log('// - - - - - //')
+							console.log('// - - - - - //')
+							
 							charge.proceedWithStripeUser(stripeCustomerRes, stripeCustomerDataObj)
 						}else{
 
