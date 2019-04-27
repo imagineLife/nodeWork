@@ -27,6 +27,9 @@ charge.post = function(data,callback){
 
 	//log the DURATION of this charge post method
 	console.time('charge POST')
+	console.log('chargePOST data')
+	console.log(data)
+	console.log('// - * - * - * - * - //')
 
 	//store callback for easier access
 	// in related fns
@@ -74,35 +77,18 @@ charge.post = function(data,callback){
 				callback(400, {'Error': 'No Cart for a user with this token'})
 				return;
 			}
-			
 
 			/*
 				get the cart  total
 				if there is user cart data
 				NOTE: must be in pennies for stripe ($10 gets translated to 1000 for stripe)
 			*/
+			
 			let thisCartTotal = cartData.cartData.reduce((acc, curVal) => {
 				return acc + (curVal.price * curVal.count) 
 			}, 0)
 
 			stripeCustomerDataObj.cartTotal = thisCartTotal * 100
-
-
-			/*
-				CHECK for existing stripeID
-
-				**NOTE- when extending stripe interactions,
-				this can be put in a more accesible location for other
-				stripe interactions: check reigstered card, check  registered email, etc.
-
-				SCHECK for stored stripeID in req
-				if data.headers.stripeID, then...
-					use StripeID && add to stripeCustomerDataObj
-						ELSE create stripeUser
-							 ** (stripeUser) is already setup
-				}
-
-			*/
 
 			/* 
 				interact with STRIPE API
@@ -114,81 +100,61 @@ charge.post = function(data,callback){
 		   	//prepare stripe customer user emailString string
 		    const emailStr = queryString.stringify({email: data.payload.email});
 
-			//check for stripe customer			
+			//check for stripe customer		
 			try{
 				
-				/*
-					REMOVE with new node work
-				*/
-				charge.makeStripeReq(stripeAPIPrepData, emailStr).then(stripeCustomerRes => {
+				//check for stripeID passed through req payload
+				let existingStripeID = data.payload.stripeID || null
 
-					/*
-						check for matching customer email from stripe
-						IF matching, proceed
-						ELSE make stripe customer acct THEN proceed
-					*/
+				//if stripeID in payload
+				if(existingStripeID !== null){
+					console.log('IS stripeID in payload!!');
+					console.log('// - - - - - //')
 					
-					/*
-						REMOVE with new node work
-					*/
-					let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)
+					thisCust = {id: existingStripeID}
+					charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj, stripeAPIPrepData)
+				
+				// if no stripe customer
+				}else{
 
-					//if registered stripe customer
-					
-					/*
-						REMOVE with new node work
-					*/
-					if(stripeCustomerRes.data.length >= 1 && thisCust && thisCust.length > 0){
-						thisCust = thisCust[0]
-						charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj, stripeAPIPrepData)
-					
-					// if no stripe customer
-					}else{
+					stripeAPIPrepData.method = "POST";
 
-						stripeAPIPrepData.method = "POST";
+				    try {
 
-					    try {
+				    	//Create New Stripe User
+				    	//returns customer object
+				        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
+				        	
+				        	//store customer ID
+				        	stripeCustomerDataObj.id = res.id;
 
-					    	//Create New Stripe User
-					    	//returns customer object
-					        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
-					        	
-					        	//store customer ID
-					        	stripeCustomerDataObj.id = res.id;
+				        	/*
+				        		STORE the stripe user ID in node user data
+				        	*/
 
-					        	/*
-					        		STORE the stripe user ID in node user data
-					        	*/
+				        	console.log('patch starting');
+				        	doUsers.patch({email: data.payload.email, stripeID: res.id}, (patchedData) => {
+				        		console.log('patchedData finished')
+				        		console.log(patchedData)
+				        		// charge.callback(200, {'success for now'})
+				        	})
 
-					        	console.log('patch starting');
-					        	doUsers.patch({email: data.payload.email, stripeID: res.id}, (patchedData) => {
-					        		console.log('patchedData finished')
-					        		console.log(patchedData)
-					        		// charge.callback(200, {'success for now'})
-					        	})
+				        	console.log('POC ASYNC');
+				        	charge.proceedWithStripeUser(res, stripeCustomerDataObj, stripeAPIPrepData)
 
-					        	console.log('POC ASYNC');
-					        	charge.proceedWithStripeUser(res, stripeCustomerDataObj, stripeAPIPrepData)
-
-					        });
-					    } catch (error) {
-					    	console.log('TRIED to make stripe user, error')
-					    	console.log(error)
-					    	console.timeEnd('charge POST')
-					       charge.callback(400, { Error: "Could not create a new customer" });
-					        return;
-					    }
-					} 
-				}).catch(err => {
-					console.log('makeStripeReq err on v1/cust GET')
-					console.log(err)
-					console.timeEnd('charge POST')
-					callback(400, {'error': err})
-				})
+				        });
+				    } catch (error) {
+				    	console.log('TRIED to make stripe user, error')
+				    	console.log(error)
+				    	console.timeEnd('charge POST')
+				       charge.callback(400, { Error: "Could not create a new customer" });
+				        return;
+				    }
+				} 
 
 			}catch(e){
 				console.log('error charging :(')
-	        	console.log(error)	        	
+	        	console.log(e)	        	
 	        	console.timeEnd('charge POST')
 	            callback(400, { Error: "No Customer present" });
 	            return;
@@ -288,7 +254,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
     stripeCustDataObj.id = res.id;
     
    	//Look for a source from stripe, if so, save source to var
-	stripeCustDataObj.source = (res.sources.data.length > 0 ) ? res.sources.data[0] : null
+	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
 
 	//IF NO SOURCE
 	//	 make a source
@@ -354,11 +320,13 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
             	console.log('// - - - 8 - - //')
             	console.log('CHARGED!')
+            	console.timeEnd('charge POST')
             	charge.callback(200, { Success: "CHARGED! :) " });
             })
             .catch(err => {
             	console.log('error charging =>')
             	console.log(err)
+            	console.timeEnd('charge POST')
             	charge.callback(400, { Error: "Error charging" });	
             });
         } catch (error) {
