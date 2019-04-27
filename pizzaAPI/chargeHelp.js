@@ -2,6 +2,7 @@
 const doTokens = require('./lib/handlers/tokens.js')
 const dataLib = require('./lib/data.js')
 const helpers = require('./lib/helpers.js')
+const doUsers = require('./lib/handlers/users')
 const queryString = require('querystring');
 const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./config')
 const https = require('https');
@@ -15,6 +16,8 @@ let charge = {}
 //	email in payload
 
 charge.post = function(data,callback){
+
+	//add stripeID in header req
 
 	//Prepare stripe communication details
 	let stripeAPIPrepData = {
@@ -38,6 +41,8 @@ charge.post = function(data,callback){
 		callback(400, { Error: "Missing token" });
         return;
 	}
+
+
 
 	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, data.payload.email, (tokenIsValid) => {
@@ -82,6 +87,23 @@ charge.post = function(data,callback){
 
 			stripeCustomerDataObj.cartTotal = thisCartTotal * 100
 
+
+			/*
+				CHECK for existing stripeID
+
+				**NOTE- when extending stripe interactions,
+				this can be put in a more accesible location for other
+				stripe interactions: check reigstered card, check  registered email, etc.
+
+				SCHECK for stored stripeID in req
+				if data.headers.stripeID, then...
+					use StripeID && add to stripeCustomerDataObj
+						ELSE create stripeUser
+							 ** (stripeUser) is already setup
+				}
+
+			*/
+
 			/* 
 				interact with STRIPE API
 				- customer lookup
@@ -92,31 +114,35 @@ charge.post = function(data,callback){
 		   	//prepare stripe customer user emailString string
 		    const emailStr = queryString.stringify({email: data.payload.email});
 
-			//check for stripe customer
-			console.log('BEFORE TRY CATCH stripeAPIPrepData')
-			console.log(stripeAPIPrepData)
-			
+			//check for stripe customer			
 			try{
 				
+				/*
+					REMOVE with new node work
+				*/
 				charge.makeStripeReq(stripeAPIPrepData, emailStr).then(stripeCustomerRes => {
-					console.log('GET ALL CUSTOMERS result...')
 
 					/*
 						check for matching customer email from stripe
 						IF matching, proceed
 						ELSE make stripe customer acct THEN proceed
 					*/
-					//
+					
+					/*
+						REMOVE with new node work
+					*/
 					let thisCust = stripeCustomerRes.data.filter(d => d.email == data.payload.email)
 
+					//if registered stripe customer
+					
+					/*
+						REMOVE with new node work
+					*/
 					if(stripeCustomerRes.data.length >= 1 && thisCust && thisCust.length > 0){
 						thisCust = thisCust[0]
-						console.log('thisCust')
-						console.log(thisCust)
-						console.log('// - - - - - //')
-						console.log('// - - - - - //')
-						
-						charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj)
+						charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj, stripeAPIPrepData)
+					
+					// if no stripe customer
 					}else{
 
 						stripeAPIPrepData.method = "POST";
@@ -130,7 +156,19 @@ charge.post = function(data,callback){
 					        	//store customer ID
 					        	stripeCustomerDataObj.id = res.id;
 
-					        	charge.proceedWithStripeUser(res, stripeCustomerDataObj)
+					        	/*
+					        		STORE the stripe user ID in node user data
+					        	*/
+
+					        	console.log('patch starting');
+					        	doUsers.patch({email: data.payload.email, stripeID: res.id}, (patchedData) => {
+					        		console.log('patchedData finished')
+					        		console.log(patchedData)
+					        		// charge.callback(200, {'success for now'})
+					        	})
+
+					        	console.log('POC ASYNC');
+					        	charge.proceedWithStripeUser(res, stripeCustomerDataObj, stripeAPIPrepData)
 
 					        });
 					    } catch (error) {
@@ -215,9 +253,7 @@ charge.prepRequestObj = (pathMethod) => {
 charge.makeStripeReq = (reqObj, reqStr) => {
 	console.log('making stripe req, reqStr =>  ')
 	console.log(reqStr)
-	
-
-	// reqObj.source = "tok_visa"
+	console.log('// -- -- -- //');
 
 	let stripeAPIResultData = null;
 	return new Promise(async function(resolve, reject) {
@@ -236,14 +272,11 @@ charge.makeStripeReq = (reqObj, reqStr) => {
     });
 }
 
-charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
+charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 
 	console.log('// - - - 4 - - //')
 	console.log('proceedWithStripeUser, IS customer')
-	console.log('customer DATA ->')
-	console.log(res)
-	console.log('// - - - - - //')
-
+	
 	/*
 
 		NEEDS UPDATING, when there IS a customer
@@ -256,7 +289,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
     
    	//Look for a source from stripe, if so, save source to var
 	stripeCustDataObj.source = (res.sources.data.length > 0 ) ? res.sources.data[0] : null
-	
+
 	//IF NO SOURCE
 	//	 make a source
 	//	 THEN charge the customer
@@ -289,6 +322,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj) => {
 	//if there IS a source
 	//	 charge the customer
 	if(stripeCustDataObj.source !== null) {
+		
 		charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj);
 	}
 }
@@ -312,9 +346,6 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 
 		console.log('// - - - 7 - - //')
 		console.log('ALREADY SOURCES stripeCustDataObj.cartTotal')
-		console.log(stripeCustDataObj.cartTotal)
-		
-		 
 
 		let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
 
@@ -323,7 +354,6 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
             	console.log('// - - - 8 - - //')
             	console.log('CHARGED!')
-            	console.timeEnd('charge POST')
             	charge.callback(200, { Success: "CHARGED! :) " });
             })
             .catch(err => {
