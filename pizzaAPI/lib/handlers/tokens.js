@@ -40,12 +40,13 @@ doTokens.post = (data, callback) => {
 
 					//set exp date 1 hour in the future
 					const expDate = Date.now() + 1000 * 60 * 60;
-
+					
 					//store the tokenId as a 'token Object'
 					const tokenObj = {
 						email: eml,
 						tokenId: tokenId,
-						expires: expDate
+						expires: expDate,
+						stripeID: userData.stripeID || null
 					}
 
 					//store the tokenObj
