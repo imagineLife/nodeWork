@@ -171,6 +171,30 @@ doUsers.put = function(data,callback){
 	}
 }
 
+//editing select key(s) in the user object
+doUsers.patch = function(data, callback){
+
+	//get userData
+	dataLib.read('users', data.email, (err, userData) => {
+
+		//append newData to retrieved user data
+		const newData = {...userData, ...data}
+
+		//Store the newly updated userData obj
+		dataLib.update('users', data.email, newData, (err) => {
+
+			if(!err){
+				callback(200, {"Success!": `${newData.firstName} ${newData.lastName} updated successfully`})
+			}else{
+				callback(500, {'Error': 'Couldnt update this user with this info'})
+			}
+
+		})
+
+	})
+
+}
+
 //Users GET
 // TODO - - - - NOTE: only let an authenticated users access their obj.
 //	
