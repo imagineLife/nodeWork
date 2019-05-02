@@ -4,7 +4,7 @@ const dataLib = require('./lib/data.js')
 const helpers = require('./lib/helpers.js')
 const doUsers = require('./lib/handlers/users')
 const queryString = require('querystring');
-const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./env.js')
+// const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./env.js')
 const https = require('https');
 
 //holder of charge methods
@@ -16,7 +16,9 @@ let charge = {}
 //	email in payload
 
 charge.post = function(data,callback){
-
+	console.log('charge post env vars => ')
+	console.log(process.env)
+	
 	//add stripeID in header req
 
 	//Prepare stripe communication details
@@ -162,11 +164,11 @@ charge.prepRequestObj = (pathMethod) => {
 	console.log(pathMethod)
 	
 	return {
-        host: STRIPE_API_HOST,
+        host: process.env.STRIPE_API_HOST,
         path: pathMethod.path,
         method: pathMethod.method,
         headers: {
-            Authorization: `Bearer ${STRIPE_API_TOKEN}`,
+            Authorization: `Bearer ${process.env.STRIPE_API_TOKEN}`,
             Accept: "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
             /*
@@ -194,7 +196,6 @@ charge.makeStripeReq = (reqObj, reqStr) => {
         } catch (error) {
         	console.log('error')
         	console.log(error)
-        	
             reject("Error calling to Stripe");
         }
         resolve(stripeAPIResultData);
@@ -288,7 +289,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             	
             })
             .catch(err => {
-            	console.log('error charging =>')
+            	console.log('makeStripeReq catch =>')
             	console.log(err)
             	console.timeEnd('charge POST')
             	charge.callback(400, { Error: "Error charging" });	
