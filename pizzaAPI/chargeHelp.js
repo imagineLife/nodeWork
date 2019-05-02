@@ -164,35 +164,6 @@ charge.post = function(data,callback){
 	})
 }
 
-/*
- 	 Create a stripe SOURCE for the customer
-
- 	 HELP REMOVE THIS. seems redundant repetitive
-*/
-
-charge.makeStripeSource = (stripeAPIData) => {
-	console.log('making StripeSource!')
-	
-	let reqStrData = queryString.stringify({source: "tok_visa"})
-    
-	return new Promise(async function(resolve, reject) {
-	    try {
-
-	        charge.makeStripeReq(stripeAPIData, reqStrData)
-	        	.then(res => {
-	        		resolve(res.id)
-	        	})
-	        	.catch(err => {
-	        		charge.callback(400, {"make stripe rep CATCH Error": err})
-	        		reject("Error creating stripe source");
-	        	});
-	    } catch (error) {
-	    	charge.callback(400, {"Error": error})
-	        reject("Error creating stripe source");
-	    }
-	})
-}
-
 //prepare stripe communication object
 charge.prepRequestObj = (pathMethod) => {
 	console.log('pathMethod')
