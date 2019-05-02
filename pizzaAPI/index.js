@@ -1,7 +1,10 @@
 //PRIMARY file for the api
 const server = require('./lib/server')
 const webWorkers = require('./lib/workers')
-const envs = require('./env.js')
+const envVars = require('./env.js')
+
+//START APP with cli_env=prod or cli_env=dev node index.js
+//	will 'default' to cli_env=dev below
 
 let serverObj = {};
 
@@ -13,24 +16,16 @@ serverObj.init = () => {
 	server.init();
 
 	//start webWorkers
-	// webWorkers.init();
+	// webWorkers.init()
 
-	console.log('process.env')
-	console.log(process.env)
-	
-	/*
-		START app with cli_env=prod or cli_env=dev node index.js
 
-		(failover) cont env = process.env.cli_env || 'dev'
-		
-		require env above
-			export json obj
-			then read the file
-			get env vars
-			for(var thisEnv in envVars) => {
-				process.env[thisEnv] = envVars[process.env[env]].thisEnv
-			}
-	*/
+	//get/set env vars from env file
+	const envType = process.env.cli_env || 'dev'
+	for(var thisEnv in envVars[envType]){
+		// console.log('looping env vars')
+		// console.log(thisEnv)
+		process.env[thisEnv] = envVars[envType][thisEnv]
+	}
 	
 }
 
