@@ -4,7 +4,7 @@ const dataLib = require('./lib/data.js')
 const helpers = require('./lib/helpers.js')
 const doUsers = require('./lib/handlers/users')
 const queryString = require('querystring');
-const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./config')
+const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./env.js')
 const https = require('https');
 
 //holder of charge methods
@@ -120,26 +120,18 @@ charge.post = function(data,callback){
 					stripeAPIPrepData.method = "POST";
 
 				    try {
-
 				    	//Create New Stripe User
 				    	//returns customer object
 				        charge.makeStripeReq(stripeAPIPrepData, emailStr).then(res => {
 				        	
-				        	//store customer ID
 				        	stripeCustomerDataObj.id = res.id;
 
-				        	/*
-				        		STORE the stripe user ID in node user data
-				        	*/
-
-				        	console.log('patch starting');
+				        	// stre the stripe user ID in node user data
 				        	doUsers.patch({email: data.payload.email, stripeID: res.id}, (patchedData) => {
 				        		console.log('patchedData finished')
 				        		console.log(patchedData)
-				        		// charge.callback(200, {'success for now'})
 				        	})
 
-				        	console.log('POC ASYNC');
 				        	charge.proceedWithStripeUser(res, stripeCustomerDataObj, stripeAPIPrepData)
 
 				        });
@@ -178,7 +170,7 @@ charge.prepRequestObj = (pathMethod) => {
             Accept: "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
             /*
-					Not really necessary! Epic.
+					Not really necessary right now,
 					can help prevent against ddos attacks
 					maybe later...
             */
@@ -229,7 +221,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 
 	//IF NO SOURCE
 	//	 make a source
-	//	 THEN charge the customer
+	//	 charge the customer
 	if(stripeCustDataObj.source == null){
 		console.log('// - - - 5 - - //')
 		console.log('NO customer SOURCE yet, need to MAKE one');
@@ -256,7 +248,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	}
 
 
-	//if there IS a source
+	//if stripe source IS present
 	//	 charge the customer
 	if(stripeCustDataObj.source !== null) {
 		
@@ -293,6 +285,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             	console.log('CHARGED!')
             	console.timeEnd('charge POST')
             	charge.callback(200, { Success: "CHARGED! :) " });
+            	
             })
             .catch(err => {
             	console.log('error charging =>')
