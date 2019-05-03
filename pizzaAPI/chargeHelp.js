@@ -3,17 +3,20 @@ const doTokens = require('./lib/handlers/tokens.js')
 const dataLib = require('./lib/data.js')
 const helpers = require('./lib/helpers.js')
 const doUsers = require('./lib/handlers/users')
+const doMail = require('./lib/handlers/mail')
 const queryString = require('querystring');
-// const {STRIPE_API_HOST, STRIPE_API_TOKEN} = require('./env.js')
 const https = require('https');
 
 //holder of charge methods
 let charge = {}
 
-//charge POST
-//REQ FIELDS: 
-//	token in header
-//	email in payload
+/*charge POST
+REQ FIELDS: 
+	token in header
+	email in payload
+OPT field
+	stripeID in body
+*/
 
 charge.post = function(data,callback){
 
@@ -53,6 +56,9 @@ charge.post = function(data,callback){
 			cartTotal: null
 		}
 
+		//prep holder for cart data;
+		let userCartData = null;
+
 		//get node-stored user CART data
 		dataLib.read('cart', data.payload.email, (err, cartData) => {
 
@@ -69,6 +75,7 @@ charge.post = function(data,callback){
 
 			stripeCustomerDataObj.cartTotal = thisCartTotal * 100
 
+			userCartData = cartData
 			/* 
 				interact with STRIPE API
 				- customer lookup
@@ -198,6 +205,8 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	//	 charge the customer
 	if(stripeCustDataObj.source !== null) {
 		charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj);
+
+		//get firstName from user data
 	}
 }
 
@@ -224,10 +233,23 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 			
             charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
             	console.log('// - - - 8 - - //')
-            	console.log('CHARGED!')
+            	console.log('CHARGED, emailing receipt!')
             	console.timeEnd('charge POST')
             	charge.callback(200, { Success: "CHARGED! :) " });
             	
+            	let mailObj = {
+            		from: 'imagineLife Pizza <imagineLifePizzaShop@imagine.life.com>',
+            		to: data.payload.email,
+            		subject: 'Receipt for pizza order',
+            		text: `Thanks for your order!
+            		Your $${stripeCustomerDataObj.cartTotal} order is being prepared
+            		& is on its way!
+
+            		-imagineLife PizzaShop-`	
+            	}
+
+            	//email Reciept
+            	doMail.send('receipt', mailObj)
             })
             .catch(err => {
             	console.log('makeStripeReq catch =>')
