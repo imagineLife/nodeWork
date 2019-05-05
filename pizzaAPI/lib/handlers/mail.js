@@ -1,6 +1,7 @@
-const doUsers = require('./lib/handlers/users')
+const doUsers = require('./users')
 const https = require('https');
 const querystring = require("querystring");
+const helpers = require('../helpers.js')
 
 //mailgun sending docs
 //	https://documentation.mailgun.com/en/latest/api-sending.html#sending
@@ -12,25 +13,26 @@ const querystring = require("querystring");
 const doMail = {};
 
 doMail.send = (mailType, mailObj, callback) => {
+	console.log('SENDING MAIL!');
 	console.log('mailType')
 	console.log(mailType)
 	console.log('mailObj')
 	console.log(mailObj)
 	
+	// console.log('process.env')
+	// console.log(process.env)
+	
+	
 	let stringObject = querystring.stringify(mailObj)
 	
 	let reqOptions = {
-		hostname: process.env.MAILGUN_HOST,
-        port: process.env.MAILGUN_PORT,
-        protocol: "https:",
-        path: `/v3/${process.env.MAILGUN_DOMAIN}/messages`,
+        hostname: `${process.env.MAILGUN_API_HOST}`,
+        path: `/${process.env.MAILGUN_API_DOMAIN}/messages`,
         method: "POST",
-        retry: 1,
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Content-Length": Buffer.byteLength(stringObject)
+            "Content-Type": "application/x-www-form-urlencoded"
         },
-        auth: "api:" + process.env.MAILGUN_API_KEY,
+        auth: `api:${process.env.MAILGUN_API_KEY}`,
         agent: false
 	};
 
@@ -63,19 +65,26 @@ doMail.send = (mailType, mailObj, callback) => {
 		if(mailType == 'confirmEmail')
 	*/
 
-	/*
-		return new Promise(async function(resolve, reject) {
-	        try {
-	            await helpers.request(reqOptions, reqData);
-	        } catch (error) {
-	            reject("Could not send the user a receipt");
-	            return;
-	        }
+	console.log('reqOptions')
+	console.log(reqOptions)
+	console.log('stringObject')
+	console.log(stringObject)
 
-	        resolve("Emailed receipt to customer");
-	    });
+	
+	return new Promise(async function(resolve, reject) {
+		let mailAPIResults = null;
+        try {
+            mailAPIResults = await helpers.request(reqOptions, stringObject);
+        } catch (error) {
+        	console.log(error)
+        	reject(` ^ ^ ^ ERROR: Could not send the user a ${mailType}`);
+        }
+        resolve(mailAPIResults);
+    });
 
-	*/
+	
 
 
 }
+
+module.exports = doMail;
