@@ -35,6 +35,9 @@ doMail.send = (mailType, mailObj, callback) => {
 	};
 
 	if(mailType == 'receipt'){
+
+	//modeled after...
+
 		//prep headers obj
 		// reqOptions = {
 		// 	hostname: process.env.MAILGUN_HOST,
@@ -54,7 +57,25 @@ doMail.send = (mailType, mailObj, callback) => {
 	}
 
 	/*
+		Other future mail options...
 		if(mailType == 'promo')
 		if(mailType == 'resetPassword')
+		if(mailType == 'confirmEmail')
 	*/
+
+	/*
+		return new Promise(async function(resolve, reject) {
+	        try {
+	            await helpers.request(reqOptions, reqData);
+	        } catch (error) {
+	            reject("Could not send the user a receipt");
+	            return;
+	        }
+
+	        resolve("Emailed receipt to customer");
+	    });
+
+	*/
+
+
 }
