@@ -74,6 +74,7 @@ charge.post = function(data,callback){
 			}, 0)
 
 			stripeCustomerDataObj.cartTotal = thisCartTotal * 100
+			stripeCustomerDataObj.email = data.payload.email
 
 			userCartData = cartData
 			/* 
@@ -107,7 +108,7 @@ charge.post = function(data,callback){
 				        	stripeCustomerDataObj.id = customerObj.id;
 
 				        	// store the stripe user ID in node user data
-				        	doUsers.patch({email: data.payload.email, stripeID: customerObj.id}, (patchedData) => return)
+				        	doUsers.patch({email: data.payload.email, stripeID: customerObj.id}, (patchedData) => {return})
 				        	charge.proceedWithStripeUser(customerObj, stripeCustomerDataObj, stripeAPIPrepData)
 
 				        });
@@ -235,21 +236,38 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             	console.log('// - - - 8 - - //')
             	console.log('CHARGED, emailing receipt!')
             	console.timeEnd('charge POST')
-            	charge.callback(200, { Success: "CHARGED! :) " });
+            	// charge.callback(200, { Success: "CHARGED! :) " });
             	
             	let mailObj = {
-            		from: 'imagineLife Pizza <imagineLifePizzaShop@imagine.life.com>',
-            		to: data.payload.email,
+            		from: 'jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org',
+            		to: 'mretfaster@gmail.com',
             		subject: 'Receipt for pizza order',
             		text: `Thanks for your order!
-            		Your $${stripeCustomerDataObj.cartTotal} order is being prepared
+            		Your $${stripeCustDataObj.cartTotal} order is being prepared
             		& is on its way!
 
             		-imagineLife PizzaShop-`	
             	}
 
-            	//email Reciept
-            	doMail.send('receipt', mailObj)
+            	/*
+					email Reciept
+					- should this pass callback to sendMail method 
+					&& callback/confirm/fail from the mail?!
+
+					- should this lead to multiple next-steps?...
+						- send receipt
+						- send user confirmation through ui
+            	*/
+
+            	doMail.send('receipt', mailObj).then(mailRes => {
+            		console.log('mailRes')
+            		console.log(mailRes)
+            		
+            		charge.callback(200, { Success: "email sent! :) " });
+            	}).catch(mailErr => {
+            		console.log(mailErr)
+            		charge.callback(400, {'MailErr': mailErr})
+            	}) // ... charge.callback?
             })
             .catch(err => {
             	console.log('makeStripeReq catch =>')
