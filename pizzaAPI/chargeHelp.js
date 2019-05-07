@@ -239,14 +239,10 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
             	// charge.callback(200, { Success: "CHARGED! :) " });
             	
             	let mailObj = {
-            		from: 'jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org',
+            		from: 'Excited User <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>',
             		to: 'mretfaster@gmail.com',
             		subject: 'Receipt for pizza order',
-            		text: `Thanks for your order!
-            		Your $${stripeCustDataObj.cartTotal} order is being prepared
-            		& is on its way!
-
-            		-imagineLife PizzaShop-`	
+            		text: `Thanks for your order`	
             	}
 
             	/*
