@@ -22,6 +22,10 @@ helpers.hash = function(str){
 	if(typeof(str) == 'string' && str.length > 0){
 		
 		//uses a hashingSecret!! from dependency config  file
+		/*
+			NOTE: a JWT can be built using node too!!
+			jwt encodes the user ID, token, expirationdate, guid
+		*/
 		let hashed = crypto.createHmac('sha256', config.hashingSecret).update(str).digest('hex');
 		return hashed;
 
@@ -68,8 +72,9 @@ helpers.createRandomString = (strLength) => {
 	}
 }
 
-//We send a request to either Mailgun or Stripe
+//Send a request to Stripe ... OR Mailgun
 helpers.request = function(reqOptions, reqData) {
+	
     return new Promise((resolve, reject) => {
         const req = https.request(reqOptions, res => {
             let responseData;
@@ -80,10 +85,10 @@ helpers.request = function(reqOptions, reqData) {
             });
 
             res.on("end", () => {
-                try {
+                try {                	
                     resolve(JSON.parse(responseData));
                 } catch (e) {
-                    resolve(responseData);
+                    resolve({'Request error': responseData});
                 }
             });
         });
@@ -95,6 +100,19 @@ helpers.request = function(reqOptions, reqData) {
         req.end();
     });
 };
+
+helpers.btoa = function btoa(str) {
+	let buffer;
+
+	if (str instanceof Buffer) {
+	  buffer = str;
+	} else {
+	  buffer = Buffer.from(str.toString(), 'binary');
+	}
+
+	return buffer.toString('base64');
+};
+
 
 module.exports = helpers;
 
