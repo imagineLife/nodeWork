@@ -1,9 +1,9 @@
 //Dependencies
-const doTokens = require('./lib/handlers/tokens.js')
-const dataLib = require('./lib/data.js')
-const helpers = require('./lib/helpers.js')
-const doUsers = require('./lib/handlers/users')
-const doMail = require('./lib/handlers/mail')
+const doTokens = require('./tokens')
+const dataLib = require('../data')
+const helpers = require('../helpers')
+const doUsers = require('./users')
+const doMail = require('./mail')
 const queryString = require('querystring');
 const https = require('https');
 
