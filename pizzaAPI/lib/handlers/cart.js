@@ -3,6 +3,7 @@ const helpers = require('../helpers')
 const routeHandlers = require('./index')
 const doTokens = require('./tokens')
 const u = require('util')
+const debug = u.debuglog('CART')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -22,6 +23,8 @@ const doCart = {}
 //	cart in payload
 
 doCart.post = function(data,callback){
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Cart Post Data:')
+	debug(data);
 
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;	
