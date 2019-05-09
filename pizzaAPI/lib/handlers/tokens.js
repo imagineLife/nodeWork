@@ -19,6 +19,8 @@ let doTokens = {};
 //a user creating a  token to use later
 //NO optional data
 doTokens.post = (data, callback) => {
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','POST Data:')
+	debug(data);
 	let dataEmail = data.payload.email
 	//parse email & pw
 	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
@@ -83,6 +85,8 @@ doTokens.post = (data, callback) => {
 //reqd data is ID
 //NO opt data
 doTokens.get = (data, callback) => {
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','GET Data:')
+	debug(data);
 
 	//TEST this by using postman with
 	// http://localhost:3000/users?phoneNumber=1238675309
@@ -121,7 +125,8 @@ doTokens.get = (data, callback) => {
 	NO optional data
 */
 doTokens.put = (data, callback) => {
-	
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','PUT Data:')
+	debug(data);
 	//get id & extend boolean from payload
 	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
@@ -171,7 +176,8 @@ doTokens.put = (data, callback) => {
 //required: id
 //optional: NONE
 doTokens.delete = (data, callback) => {
-	
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','DELETE Data:')
+	debug(data);
 	//check that id is valid
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
@@ -208,7 +214,8 @@ doTokens.delete = (data, callback) => {
 
 //VERIFY that a given tokenID MATCHES a given user
 doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callback){
-
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','VERIFY-MATCH Data:')
+	debug(data);
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
 		if(!err && storedTokenData){
