@@ -25,7 +25,7 @@ doTokens.post = (data, callback) => {
 	//parse email & pw
 	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
-
+	
 	if(eml && pw){
 
 		//lookup user who matches the phoneNumber
@@ -215,7 +215,8 @@ doTokens.delete = (data, callback) => {
 //VERIFY that a given tokenID MATCHES a given user
 doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callback){
 	debug('\x1b[32m\x1b[37m%s\x1b[0m','VERIFY-MATCH Data:')
-	debug(data);
+	debug(tokenID);
+	debug(givenEmailAddr)
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
 		if(!err && storedTokenData){
