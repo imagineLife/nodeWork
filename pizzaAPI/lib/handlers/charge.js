@@ -6,6 +6,8 @@ const doUsers = require('./users')
 const doMail = require('./mail')
 const queryString = require('querystring');
 const https = require('https');
+const u = require('util')
+const debug = u.debuglog('CHARGE')
 
 //holder of charge methods
 let charge = {}
@@ -19,6 +21,8 @@ OPT field
 */
 
 charge.post = function(data,callback){
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Post Data:')
+	debug(data);
 
 	//Prepare stripe communication details
 	let stripeAPIPrepData = {
@@ -67,6 +71,9 @@ charge.post = function(data,callback){
 				callback(400, {'Error': 'No Cart for a user with this token'})
 				return;
 			}
+			
+			console.log('cartData.cartData')
+			console.log(cartData.cartData)
 			
 			//calculate cart total
 			let thisCartTotal = cartData.cartData.reduce((acc, curVal) => {
@@ -231,17 +238,19 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 	let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
 
 	try {
+
+		console.log('stripeCustDataObj')
+		console.log(stripeCustDataObj)
+		
 		
         charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
-        	console.log('// - - - 8 - - //')
-        	console.log('CHARGED, emailing receipt!')
         	console.timeEnd('charge POST')
         	
         	let mailObj = {
-        		from: `Excited User <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>`,
+        		from: `ImagineLife Pizza Shop <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>`,
         		to: 'mretfaster@gmail.com',
         		subject: 'Receipt for pizza order',
-        		text: `Thanks for your order`
+        		text: `Thanks for your order of $${(stripeCustDataObj.cartTotal/100).toFixed(2)}`
         	}
 
         	/*
@@ -255,14 +264,11 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
         	*/
 
         	doMail.send('receipt', mailObj).then(mailRes => {
-        		console.log('mailRes')
-        		console.log(mailRes)
-        		
         		charge.callback(200, { Success: "email sent! :) " });
         	}).catch(mailErr => {
         		console.log(mailErr)
         		charge.callback(400, {'MailErr': mailErr})
-        	}) // ... charge.callback?
+        	})
         })
         .catch(err => {
         	console.log('makeStripeReq catch =>')
