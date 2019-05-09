@@ -2,6 +2,8 @@ const dataLib = require('../data')
 const helpers = require('../helpers')
 const routeHandlers = require('./index')
 const doTokens = require('./tokens')
+const u = require('util')
+const debug = u.debuglog('USERS')
 
 //request data checker fn
 function checkForLengthAndType(data){
@@ -30,6 +32,12 @@ doUsers.post = function(data,callback){
 	const pw = checkForLengthAndType(data.payload.passWord)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`Users Post Data:`)
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`First: ${fn}`)
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`Last: ${ln}`)
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`email: ${eml}`)
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`pw: ${pw}`)
+	debug('\x1b[44m\x1b[37m%s\x1b[0m',`tosAg: ${tosAg}`)
 
 	//continue if all reqd fields are present
 	if(fn && ln && eml && pw && tosAg && dataAddr){
@@ -86,6 +94,7 @@ doUsers.post = function(data,callback){
 
 	
 	}else{
+
 	//THROW ERROR if payload doesn't contain req'd fields
 		callback(400,{'Error': 'Missing Reqd fields'})
 	}
