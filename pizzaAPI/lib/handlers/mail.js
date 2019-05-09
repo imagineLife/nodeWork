@@ -2,6 +2,8 @@ const doUsers = require('./users')
 const https = require('https');
 const querystring = require("querystring");
 const helpers = require('../helpers.js')
+const u = require('util')
+const debug = u.debuglog('MAIL')
 
 //mailgun sending docs
 //	https://documentation.mailgun.com/en/latest/api-sending.html#sending
@@ -13,6 +15,10 @@ const helpers = require('../helpers.js')
 const doMail = {};
 
 doMail.send = (mailType, mailObj, callback) => {
+    debug(`\x1b[36m%s\x1b[0m`,`SEND:`);
+    debug(`\x1b[36m%s\x1b[0m`, mailObj);
+    debug(`\x1b[36m%s\x1b[0m`, mailType);
+
 	
 	let stringObject = querystring.stringify(mailObj)
 	
