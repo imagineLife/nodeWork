@@ -1,6 +1,8 @@
 //dependencies
 const dataLib = require('../data')
 const helpers = require('../helpers')
+const u = require('util')
+const debug = u.debuglog('TOKENS')
 
 //request data checker fn
 function checkForLengthAndType(data){
