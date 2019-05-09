@@ -7,69 +7,29 @@ const helpers = require('../helpers.js')
 //	https://documentation.mailgun.com/en/latest/api-sending.html#sending
 // post /<domain>/messages
 
-//mailgun sending examples
+//mailgun examples
 // https://documentation.mailgun.com/en/latest/api-sending.html#examples
 
 const doMail = {};
 
 doMail.send = (mailType, mailObj, callback) => {
-	console.log('SENDING MAIL!');
-	console.log('mailType')
-	console.log(mailType)
-	console.log('mailObj')
-	console.log(mailObj)
-	
-	// console.log('process.env')
-	// console.log(process.env)
-	
 	
 	let stringObject = querystring.stringify(mailObj)
 	
+	let apiStr = `api:${process.env.MAILGUN_API_KEY}`
 	let reqOptions = {
-        hostname: `${process.env.MAILGUN_API_HOST}`,
-        path: `/${process.env.MAILGUN_API_DOMAIN}/messages`,
+        host: `api.mailgun.net`,//`${process.env.MAILGUN_API_HOST}`,
+        path: `/v3/${process.env.MAILGUN_API_DOMAIN}/messages`,
         method: "POST",
         headers: {
+        	"Authorization" : `Basic ${helpers.btoa(apiStr)}`,
             "Content-Type": "application/x-www-form-urlencoded"
-        },
-        auth: `api:${process.env.MAILGUN_API_KEY}`,
-        agent: false
+        }
 	};
 
 	if(mailType == 'receipt'){
 
-	//modeled after...
-
-		//prep headers obj
-		// reqOptions = {
-		// 	hostname: process.env.MAILGUN_HOST,
-	 //        port: process.env.MAILGUN_PORT,
-	 //        protocol: "https:",
-	 //        path: `/v3/${process.env.MAILGUN_DOMAIN}/messages`,
-	 //        method: "POST",
-	 //        retry: 1,
-	 //        headers: {
-	 //            "Content-Type": "application/x-www-form-urlencoded",
-	 //            "Content-Length": Buffer.byteLength(reqData)
-	 //        },
-	 //        auth: "api:" + process.env.MAILGUN_API_KEY,
-	 //        agent: false
-		// }
-
 	}
-
-	/*
-		Other future mail options...
-		if(mailType == 'promo')
-		if(mailType == 'resetPassword')
-		if(mailType == 'confirmEmail')
-	*/
-
-	console.log('reqOptions')
-	console.log(reqOptions)
-	console.log('stringObject')
-	console.log(stringObject)
-
 	
 	return new Promise(async function(resolve, reject) {
 		let mailAPIResults = null;
@@ -81,9 +41,6 @@ doMail.send = (mailType, mailObj, callback) => {
         }
         resolve(mailAPIResults);
     });
-
-	
-
 
 }
 
