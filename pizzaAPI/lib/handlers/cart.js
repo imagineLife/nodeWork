@@ -23,7 +23,7 @@ const doCart = {}
 //	cart in payload
 
 doCart.post = function(data,callback){
-	debug('\x1b[32m\x1b[37m%s\x1b[0m','Cart Post Data:')
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Post Data:')
 	debug(data);
 
 	//GET token from headers
@@ -100,7 +100,8 @@ doCart.post = function(data,callback){
 //@TODO only let auth user update their own obj. don't let them update others
 
 doCart.put = function(data,callback){
-	
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Put Data:')
+	debug(data);
 	//check that the email is value
 	const email = isEmailValid(data.queryStrObj.email)
 	
@@ -177,7 +178,8 @@ doCart.put = function(data,callback){
 // TODO - - - - NOTE: only let an authenticated users access their obj.
 //	
 doCart.get = function(data,callback){
-
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Get Data:')
+	debug(data);
 	//TEST this by using postman with
 	// http://localhost:3000/users?email=jajo@gmail.com
 	// should return the user object
@@ -229,7 +231,8 @@ doCart.get = function(data,callback){
 //DONT let them delete OTHERS' carts
 //CLEANUP other data files associated with this user
 doCart.delete = function(data,callback){
-	console.log('delete CART?!');
+	debug('\x1b[32m\x1b[37m%s\x1b[0m','Delete Data:')
+	debug(data);
 	
 	//check that phone is valid
 	const email = isEmailValid(data.queryStrObj.email);
