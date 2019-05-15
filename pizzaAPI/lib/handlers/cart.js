@@ -91,11 +91,8 @@ doCart.post = function(data,callback){
 
 }
 
-//Users PUT
-//req email
-//OPTIONAL - firstName, lastName, pw (at least ONE MUST be specified)
-//@TODO only let auth user update their own obj. don't let them update others
-
+//Cart PUT
+//req email && item
 doCart.put = function(data,callback){
 	debug('\x1b[32m\x1b[37m%s\x1b[0m','Put Data:')
 	debug(data);
@@ -113,7 +110,7 @@ doCart.put = function(data,callback){
 		return;
 	}
 
-	//if email exists, keep going
+	//check for updatable fields
 	if(!fn || !ln || !pw){
 		callback(400, {'Error': 'Missing updatable field'})
 		return;	
@@ -130,39 +127,40 @@ doCart.put = function(data,callback){
 			callback(403, {'Error': 'Missing required token in header, or token invalid'})
 			return;
 		}
+		callback(200, {'MORE': 'need to update the code to update the cart'})
 
 		//lookup the user
-		dataLib.read('users', email, (err, userData) => {
+		// dataLib.read('users', email, (err, userData) => {
 			
-			//if error or no data for that file
-			if(err){
-				callback(400, {'Error': 'No data or file exists for that user'})
-				return;
-			}
+		// 	//if error or no data for that file
+		// 	if(err){
+		// 		callback(400, {'Error': 'No data or file exists for that user'})
+		// 		return;
+		// 	}
 
-			//update the field in the userData 
-			if(fn){
-				userData.firstName = fn;
-			}
-			if(ln){
-				userData.lastName = ln;
-			}
-			if(pw){
-				userData.passWord = helpers.hash(pw);
-			}
+		// 	//update the field in the userData 
+		// 	if(fn){
+		// 		userData.firstName = fn;
+		// 	}
+		// 	if(ln){
+		// 		userData.lastName = ln;
+		// 	}
+		// 	if(pw){
+		// 		userData.passWord = helpers.hash(pw);
+		// 	}
 
-			//Store the newly updated userData obj
-			dataLib.update('users', email, userData, (err) => {
+		// 	//Store the newly updated userData obj
+		// 	dataLib.update('users', email, userData, (err) => {
 
-				if(!err){
-					callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
-				}else{
-					callback(500, {'Error': 'Couldnt update this user with this info'})
-				}
+		// 		if(!err){
+		// 			callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
+		// 		}else{
+		// 			callback(500, {'Error': 'Couldnt update this user with this info'})
+		// 		}
 
-			})
+		// 	})
 
-		})
+		// })
 
 	})
 }
@@ -230,36 +228,34 @@ doCart.delete = function(data,callback){
 	//check that phone is valid
 	const email = isEmailValid(data.queryStrObj.email);
 
-	//if phone is valid
-	if(email){
-
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-		//verify that token is valid for passed email
-		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-			if(tokenIsValid){
-				
-				//REMOVE cart
-				let deleteRes;
-				try{
-					//on success, returns undefined
-					deleteRes = dataLib.deleteSync('cart', email);	
-					callback(200, {'Success!' : 'Cart deleted successfully'})
-				}catch(err){
-					console.log('err')
-					console.log(err)
-					callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-				}
-
-			}else{
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
-			}
-		})
-
-	}else{	
+	if(!email){
 		callback(400, {'Error': 'Seems like Missing email field'})
+		return;	
 	}
+
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+	//verify that token is valid for passed email
+	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+		if(tokenIsValid){
+			
+			//REMOVE cart
+			let deleteRes;
+			try{
+				//on success, returns undefined
+				deleteRes = dataLib.deleteSync('cart', email);	
+				callback(200, {'Success!' : 'Cart deleted successfully'})
+			}catch(err){
+				console.log('err')
+				console.log(err)
+				callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+			}
+
+		}else{
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		}
+	})
 }
 
 module.exports = doCart;
