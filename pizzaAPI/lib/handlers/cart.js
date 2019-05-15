@@ -50,45 +50,42 @@ doCart.post = function(data,callback){
 
 	//verify that token is valid for passed phoneNumber
 	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
-		if(tokenIsValid){
+		
+		if(!tokenIsValid){
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
 
-			const cartFromUser = data.payload.cart
+		const cartFromUser = data.payload.cart
 
-			//check if user cart already exists
-			//takes dir, fileName,callback
-			dataLib.read('cart', dataEmail, (err, cartData) => {				
+		//check if user cart already exists
+		//takes dir, fileName,callback
+		dataLib.read('cart', dataEmail, (err, cartData) => {				
+			
+			if(cartData !== undefined){
+				//Cart already exists
+				callback(400,{'Error': 'A cart under that user already exists'})
+				return;
+			}
 				
-				//if it comes back with an error,
-				// that means there IS no cart for this user yet
-				if(cartData == undefined && err){
-					
-					//create a user object from user data
-					let dataObj = {
-						email: dataEmail,
-						cartData: cartFromUser
-					}
+			//create a user object from user data
+			let dataObj = {
+				email: dataEmail,
+				cartData: cartFromUser
+			}
 
-					//STORE this user to disk
-					//create method takes dir,fileName,data,callback
-					dataLib.create('cart',dataEmail,dataObj,(err) => {
-						if(!err){
-							callback(200, {'Success!': `Cart for ${dataEmail} created successfully!`})
-						}else{
-							callback(500, {'ERROR': 'Could not create the new cart'})
-							console.log(err)
-						}
-					})
-
+			//STORE this user to disk
+			//create method takes dir,fileName,data,callback
+			dataLib.create('cart',dataEmail,dataObj,(err) => {
+				if(!err){
+					callback(200, {'Success!': `Cart for ${dataEmail} created successfully!`})
 				}else{
-					//Cart already exists
-					callback(400,{'Error': 'A cart under that user already exists'})
+					callback(500, {'ERROR': 'Could not create the new cart'})
+					console.log(err)
 				}
-
 			})
 
-		}else{
-			callback(403, {'Error': 'Missing required token in header, or token invalid'})
-		}
+		})
 
 	})
 
@@ -117,8 +114,7 @@ doCart.put = function(data,callback){
 	}
 
 	//if email exists, keep going
-
-	if(fn || ln || pw){
+	if(!fn || !ln || !pw){
 		callback(400, {'Error': 'Missing updatable field'})
 		return;	
 	}
@@ -130,46 +126,43 @@ doCart.put = function(data,callback){
 
 	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-		if(tokenIsValid){
+		if(!tokenIsValid){
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
 
-			//lookup the user
-			dataLib.read('users', email, (err, userData) => {
-				
-				//check if file is error-less AND has userdata
-				if(!err && userData){
+		//lookup the user
+		dataLib.read('users', email, (err, userData) => {
+			
+			//if error or no data for that file
+			if(err){
+				callback(400, {'Error': 'No data or file exists for that user'})
+				return;
+			}
 
-					//update the field in the userData 
-					if(fn){
-						userData.firstName = fn;
-					}
-					if(ln){
-						userData.lastName = ln;
-					}
-					if(pw){
-						userData.passWord = helpers.hash(pw);
-					}
+			//update the field in the userData 
+			if(fn){
+				userData.firstName = fn;
+			}
+			if(ln){
+				userData.lastName = ln;
+			}
+			if(pw){
+				userData.passWord = helpers.hash(pw);
+			}
 
-					//Store the newly updated userData obj
-					dataLib.update('users', email, userData, (err) => {
+			//Store the newly updated userData obj
+			dataLib.update('users', email, userData, (err) => {
 
-						if(!err){
-							callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
-						}else{
-							callback(500, {'Error': 'Couldnt update this user with this info'})
-						}
-
-					})
-
-
-				//if error or no data for that file
+				if(!err){
+					callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
 				}else{
-					callback(400, {'Error': 'No data or file exists for that'})
+					callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
+
 			})
 
-		}else{
-			callback(403, {'Error': 'Missing required token in header, or token invalid'})
-		}
+		})
 
 	})
 }
@@ -196,27 +189,27 @@ doCart.get = function(data,callback){
 		//verify that token is valid for passed email
 		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 
-			//IF token MATCHES email
-			if(tokenIsValid){
-
-				//lookup the user from the filesystem
-				dataLib.read('cart',email, (err, storedCartData) => {
-					if(!err && storedCartData){
-
-						//REMOVE hashed pw from the user object before showing the user
-						delete storedCartData.hashedPW;
-						callback(200, storedCartData);
-
-					}else{
-
-						//NOT FOUND USER
-						callback(404)
-					}
-				})
-
-			}else{
+			if(!tokenIsValid){
 				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+				return;
 			}
+
+			//lookup the user from the filesystem
+			dataLib.read('cart',email, (err, storedCartData) => {
+				if(!storedCartData){
+					//NOT FOUND USER
+					callback(404, {'Error': 'no data for that user'})
+					return;
+				}
+				if(err){
+					callback(404, {'Error': err})
+					return
+				}
+
+				//REMOVE hashed pw from the user object before showing the user
+				delete storedCartData.hashedPW;
+				callback(200, storedCartData);
+			})
 
 		})
 
