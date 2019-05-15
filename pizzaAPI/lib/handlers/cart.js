@@ -110,68 +110,68 @@ doCart.put = function(data,callback){
 	const ln = checkForLengthAndType(data.payload.lastName)
 	const pw = checkForLengthAndType(data.payload.passWord)
 
-	//if phone number exists, keep going
-	if(email){
+	//if email is invalid, Error 
+	if(!email){
+		callback(400, {'Error': 'Missing reqd field'})
+		return;
+	}
 
-		//if at least one other field exists to update
-		if(fn || ln || pw){
+	//if email exists, keep going
 
-			//GET token from headers
-			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	if(fn || ln || pw){
+		callback(400, {'Error': 'Missing updatable field'})
+		return;	
+	}
+	
+	//if at least one other field exists to update
 
-			//verify that token is valid for passed phoneNumber
-			doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-				if(tokenIsValid){
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-					//lookup the user
-					dataLib.read('users', email, (err, userData) => {
-						
-						//check if file is error-less AND has userdata
-						if(!err && userData){
+	//verify that token is valid for passed email
+	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+		if(tokenIsValid){
 
-							//update the field in the userData 
-							if(fn){
-								userData.firstName = fn;
-							}
-							if(ln){
-								userData.lastName = ln;
-							}
-							if(pw){
-								userData.passWord = helpers.hash(pw);
-							}
+			//lookup the user
+			dataLib.read('users', email, (err, userData) => {
+				
+				//check if file is error-less AND has userdata
+				if(!err && userData){
 
-							//Store the newly updated userData obj
-							dataLib.update('users', email, userData, (err) => {
+					//update the field in the userData 
+					if(fn){
+						userData.firstName = fn;
+					}
+					if(ln){
+						userData.lastName = ln;
+					}
+					if(pw){
+						userData.passWord = helpers.hash(pw);
+					}
 
-								if(!err){
-									callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
-								}else{
-									callback(500, {'Error': 'Couldnt update this user with this info'})
-								}
+					//Store the newly updated userData obj
+					dataLib.update('users', email, userData, (err) => {
 
-							})
-
-
-						//if error or no data for that file
+						if(!err){
+							callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
 						}else{
-							callback(400, {'Error': 'No data or file exists for that'})
+							callback(500, {'Error': 'Couldnt update this user with this info'})
 						}
+
 					})
 
-				}else{
-					callback(403, {'Error': 'Missing required token in header, or token invalid'})
-				}
 
+				//if error or no data for that file
+				}else{
+					callback(400, {'Error': 'No data or file exists for that'})
+				}
 			})
 
 		}else{
-			callback(400, {'Error': 'Missing updatable field'})
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
 		}
 
-	//if phone is invalid, Error 
-	}else{
-		callback(400, {'Error': 'Missing reqd field'})
-	}
+	})
 }
 
 //Users GET
