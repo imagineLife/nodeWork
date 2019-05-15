@@ -69,11 +69,11 @@ requires:
 - authToken in the request body  
 - user email in request query string  
 
-## Start the server
-Clone the directory,  
-Open a command-line of sorts,  
-run _node index.js_  
-The terminal should print that the server is running on port 3000!
+## CHARGE  
+***CREATE (post)***  
 
-## Testing & 'Using' the API
-Try using [Postman](https://www.getpostman.com/)  
+	/charge  
+
+requires:  
+- authToken in the request header  
+- user email in request body  
