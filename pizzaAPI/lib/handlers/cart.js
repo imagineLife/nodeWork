@@ -48,7 +48,7 @@ doCart.post = function(data,callback){
 		return;
 	}
 
-	//verify that token is valid for passed phoneNumber
+	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, dataEmail, (tokenIsValid) => {
 		
 		if(!tokenIsValid){
@@ -175,10 +175,8 @@ doCart.get = function(data,callback){
 	// http://localhost:3000/users?email=jajo@gmail.com
 	// should return the user object
 
-	//check that the email is value
+	//check that the email is valid
 	const email = isEmailValid(data.queryStrObj.email);
-	
-	//if phone is valid
 	if(!email){
 		callback(400, {'Error': 'Seems like Missing email field'})
 		return;
@@ -224,7 +222,7 @@ doCart.delete = function(data,callback){
 	debug('\x1b[32m\x1b[37m%s\x1b[0m','Delete Data:')
 	debug(data);
 	
-	//check that phone is valid
+	//check that email is valid
 	const email = isEmailValid(data.queryStrObj.email);
 
 	if(!email){
