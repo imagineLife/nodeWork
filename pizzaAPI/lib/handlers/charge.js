@@ -263,7 +263,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 					- send user confirmation through ui
         	*/
 
-        	doMail.send('receipt', mailObj).then(mailRes => {
+        	doMail.send(mailObj).then(mailRes => {
         		charge.callback(200, { Success: "email sent! :) " });
         	}).catch(mailErr => {
         		console.log(mailErr)
