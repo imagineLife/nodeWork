@@ -112,67 +112,63 @@ doUsers.put = function(data,callback){
 	const ln = checkForLengthAndType(data.payload.lastName)
 	const pw = checkForLengthAndType(data.payload.passWord)
 
-	//if phone number exists, keep going
-	if(email){
+	//sanity checking email field
+	if(!email){
+		callback(400, {'Error': 'Missing reqd email'})
+	}
 
-		//if at least one other field exists to update
-		if(fn || ln || pw){
+	//if at least one other field exists to update
+	if(fn || ln || pw){
 
-			//GET token from headers
-			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		//GET token from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-			//verify that token is valid for passed phoneNumber
-			doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-				if(tokenIsValid){
+		//verify that token is valid for passed phoneNumber
+		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+			
+			//if invalid token
+			if(!tokenIsValid){
+				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+				return;
+			}
 
-					//lookup the user
-					dataLib.read('users', email, (err, userData) => {
-						
-						//check if file is error-less AND has userdata
-						if(!err && userData){
-
-							//update the field in the userData 
-							if(fn){
-								userData.firstName = fn;
-							}
-							if(ln){
-								userData.lastName = ln;
-							}
-							if(pw){
-								userData.passWord = helpers.hash(pw);
-							}
-
-							//Store the newly updated userData obj
-							dataLib.update('users', email, userData, (err) => {
-
-								if(!err){
-									callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
-								}else{
-									callback(500, {'Error': 'Couldnt update this user with this info'})
-								}
-
-							})
-
-
-						//if error or no data for that file
-						}else{
-							callback(400, {'Error': 'No data or file exists for that'})
-						}
-					})
-
-				}else{
-					callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			//lookup the user
+			dataLib.read('users', email, (err, userData) => {
+				
+				//if error or no data for that file
+				if(!userData || err){
+					callback(400, {'Error': 'No data or file exists for that file'})
+					return;
 				}
+
+				//update the field in the userData 
+				if(fn){
+					userData.firstName = fn;
+				}
+				if(ln){
+					userData.lastName = ln;
+				}
+				if(pw){
+					userData.passWord = helpers.hash(pw);
+				}
+
+				//Store the newly updated userData obj
+				dataLib.update('users', email, userData, (err) => {
+
+					if(!err){
+						callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
+					}else{
+						callback(500, {'Error': 'Couldnt update this user with this info'})
+					}
+
+				})
 
 			})
 
-		}else{
-			callback(400, {'Error': 'Missing updatable field'})
-		}
+		})
 
-	//if phone is invalid, Error 
 	}else{
-		callback(400, {'Error': 'Missing reqd field'})
+		callback(400, {'Error': 'Missing updatable field'})
 	}
 }
 
@@ -260,45 +256,48 @@ doUsers.delete = function(data,callback){
 	//check that phone is valid
 	const email = isEmailValid(data.queryStrObj.email);
 
-	//if phone is valid
-	if(email){
+	//if email is notvalid
+	if(!email){
+		callback(400, {'Error': 'Seems like Missing email field'})
+		return;
+	}
 
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed email
-		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-			if(tokenIsValid){
+	//verify that token is valid for passed email
+	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+		
+		//if token is invalud
+		if(!tokenIsValid){
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
 
-				//lookup the user from the filesystem
-				dataLib.read('users',email, (err, storedUserData) => {
-					
-					if(!err && storedUserData){
+		//lookup the user from the filesystem
+		dataLib.read('users',email, (err, storedUserData) => {
+			
+			//NOT FOUND USER
+			if(!storedUserData){
+				callback(400, {'Error': 'Couldnt Find user'})
+				return
+			}
 
-						//REMOVE user
-						dataLib.delete('users', email, (err) => {
+			if(!err && storedUserData){
 
-							if(!err){
-								callback(200, {'Success!' : 'User deleted successfully'})
-							}else{
-								callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-							}
+				//REMOVE user
+				dataLib.delete('users', email, (err) => {
 
-						})
+					if(!err){
+						callback(200, {'Success!' : 'User deleted successfully'})
 					}else{
-						//NOT FOUND USER
-						callback(400, {'Error': 'Couldnt Find user'})
+						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
 					}
-				})
 
-			}else{
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+				})
 			}
 		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing email field'})
-	}
+	})
 }
 
 module.exports = doUsers;
