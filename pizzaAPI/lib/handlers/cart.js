@@ -238,22 +238,21 @@ doCart.delete = function(data,callback){
 
 	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-		if(tokenIsValid){
-			
-			//REMOVE cart
-			let deleteRes;
-			try{
-				//on success, returns undefined
-				deleteRes = dataLib.deleteSync('cart', email);	
-				callback(200, {'Success!' : 'Cart deleted successfully'})
-			}catch(err){
-				console.log('err')
-				console.log(err)
-				callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-			}
-
-		}else{
+		if(!tokenIsValid){
 			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
+			
+		//REMOVE cart
+		let deleteRes;
+		try{
+			//on success, returns undefined
+			deleteRes = dataLib.deleteSync('cart', email);	
+			callback(200, {'Success!' : 'Cart deleted successfully'})
+		}catch(err){
+			console.log('err')
+			console.log(err)
+			callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
 		}
 	})
 }
