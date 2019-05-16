@@ -14,7 +14,7 @@ const debug = u.debuglog('MAIL')
 
 const doMail = {};
 
-doMail.send = (mailType, mailObj, callback) => {
+doMail.send = mailObj => {
     debug(`\x1b[36m%s\x1b[0m`,`SEND:`);
     debug(`\x1b[36m%s\x1b[0m`, mailObj);
     debug(`\x1b[36m%s\x1b[0m`, mailType);
@@ -32,10 +32,6 @@ doMail.send = (mailType, mailObj, callback) => {
             "Content-Type": "application/x-www-form-urlencoded"
         }
 	};
-
-	if(mailType == 'receipt'){
-
-	}
 	
 	return new Promise(async function(resolve, reject) {
 		let mailAPIResults = null;
