@@ -179,41 +179,40 @@ doCart.get = function(data,callback){
 	const email = isEmailValid(data.queryStrObj.email);
 	
 	//if phone is valid
-	if(email){
+	if(!email){
+		callback(400, {'Error': 'Seems like Missing email field'})
+		return;
+	}
 
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed email
-		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+	//verify that token is valid for passed email
+	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 
-			if(!tokenIsValid){
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		if(!tokenIsValid){
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
+
+		//lookup the user from the filesystem
+		dataLib.read('cart',email, (err, storedCartData) => {
+			if(!storedCartData){
+				//NOT FOUND USER
+				callback(404, {'Error': 'no data for that user'})
 				return;
 			}
+			if(err){
+				callback(404, {'Error': err})
+				return
+			}
 
-			//lookup the user from the filesystem
-			dataLib.read('cart',email, (err, storedCartData) => {
-				if(!storedCartData){
-					//NOT FOUND USER
-					callback(404, {'Error': 'no data for that user'})
-					return;
-				}
-				if(err){
-					callback(404, {'Error': err})
-					return
-				}
-
-				//REMOVE hashed pw from the user object before showing the user
-				delete storedCartData.hashedPW;
-				callback(200, storedCartData);
-			})
-
+			//REMOVE hashed pw from the user object before showing the user
+			delete storedCartData.hashedPW;
+			callback(200, storedCartData);
 		})
 
-	}else{	
-		callback(400, {'Error': 'Seems like Missing email field'})
-	}
+	})
 	
 }
 
