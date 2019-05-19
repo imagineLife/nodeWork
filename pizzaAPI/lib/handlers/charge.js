@@ -72,9 +72,6 @@ charge.post = function(data,callback){
 				return;
 			}
 			
-			console.log('cartData.cartData')
-			console.log(cartData.cartData)
-			
 			//calculate cart total
 			let thisCartTotal = cartData.cartData.reduce((acc, curVal) => {
 				return acc + (curVal.price * curVal.count) 
@@ -150,9 +147,7 @@ charge.prepRequestObj = (pathMethod) => {
         headers: {
             Authorization: `Bearer ${process.env.STRIPE_API_TOKEN}`,
             Accept: "application/json",
-            "Content-Type": "application/x-www-form-urlencoded",
-            //can help prevent against ddos attacks...
-            // "Content-Length": Buffer.byteLength(reqStr)
+            "Content-Type": "application/x-www-form-urlencoded"
         }
     };
 }
@@ -175,13 +170,6 @@ charge.makeStripeReq = (reqObj, reqStr) => {
 }
 
 charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
-	
-	/*
-
-		NEEDS UPDATING, when there IS a customer
-		returns a SOURCES object
-
-	*/	
 	
     stripeCustDataObj.id = res.id;
 	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
@@ -237,11 +225,7 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 
 	let dataInString = charge.prepChargeReqStr(stripeCustDataObj);
 
-	try {
-
-		console.log('stripeCustDataObj')
-		console.log(stripeCustDataObj)
-		
+	try {		
 		
         charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
         	console.timeEnd('charge POST')
