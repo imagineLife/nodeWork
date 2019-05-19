@@ -17,7 +17,7 @@ const isEmailValid = str => typeof(str) == 'string' && str.includes('.com') && s
 const doUsers = {}
 
 //Users POST
-//REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
+//REQ FIELDS: first, last, email, pw, tosAgreement, NO optional Data
 doUsers.post = function(data,callback){
 	
 	//GET all req'd fields from request payload
@@ -39,10 +39,10 @@ doUsers.post = function(data,callback){
 	debug('\x1b[44m\x1b[37m%s\x1b[0m',`pw: ${pw}`)
 	debug('\x1b[44m\x1b[37m%s\x1b[0m',`tosAg: ${tosAg}`)
 
-	//continue if all reqd fields are present
+	//continue if all required fields are present
 	if(!fn || !ln || !eml || !pw || !tosAg || !dataAddr){
 		//THROW ERROR if payload doesn't contain req'd fields
-		callback(400,{'Error': 'Missing Reqd fields'})
+		callback(400,{'Error': 'Missing required field(s)'})
 		return;
 	}
 	/*
@@ -51,7 +51,7 @@ doUsers.post = function(data,callback){
 		READ from users data using this data
 	*/
 
-	//check if user phoneNumber already exists
+	//check if user email already exists
 	//takes dir, fileName,callback
 	dataLib.read('users', eml, (err,result) => {
 
@@ -114,7 +114,7 @@ doUsers.put = function(data,callback){
 
 	//sanity checking email field
 	if(!email){
-		callback(400, {'Error': 'Missing reqd email'})
+		callback(400, {'Error': 'Missing required email'})
 	}
 
 	//if at least one other field exists to update
@@ -123,7 +123,7 @@ doUsers.put = function(data,callback){
 		//GET token from headers
 		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed phoneNumber
+		//verify that token is valid for passed email
 		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 			
 			//if invalid token
@@ -208,42 +208,43 @@ doUsers.get = function(data,callback){
 	//check that the email is value
 	const email = isEmailValid(data.queryStrObj.email);
 	
-	//if phone is valid
-	if(email){
+	//sanity check email
+	if(!email){
+		callback(400, {'Error': 'Seems like Missing email field'})
+		return;
+	}
 
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed email
-		doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
+	//verify that token is valid for passed email
+	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
 
-			//IF token MATCHES email
-			if(tokenIsValid){
+		//sanity check valid token
+		if(!tokenIsValid){
+			callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			return;
+		}
 
-				//lookup the user from the filesystem
-				dataLib.read('users',email, (err, storedUserData) => {
-					if(!err && storedUserData){
+		//lookup the user from the filesystem
+		dataLib.read('users',email, (err, storedUserData) => {
 
-						//REMOVE hashed pw from the user object before showing the user
-						delete storedUserData.hashedPW;
-						callback(200, storedUserData);
-
-					}else{
-
-						//NOT FOUND USER
-						callback(404)
-					}
-				})
-
-			}else{
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			if(!storedUserData){
+				callback(404, {"Err": "User not found"})
+				return
 			}
 
+			if(err){
+				callback(500, {"server Err": err})	
+				return
+			}
+
+			//REMOVE hashed pw from the user object before showing the user
+			delete storedUserData.hashedPW;
+			callback(200, storedUserData);
 		})
 
-	}else{	
-		callback(400, {'Error': 'Seems like Missing email field'})
-	}
+	})
 	
 }
 
@@ -253,7 +254,7 @@ doUsers.get = function(data,callback){
 //CLEANUP other data files associated with this user
 doUsers.delete = function(data,callback){
 	
-	//check that phone is valid
+	//check that email is valid
 	const email = isEmailValid(data.queryStrObj.email);
 
 	//if email is notvalid
