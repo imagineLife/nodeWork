@@ -13,7 +13,7 @@ function checkForLengthAndType(data){
 
 const isEmailValid = str => typeof(str) == 'string' && str.includes('.com') && str.includes('@') ? str.trim() : false;
 
-//deals with users CRUD methods
+//deals with cart
 const doCart = {}
 
 //cart POST
@@ -100,23 +100,19 @@ doCart.put = function(data,callback){
 	const email = isEmailValid(data.queryStrObj.email)
 	
 	//check for optional fields
-	const fn = checkForLengthAndType(data.payload.firstName)
-	const ln = checkForLengthAndType(data.payload.lastName)
-	const pw = checkForLengthAndType(data.payload.passWord)
+	const cart = checkForLengthAndType(data.payload.cart)
 
 	//if email is invalid, Error 
 	if(!email){
-		callback(400, {'Error': 'Missing reqd field'})
+		callback(400, {'Error': 'Missing reqd email'})
 		return;
 	}
 
 	//check for updatable fields
-	if(!fn || !ln || !pw){
-		callback(400, {'Error': 'Missing updatable field'})
+	if(!cart){
+		callback(400, {'Error': 'Missing updatable cart data'})
 		return;	
 	}
-	
-	//if at least one other field exists to update
 
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
@@ -129,31 +125,22 @@ doCart.put = function(data,callback){
 		}
 		callback(200, {'MORE': 'need to update the code to update the cart'})
 
-		//lookup the user
-		// dataLib.read('users', email, (err, userData) => {
+		//lookup the cart
+		// dataLib.read('cart', email, (err, cartData) => {
 			
 		// 	//if error or no data for that file
 		// 	if(err){
-		// 		callback(400, {'Error': 'No data or file exists for that user'})
+		// 		callback(400, {'Error': 'No cart exists for that user'})
 		// 		return;
 		// 	}
 
-		// 	//update the field in the userData 
-		// 	if(fn){
-		// 		userData.firstName = fn;
-		// 	}
-		// 	if(ln){
-		// 		userData.lastName = ln;
-		// 	}
-		// 	if(pw){
-		// 		userData.passWord = helpers.hash(pw);
-		// 	}
+		//EDIT CART HERE
 
-		// 	//Store the newly updated userData obj
-		// 	dataLib.update('users', email, userData, (err) => {
+		// 	//Store the newly updated cartData obj
+		// 	dataLib.update('cart', email, cartData, (err) => {
 
 		// 		if(!err){
-		// 			callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
+		// 			callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
 		// 		}else{
 		// 			callback(500, {'Error': 'Couldnt update this user with this info'})
 		// 		}
@@ -165,12 +152,11 @@ doCart.put = function(data,callback){
 	})
 }
 
-//Users GET
-// TODO - - - - NOTE: only let an authenticated users access their obj.
-//	
+// GET cart	
 doCart.get = function(data,callback){
 	debug('\x1b[32m\x1b[37m%s\x1b[0m','Get Data:')
 	debug(data);
+	
 	//TEST this by using postman with
 	// http://localhost:3000/users?email=jajo@gmail.com
 	// should return the user object
