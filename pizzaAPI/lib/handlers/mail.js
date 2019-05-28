@@ -17,8 +17,6 @@ const doMail = {};
 doMail.send = mailObj => {
     debug(`\x1b[36m%s\x1b[0m`,`SEND:`);
     debug(`\x1b[36m%s\x1b[0m`, mailObj);
-    debug(`\x1b[36m%s\x1b[0m`, mailType);
-
 	
 	let stringObject = querystring.stringify(mailObj)
 	
@@ -39,7 +37,7 @@ doMail.send = mailObj => {
             mailAPIResults = await helpers.request(reqOptions, stringObject);
         } catch (error) {
         	console.log(error)
-        	reject(` ^ ^ ^ ERROR: Could not send the user a ${mailType}`);
+        	reject(` ^ ^ ^ ERROR: Could not send the user an email`);
         }
         resolve(mailAPIResults);
     });
