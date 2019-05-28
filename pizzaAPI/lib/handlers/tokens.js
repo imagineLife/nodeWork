@@ -32,12 +32,12 @@ doTokens.post = (data, callback) => {
 		return;
 	}
 
-	//lookup user who matches the phoneNumber
+	//lookup user who matches the email
 	dataLib.read('users', eml, (err, userData) => {
 
 		//sanity check
 		if(err || !userData){
-			callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
+			callback(400, {'Error': 'Couldnt find that user'})
 		}
 
 		//hash pw to compare to STORED hashed pw
