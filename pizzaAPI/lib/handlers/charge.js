@@ -39,7 +39,6 @@ charge.post = function(data,callback){
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 	
 	if(!passedToken){
-		console.timeEnd('charge POST')
 		callback(400, { Error: "Missing token" });
         return;
 	}
@@ -48,7 +47,6 @@ charge.post = function(data,callback){
 	doTokens.verifyTokenMatch(passedToken, data.payload.email, (tokenIsValid) => {
 
 		if(!tokenIsValid){
-			console.timeEnd('charge POST')
 			callback(400, { Error: "non-matching token for this user" });
 			return;
 		}
@@ -67,7 +65,6 @@ charge.post = function(data,callback){
 		dataLib.read('cart', data.payload.email, (err, cartData) => {
 
 			if(!cartData || cartData == undefined){
-				console.timeEnd('charge POST')
 				callback(400, {'Error': 'No Cart for a user with this token'})
 				return;
 			}
@@ -81,6 +78,7 @@ charge.post = function(data,callback){
 			stripeCustomerDataObj.email = data.payload.email
 
 			userCartData = cartData
+			
 			/* 
 				interact with STRIPE API
 				- customer lookup
@@ -117,18 +115,12 @@ charge.post = function(data,callback){
 
 				        });
 				    } catch (error) {
-				    	console.log('TRIED to make stripe user, error')
-				    	console.log(error)
-				    	console.timeEnd('charge POST')
 				       charge.callback(400, { Error: "Could not create a new customer" });
 				       return;
 				    }
 				} 
 
-			}catch(e){
-				console.log('error charging :(')
-	        	console.log(e)	        	
-	        	console.timeEnd('charge POST')
+			}catch(e){   	
 	            callback(400, { Error: "No Customer present" });
 	            return;
 			}
@@ -217,7 +209,7 @@ charge.prepChargeReqStr = (data) => {
 	return queryString.stringify(obj);
 }
 
-charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
+charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
 	stripeAPIPrepData = {
 		path: "/v1/charges",
 		method: "POST"
@@ -228,7 +220,6 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
 	try {		
 		
         charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
-        	console.timeEnd('charge POST')
         	
         	let mailObj = {
         		from: `ImagineLife Pizza Shop <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>`,
@@ -236,16 +227,6 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
         		subject: 'Receipt for pizza order',
         		text: `Thanks for your order of $${(stripeCustDataObj.cartTotal/100).toFixed(2)}`
         	}
-
-        	/*
-				email Reciept
-				- should this pass callback to sendMail method 
-				&& callback/confirm/fail from the mail?!
-
-				- should this lead to multiple next-steps?...
-					- send receipt
-					- send user confirmation through ui
-        	*/
 
         	doMail.send(mailObj).then(mailRes => {
         		charge.callback(200, { Success: "email sent! :) " });
@@ -255,13 +236,12 @@ charge.chargeStripeCustomer = (stripeAPIPrepData, stripeCustDataObj) => {
         	})
         })
         .catch(err => {
-        	console.log('makeStripeReq catch =>')
+        	console.log('chargeStripeCustomer err')
         	console.log(err)
-        	console.timeEnd('charge POST')
+        	
         	charge.callback(400, { Error: "Error charging" });	
         });
     } catch (error) {
-    	console.timeEnd('charge POST')
         charge.callback(400, { Error: "Could not charge" });
         return;
     }
