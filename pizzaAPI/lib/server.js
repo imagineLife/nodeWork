@@ -1,4 +1,4 @@
-//SERVER-reated tasks
+//SERVER-related tasks
 
 //Dependency
 const http = require('http');
@@ -12,16 +12,17 @@ const helpers = require('./helpers')
 const path = require('path');
 
 const util =require('util')
+const decoder = new stringDecoder('utf-8');
 
 /*
 	BELOW -> instead of console.log
 	name that is passed as a startup arguement
 	used when starting app & seeing only debug messages in the console via
-	NODE_DEBUG=workers node index.js
+	NODE_DEBUG=server node index.js
 
 	THIS also makes logging in the server terminal
 	 CONDITIONAL based on the startup command
-	NODE_DEBUG=workers node index.js
+	NODE_DEBUG=server node index.js
 */
 const debug = util.debuglog('server')
 
@@ -76,18 +77,13 @@ serverObj.sharedServer = (req, res) => {
 	//get requested headers
 	const hdrs = req.headers;
 
-	//get the payload, if is one
-	//include the encoding, utf-8
-	const decoder = new stringDecoder('utf-8');
-
 	//as new data comes in, it gets added to this var
 	let curIncomingString = ''
 
 	//when request objects emits event data, pass the data to a callback
 	//append the new incoming data to the curIncomingString with the decoder
 	req.on('data', data => {
-		debug('incoming data')
-		// debug(data)
+		debug('\x1b[32m%s\x1b[0m',`incoming request data ->${data}`)
 		curIncomingString += decoder.write(data)
 	})
 
@@ -99,7 +95,7 @@ serverObj.sharedServer = (req, res) => {
 
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
-
+		debug('\x1b[32m%s\x1b[0m', `handling ${chosenHandler}`)
 		// object to send to the handler
 		//PARSING the paload data with helpers method
 		let dataToReturn = {
@@ -111,6 +107,19 @@ serverObj.sharedServer = (req, res) => {
 		}
 
 		chosenHandler(dataToReturn, (statusCode, payload) =>{
+
+			//log some details
+			//response, request method & path
+			if(statusCode == 200){
+				debug('server 200 response! reqMethod & payloadStr')
+				debug('\x1b[32m%s\x1b[0m',`PATH: ${trimmedPathTxt.toUpperCase()}`)
+				debug('\x1b[32m%s\x1b[0m',`METHOD: ${reqMethod.toUpperCase()}`)
+			}
+			if(statusCode !== 200){
+				debug('server NON-200 response! reqMethod & payloadStr')
+				debug('\x1b[31m%s\x1b[0m',`PATH: ${trimmedPathTxt.toUpperCase()}`)
+				debug('\x1b[31m%s\x1b[0m',`METHOD: ${reqMethod.toUpperCase()}`)
+			}
 
 			//defaults if none given
 			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
@@ -124,23 +133,6 @@ serverObj.sharedServer = (req, res) => {
 			res.writeHead(statusCode);
 			res.end(payloadStr);
 
-			/*
-			If response is 200, print green
-				else print red
-			*/
-
-			//log some details
-			//response, request method & path
-			if(statusCode == 200){
-				debug('server 200 response! reqMethod & payloadStr')
-				debug('\x1b[32m%s\x1b[0m',reqMethod.toUpperCase())
-				debug('\x1b[32m%s\x1b[0m',trimmedPathTxt.toUpperCase())
-			}else{
-				debug('server NON-200 response! reqMethod & payloadStr')
-				debug('\x1b[31m%s\x1b[0m',reqMethod.toUpperCase())
-				debug('\x1b[31m%s\x1b[0m',trimmedPathTxt.toUpperCase())
-			}
-
 		})
 
 	})
@@ -149,9 +141,6 @@ serverObj.sharedServer = (req, res) => {
 
 //initialize server script
 serverObj.init = () => {
-
-	console.log('process.env AFTER setting')
-	console.log(process.env)
 
 	//Start the httpServer, listen on port 3000
 	serverObj.httpServer.listen(envConfig.httpPort, () => {
@@ -163,8 +152,8 @@ serverObj.init = () => {
 	//Start the httpsServer, listen on port 3001
 	serverObj.httpsServer.listen(envConfig.httpsPort, () => {
 		
-		//send to console in pink!
-		console.log(`\x1b[35m%s\x1b[0m`,`HTTPS Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`);
+		//send to console in fgWhite, bgBlue
+		console.log(`\x1b[44m\x1b[37m%s\x1b[0m`,`HTTPS Server is listening on port ${envConfig.httpsPort} in environment ${envConfig.friendlyEnvName} mode!!`);
 	})
 }
 
