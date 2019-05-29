@@ -1,0 +1,71 @@
+node libraries & modules used up to here
+
+Command Line Options
+	- NODE_DEBUG: logging by keyword
+
+Console
+	- console.log: passing args to change the color
+
+Crypto
+	- hashing pw
+	- using sha256
+	- encrypting
+	- decrypting
+
+File System
+	- open files
+	- close files
+	- truncate files
+	- readFiles
+
+Globals
+	- __dirname: creating a pathname
+	- module.exports: exporting file contents
+	- require: importing contents from another file
+
+HTTP
+HTTPS
+	- create servers
+	- lsiten on ports for connections
+		-with self-signed ssl certs
+	- create & craft requests
+	- modules
+		lots of 'default' features of node
+
+Path
+	- resolve a path
+	- normalize a path
+	- used to setup data & logging libs
+
+Process
+	- .env
+		to set variables
+
+QueryStrings
+	- take a url that was complex & explode it into a more coherent project
+	- taking in a HTTP req on the server
+
+String Decoder
+	- get the payload parsed
+
+Timers
+	- dont need to require explicitly
+		setInterval
+			making sure workers fire every x seconds
+
+URL
+	- parsing the hostname, pathname from the url
+
+Utilities
+	- Debuglog
+
+Buffer
+	-no require necessary
+	- decompressing & compressing strings to/from a buffer
+	- How node thinks of / represents streaming or payload data
+
+Zlib
+	- used for log compression / decompression
+
+Stream
+	ie when an incoming payload when a client makes a request
