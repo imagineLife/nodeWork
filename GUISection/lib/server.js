@@ -117,15 +117,12 @@ serverObj.sharedServer = (req, res) => {
 			payload: helpers.parseJsonToObject(curIncomingString)
 		}
 
-		chosenHandler(dataToReturn, (statusCode, payload) =>{
-			// debug('chosenHandler dataToReturn, statusCode & payload')
-			// debug(dataToReturn)
-			// debug(statusCode)
-			// debug(payload)
+		chosenHandler(dataToReturn, (statusCode, payload, contentType) =>{
 
 			//defaults if none given
 			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
 			payload = typeof(payload) === 'object' ? payload : {};
+			contentType = typeof(contentType) == 'string' ? contentType : 'json';
 
 			const payloadStr = JSON.stringify(payload)
 
