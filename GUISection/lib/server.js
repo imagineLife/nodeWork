@@ -49,14 +49,14 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 
 serverObj.myRouter = {
 	'' : routeHandlers.index,
-	'account/create': routeHandlers.account.create,
-	'account/edit': routeHandlers.account.edit,
-	'account/deletet': routeHandlers.account.deletet,
-	'session/create': routeHandlers.session.create,
-	'session/deleted': routeHandlers.session.deleted,
-	'checks/all': routeHandlers.checks.all,
-	'checks/create': routeHandlers.checks.create,
-	'checks/edit': routeHandlers.checks.edit,
+	// 'account/create': routeHandlers.account.create,
+	// 'account/edit': routeHandlers.account.edit,
+	// 'account/deletet': routeHandlers.account.deletet,
+	// 'session/create': routeHandlers.session.create,
+	// 'session/deleted': routeHandlers.session.deleted,
+	// 'checks/all': routeHandlers.checks.all,
+	// 'checks/create': routeHandlers.checks.create,
+	// 'checks/edit': routeHandlers.checks.edit,
 	'ping': routeHandlers.ping,
 	'api/users': routeHandlers.users,
 	'api/tokens' : routeHandlers.tokens,
@@ -103,10 +103,14 @@ serverObj.sharedServer = (req, res) => {
 	req.on('end', () => {
 
 		curIncomingString += decoder.end();
-
+		console.log('curIncomingString')
+		console.log(curIncomingString)
+		
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
-
+		console.log('chosenHandler')
+		console.log(chosenHandler)
+		
 		// object to send to the handler
 		let dataToReturn = {
 			trimmedPath: trimmedPathTxt,
