@@ -13,7 +13,7 @@ appObj.init = () => {
 	server.init();
 
 	//start webWorkers
-	webWorkers.init();
+	// webWorkers.init();
 
 }
 
