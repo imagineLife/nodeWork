@@ -21,9 +21,21 @@ let routeHandlers = {}
 //'index' handler
 routeHandlers.index = (data, callback) => {
 	console.log('INDEX HERE!');
+	
+	//error-handling
 	if(data.method !== 'get'){
 		callback(405,undefined,'html')
 	}
+
+	helpers.getTemplate('index', (err, resStr) => {
+		
+		//error-handling
+		if(err || !str){
+			callback(500, undefined, 'html')
+		}
+
+		callback(200, resStr, 'html')
+	})
 }
 
 
