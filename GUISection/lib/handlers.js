@@ -21,7 +21,9 @@ let routeHandlers = {}
 //'index' handler
 routeHandlers.index = (data, callback) => {
 	console.log('INDEX HERE!');
-	callback(undefined,undefined,'html')
+	if(data.method !== 'get'){
+		callback(405,undefined,'html')
+	}
 }
 
 
