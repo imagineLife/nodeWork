@@ -17,6 +17,14 @@ function checkForLengthAndType(data){
 //handlers
 let routeHandlers = {}
 
+
+//'index' handler
+routeHandlers.index = (data, callback) => {
+	console.log('INDEX HERE!');
+	callback(undefined,undefined,'html')
+}
+
+
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.users = (data, callback) => {
