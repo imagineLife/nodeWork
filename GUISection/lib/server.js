@@ -48,10 +48,19 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 })
 
 serverObj.myRouter = {
+	'' : routeHandlers.index,
+	'account/create': routeHandlers.account.create,
+	'account/edit': routeHandlers.account.edit,
+	'account/deletet': routeHandlers.account.deletet,
+	'session/create': routeHandlers.session.create,
+	'session/deleted': routeHandlers.session.deleted,
+	'checks/all': routeHandlers.checks.all,
+	'checks/create': routeHandlers.checks.create,
+	'checks/edit': routeHandlers.checks.edit,
 	'ping': routeHandlers.ping,
-	'users': routeHandlers.users,
-	'tokens' : routeHandlers.tokens,
-	'checks': routeHandlers.checks
+	'api/users': routeHandlers.users,
+	'api/tokens' : routeHandlers.tokens,
+	'api/checks': routeHandlers.checks
 }
 
 //Sharing logic to create http & https servers
