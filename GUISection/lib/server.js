@@ -121,13 +121,27 @@ serverObj.sharedServer = (req, res) => {
 
 			//defaults if none given
 			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
-			payload = typeof(payload) === 'object' ? payload : {};
 			contentType = typeof(contentType) == 'string' ? contentType : 'json';
 
-			const payloadStr = JSON.stringify(payload)
+			
+			//result payload holder
+			let payloadStr = '';
 
+			//json response types (api)
+			if(contentType == 'json'){
+				res.setHeader('Content-Type', 'application/json');
+				payload = typeof(payload) === 'object' ? payload : {};
+				payloadStr = JSON.stringify(payload);
+			}
+
+			//html response types (html)
+			if(contentType == 'html'){
+				res.setHeader('Content-Type', 'text/html');
+				payloadStr = typeof(payload) == 'string' ? payload : '';
+			}			
+
+			//return the response-parts that are constant
 			//writeHead comes on a response object, writitng the status code to the head
-			res.setHeader('Content-Type', 'application/json');
 			res.writeHead(statusCode);
 			res.end(payloadStr);
 
