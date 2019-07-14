@@ -152,7 +152,9 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 
 	//error-handling
 	if(!templateStringName){
-		return cb('A valid template was not specified')
+		console.log('templateStringName NOT VALID');
+		cb('A valid template was not specified')
+		return;
 	}
 
 	//template directory
@@ -166,10 +168,15 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 
 			//see helpers.interpolate
 			let interpolatedStr = helpers.interpolate(strRes, dataObj)
+			console.log('interpolatedStr res')
+			console.log('- - - - - ')
+			
 
-			return cb(false, interpolatedStr)
+			cb(false, interpolatedStr)
+			return;
 		}else{
-			return  cb('no template found')
+			cb('no template found')
+			return;
 		}
 	})
 }
@@ -223,6 +230,47 @@ helpers.interpolate = (str,dataObj) => {
 	console.log('// - - - - - //')
 	
 	return str
+}
+
+/*
+	Wrap the header && footer around the given template string
+	str: template string
+	data: a configuration  data object for the header && foter
+	cb : a callback fn
+*/
+helpers.addHeaderFooter = (str,dataObj,cb) => {
+	
+	//sanity Check
+	str = typeof(str) == 'string' && str.length > 0 ? str : '';
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {}
+
+	//get header template
+	helpers.getTemplate('_helper', dataObj, function(err,headerString){
+		
+		//error-handling
+		if(err || !headerString){
+			console.log('NO HEADER');
+			cb(`Couldn't find header template`)
+			return;
+		}
+
+		//get footer template
+		helpers.getTemplate('_footer', dataObj, function(err,footerString){
+			
+			//error-handling
+			if(err || !footerString){
+				console.log('NO FOOTER');
+				cb(`Couldn't find footer template`)
+				return;
+			}
+
+			console.log('WRAPPING RESULT in addHeader&Footer')
+			const wrappedResult = headerString+str+footerString;
+			cb(false, wrappedResult)
+			return;
+		})
+
+	})
 }
 
 module.exports = helpers;
