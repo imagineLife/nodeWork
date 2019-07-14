@@ -178,6 +178,10 @@ helpers.getTemplate = (templateStringName, cb) => {
 */
 helpers.interpolate = (str,dataObj) => {
 
+	//sanity check
+
+	// add the template globals to the data obj
+	// prepend the key names with 'global'
 	return str
 }
 
