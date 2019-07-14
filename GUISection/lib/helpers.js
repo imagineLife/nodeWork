@@ -139,6 +139,11 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 	}
 }
 
+//gets the string content of a template by name
+/*
+	templateStringName: String
+	cb: Fn 
+*/
 helpers.getTemplate = (templateStringName, cb) => {
 	
 	//sanity-checking the template string type && length
@@ -162,9 +167,8 @@ helpers.getTemplate = (templateStringName, cb) => {
 			cb('no template found')
 		}
 	})
-
-
-
 }
+
+
 
 module.exports = helpers;
