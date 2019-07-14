@@ -170,5 +170,15 @@ helpers.getTemplate = (templateStringName, cb) => {
 }
 
 
+//finds && replaces keys within a string
+/*
+	str: string
+	dataObj: object
+		contains keys && values that get replaced in the string
+*/
+helpers.interpolate = (str,dataObj) => {
+
+	return str
+}
 
 module.exports = helpers;
