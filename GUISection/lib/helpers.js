@@ -178,10 +178,44 @@ helpers.getTemplate = (templateStringName, cb) => {
 */
 helpers.interpolate = (str,dataObj) => {
 
-	//sanity check
-
+	console.log('INTERPOLATE _ _ _ ');
+	console.log('str')
+	console.log(str)
+	console.log('dataObj')
+	console.log(dataObj)
+	
+	console.log('// - - - - - //')
+	
+	//'sanity' check
+	str = typeof(str) == 'string' && str.length > 0 ? str : ''
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {}
+	
 	// add the template globals to the data obj
-	// prepend the key names with 'global'
+	for(let keyName in config.globalTemplate){
+		if(config.globalTemplate.hasOwnProperty(keyName)){
+	
+			// prepend the key names with 'global'
+			dataObj[`global.${keyName}`] = config.globalTemplate[keyName];
+		}
+	}
+
+	console.log('dataObj after first loop')
+	console.log(dataObj)
+	
+	for(let keyName in dataObj){
+		if(dataObj.hasOwnProperty(keyName) && typeof(dataObj[keyName] == 'string')){
+			const replace = dataObj[keyName]
+			const findVal = `{${keyName}}`
+
+			//update string
+			str = str.replace(findVal, replace)
+		}
+	}
+	
+	console.log('interpolate res str')
+	console.log(str)
+	console.log('// - - - - - //')
+	
 	return str
 }
 
