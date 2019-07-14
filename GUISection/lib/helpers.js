@@ -144,33 +144,39 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 	templateStringName: String
 	cb: Fn 
 */
-helpers.getTemplate = (templateStringName, cb) => {
+helpers.getTemplate = (templateStringName, dataObj, cb) => {
 	
-	//sanity-checking the template string type && length
-	let parsedTemplateName = typeof(templateStringName) == 'string' && templateStringName.length > 0 ? templateStringName : false;
+	//sanity-checking the template string && data
+	templateStringName = typeof(templateStringName) == 'string' && templateStringName.length > 0 ? templateStringName : false;
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {};
 
 	//error-handling
-	if(!parsedTemplateName){
-		cb('A valid template was not specified')
+	if(!templateStringName){
+		return cb('A valid template was not specified')
 	}
 
 	//template directory
 	const tempDir = path.join(__dirname, '/../templates/');
 	
 	//look for the template html file
-	fs.readFile(`${tempDir}${parsedTemplateName}.html`, 'utf8', (err, strRes) => {		
+	fs.readFile(`${tempDir}${templateStringName}.html`, 'utf8', (err, strRes) => {		
 		
 		//sanity-checking template response
 		if(!err && strRes && strRes.length > 0){
-			cb(false, strRes)
+
+			//see helpers.interpolate
+			let interpolatedStr = helpers.interpolate(strRes, dataObj)
+
+			return cb(false, interpolatedStr)
 		}else{
-			cb('no template found')
+			return  cb('no template found')
 		}
 	})
 }
 
 
-//finds && replaces keys within a string
+// finds && replaces keys within a string
+// using config data
 /*
 	str: string
 	dataObj: object
