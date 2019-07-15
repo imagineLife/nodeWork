@@ -62,7 +62,7 @@ serverObj.myRouter = {
 	'api/tokens' : routeHandlers.tokens,
 	'api/checks': routeHandlers.checks,
 	'favicon.ico' : routeHandlers.favicon,
-	'public': handlers.public
+	'public': routeHandlers.public
 }
 
 //Sharing logic to create http & https servers
@@ -105,13 +105,11 @@ serverObj.sharedServer = (req, res) => {
 	req.on('end', () => {
 
 		curIncomingString += decoder.end();
-		console.log('curIncomingString')
-		console.log(curIncomingString)
 		
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
-		console.log('chosenHandler')
-		console.log(chosenHandler)
+
+		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? routeHandlers.public : chosenHandler;
 		
 		// object to send to the handler
 		let dataToReturn = {
@@ -144,7 +142,32 @@ serverObj.sharedServer = (req, res) => {
 			if(contentType == 'html'){
 				res.setHeader('Content-Type', 'text/html');
 				payloadStr = typeof(payload) == 'string' ? payload : '';
-			}			
+			}	
+
+			if(contentType == 'favicon'){
+				res.setHeader('Content-Type', 'image/x-icon');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'css'){
+				res.setHeader('Content-Type', 'text/css');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'png'){
+				res.setHeader('Content-Type', 'image/png');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'jpg'){
+				res.setHeader('Content-Type', 'image/jpeg');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'plain'){
+				res.setHeader('Content-Type', 'text/plain');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
 
 			//return the response-parts that are constant
 			//writeHead comes on a response object, writitng the status code to the head
