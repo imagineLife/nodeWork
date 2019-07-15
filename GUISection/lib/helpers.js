@@ -35,14 +35,10 @@ helpers.hash = function(str){
 
 //parses a json STRING to an object in all cases without throwing erro
 helpers.parseJsonToObject = function(str){
-	console.log('parsing str')
-	console.log(str)
 	try{
 		const thisObj = JSON.parse(str);
 		return thisObj;
 	}catch(e){
-		console.log('ERROR parsing to str')
-		console.log(e)
 		return {}
 	}
 }
@@ -152,7 +148,6 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 
 	//error-handling
 	if(!templateStringName){
-		console.log('templateStringName NOT VALID');
 		cb('A valid template was not specified')
 		return;
 	}
@@ -168,12 +163,8 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 
 			//see helpers.interpolate
 			let interpolatedStr = helpers.interpolate(strRes, dataObj)
-			console.log('interpolatedStr res')
-			console.log('- - - - - ')
 			
-
-			cb(false, interpolatedStr)
-			return;
+			return cb(false, interpolatedStr)
 		}else{
 			cb('no template found')
 			return;
@@ -190,14 +181,6 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 		contains keys && values that get replaced in the string
 */
 helpers.interpolate = (str,dataObj) => {
-
-	console.log('INTERPOLATE _ _ _ ');
-	console.log('str')
-	console.log(str)
-	console.log('dataObj')
-	console.log(dataObj)
-	
-	console.log('// - - - - - //')
 	
 	//'sanity' check
 	str = typeof(str) == 'string' && str.length > 0 ? str : ''
@@ -211,9 +194,6 @@ helpers.interpolate = (str,dataObj) => {
 			dataObj[`global.${keyName}`] = config.globalTemplate[keyName];
 		}
 	}
-
-	console.log('dataObj after first loop')
-	console.log(dataObj)
 	
 	for(let keyName in dataObj){
 		if(dataObj.hasOwnProperty(keyName) && typeof(dataObj[keyName] == 'string')){
@@ -224,10 +204,6 @@ helpers.interpolate = (str,dataObj) => {
 			str = str.replace(findVal, replace)
 		}
 	}
-	
-	console.log('interpolate res str')
-	console.log(str)
-	console.log('// - - - - - //')
 	
 	return str
 }
@@ -245,26 +221,25 @@ helpers.addHeaderFooter = (str,dataObj,cb) => {
 	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {}
 
 	//get header template
-	helpers.getTemplate('_helper', dataObj, function(err,headerString){
+	helpers.getTemplate('_header', dataObj, (err,headerString) => {
 		
 		//error-handling
 		if(err || !headerString){
-			console.log('NO HEADER');
+
 			cb(`Couldn't find header template`)
 			return;
 		}
 
 		//get footer template
-		helpers.getTemplate('_footer', dataObj, function(err,footerString){
+		helpers.getTemplate('_footer', dataObj, (err,footerString) => {
 			
 			//error-handling
 			if(err || !footerString){
-				console.log('NO FOOTER');
+
 				cb(`Couldn't find footer template`)
 				return;
 			}
 
-			console.log('WRAPPING RESULT in addHeader&Footer')
 			const wrappedResult = headerString+str+footerString;
 			cb(false, wrappedResult)
 			return;
