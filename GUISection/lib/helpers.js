@@ -248,4 +248,28 @@ helpers.addHeaderFooter = (str,dataObj,cb) => {
 	})
 }
 
+helpers.getStaticAsset = (fileName, cb) => {
+	
+	//sanity-check
+	fileName = typeof(fileName) == 'string' && fileName.length > -1 ? fileName : false;
+
+	if(!fileName){
+		return cb('Valid filename was not specified')
+	}
+
+	const publicDir = path.join(__dirname, '/../public/')
+	
+	//get the assset from the file-system
+	fs.readFile(publicDir+fileName, (err, fileData) => {
+		
+		//error-handling
+		if(err !== null || !fileData){
+			return cb('no file could be found')
+		}
+
+		return cb(false, fileData)
+	})
+
+}
+
 module.exports = helpers;
