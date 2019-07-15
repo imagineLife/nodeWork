@@ -57,6 +57,26 @@ routeHandlers.index = (data, callback) => {
 	})
 }
 
+// Favicon handler
+routeHandlers.favicon = (data, cb) => {
+	
+	//error-handling
+	if(data.method !== 'get'){
+		return cb(405)
+	}
+
+	//get the asset
+	helpers.getStaticAsset('favicon.ico', (err, assetData) => {
+		
+		//error-handling
+		if(err || !data){
+			return cb(500)
+		}
+
+		cb(200, assetData, 'favicon')
+
+	})
+}
 
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
