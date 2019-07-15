@@ -60,7 +60,9 @@ serverObj.myRouter = {
 	'ping': routeHandlers.ping,
 	'api/users': routeHandlers.users,
 	'api/tokens' : routeHandlers.tokens,
-	'api/checks': routeHandlers.checks
+	'api/checks': routeHandlers.checks,
+	'favicon.ico' : routeHandlers.favicon,
+	'public': handlers.public
 }
 
 //Sharing logic to create http & https servers
