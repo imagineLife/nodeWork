@@ -78,6 +78,54 @@ routeHandlers.favicon = (data, cb) => {
 	})
 }
 
+// public asset handler
+routeHandlers.public = (data, cb) => {
+
+	
+	
+	//method checking
+	if(data.method !== 'get'){
+		return cb(405)
+	}
+
+	//get just the file-name
+	const trimmedAsset = data.trimmedPath.replace('public/','').trim()
+	
+	//sanity check the asset name
+	if(!(trimmedAsset.length > 0)){
+		return cb(404)
+	}
+
+	//get the asset
+	helpers.getStaticAsset(trimmedAsset, (err, assetData)=> {
+		
+		//error-handling
+		if(err || !data){
+			return cb(500)
+		}
+
+		//default content-type
+		let contentType = 'plain';
+
+		//conditional content-type
+		if(trimmedAsset.indexOf('.css') > -1){
+			contentType = 'css'
+		}
+		if(trimmedAsset.indexOf('.png') > -1){
+			contentType = 'png'
+		}
+		if(trimmedAsset.indexOf('.jpg') > -1){
+			contentType = 'jpg'
+		}
+		if(trimmedAsset.indexOf('.ico') > -1){
+			contentType = 'favicon'
+		}
+
+		cb(200, assetData, contentType);
+	})
+
+}
+
 //USERS handler
 //FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.users = (data, callback) => {
