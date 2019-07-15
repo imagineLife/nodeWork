@@ -20,21 +20,40 @@ let routeHandlers = {}
 
 //'index' handler
 routeHandlers.index = (data, callback) => {
-	
+
+	let stringTemplateData; 
+
 	//error-handling
 	if(data.method !== 'get'){
 		callback(405,undefined,'html')
 	}
 
 	//fetch template
-	helpers.getTemplate('index', (err, resStr) => {
+	helpers.getTemplate('index', stringTemplateData, (err, resStr) => {
 		
 		//error-handling
 		if(!(!err && resStr)){
 			callback(500, undefined, 'html')
-		}else{
-			callback(200, resStr, 'html')
 		}
+			
+			//some template data for html string interpolation
+		stringTemplateData = {
+			'head.title': 'Demo Title',
+			'head.description': 'demo meta description',
+			'body.title': 'demo body title',
+			'body.class': 'demo-body-class'
+		}
+
+		helpers.addHeaderFooter(resStr, stringTemplateData, (err, resultStr) => {
+
+			//error-handling
+			if(err || !resultStr){
+				return callback(500, undefined, 'html')
+			}
+
+			return callback(200, resultStr, 'html')
+		})
+
 	})
 }
 
@@ -761,7 +780,6 @@ routeHandlers.doChecks.get = (data, callback) => {
 	opt: protcol, url, method, successCodes, timeoutSeconds, AT LEAST ONE OF THESE
 */
 routeHandlers.doChecks.put = (data, callback) => {
-	console.log('put payload')
 	//check that the phoneNumber is value
 	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 
