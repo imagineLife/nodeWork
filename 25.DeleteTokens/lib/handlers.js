@@ -306,65 +306,55 @@ routeHandlers.doTokens = {};
 //a user creating a  token to use later
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
-	console.log('doTokens data')
-	console.log(data)
 	let dataPhone = data.payload.phoneNumber
 	//parse phone & pw
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
-	if(pn && pw){
-
-		//lookup user who matches the phoneNumber
-		dataLib.read('users', pn, (err, userData) => {
-
-			if(!err && userData){
-
-				//hash pw to compare to STORED hashed pw
-				const hashedPW = helpers.hash(pw);
-
-				//check if hashed pw is same as SAVED hashed pw
-				if(hashedPW == userData.hashedPW){
-
-					//create new TOKEN for this user
-					const tokenId = helpers.createRandomString(20);
-
-					//set exp date 1 hour in the future
-					const expDate = Date.now() + 1000 * 60 * 60;
-
-					//store the tokenId as a 'token Object'
-					const tokenObj = {
-						phone: pn,
-						tokenId: tokenId,
-						expires: expDate
-					}
-
-					//store the tokenObj
-					//NAME the file the tokenID
-					dataLib.create('tokens', tokenId, tokenObj, (err) => {
-						if(!err){
-							callback(200, tokenObj)
-						}else{
-							callback(500, {'Error' : 'Couldnt create new token'})
-						}
-					})
-
-				}else{
-					callback(400, {'Error': 'PW did not match the stored pw'})
-				}
-
-			}else{
-				callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
-			}
-
-		})
-
-		//match the user against the pw
-
-	}else{
-		callback(400,{'Error': 'Missing phone or pw'})
+	if(!pn || !pw){
+		return callback(400,{'Error': 'Missing phone or pw'})
 	}
 
+	//lookup user who matches the phoneNumber
+	dataLib.read('users', pn, (err, userData) => {
+
+		//sanity check response
+		if(err || userData == 'undefined'){
+			return callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
+		}
+
+		//hash pw to compare to STORED hashed pw
+		const hashedPW = helpers.hash(pw);
+
+		//check if hashed pw is same as SAVED hashed pw
+		if(hashedPW !== userData.hashedPW){
+			return callback(400, {'Error': 'PW did not match the stored pw'})
+		}
+
+		//create new TOKEN for this user
+		const tokenId = helpers.createRandomString(20);
+
+		//set exp date 1 hour in the future
+		const expDate = Date.now() + 1000 * 60 * 60;
+
+		//store the tokenId as a 'token Object'
+		const tokenObj = {
+			phone: pn,
+			tokenId: tokenId,
+			expires: expDate
+		}
+
+		//store the tokenObj
+		//NAME the file the tokenID
+		dataLib.create('tokens', tokenId, tokenObj, (err) => {
+			
+			if(err){
+				return callback(500, {'Error' : 'Couldnt create new token'});
+			}
+
+			return callback(200, tokenObj)
+		})
+	})
 }
 
 //Tokens get
@@ -380,27 +370,21 @@ routeHandlers.doTokens.get = (data, callback) => {
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(id){
-
-		//lookup the user from the filesystem
-		dataLib.read('tokens',id, (err, storedTokenData) => {
-			
-			if(!err && storedTokenData){
-
-				//REMOVE hashed pw from the user object before showing the user
-				callback(200, storedTokenData);
-
-			}else{
-
-				//NOT FOUND USER
-				callback(404)
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like incorrect token id'})
+	if(!id || id == 'undefined'){
+		return callback(400, {'Error': 'Seems like incorrect token id'})
 	}
 
+	//lookup the user from the filesystem
+	dataLib.read('tokens',id, (err, storedTokenData) => {
+		
+		if(err || !storedTokenData){
+			//NOT FOUND USER
+			return callback(404)
+		}
+
+		//REMOVE hashed pw from the user object before showing the user
+		callback(200, storedTokenData);
+	})
 }
 
 /*
@@ -414,42 +398,34 @@ routeHandlers.doTokens.put = (data, callback) => {
 	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
-	console.log('put data')
-	console.log(id)
-	console.log(extend)
 	if(id && (extend == true)){
 
 		//lookup token based on id
 		dataLib.read('tokens',id, (err,tokenData) => {
 
-			if(!err && tokenData){
-
-				//check for EXPIRED token
-				if(tokenData.expires > Date.now()){
-
-					//set expiration of the token an hour from now
-					tokenData.expires = Date.now()  + 1000 * 60 * 60;
-
-					//store the new token data
-					dataLib.update('tokens', id, tokenData, (err) => {
-
-						if(!err){
-							callback(200)
-						}else{
-							callback(500, {'Error': 'Couldnt update the token exp for some reason'})
-						}
-
-					})
-
-				}else{
-					callback(400, {'Error': 'The token has already expired & cannot be extended'})
-				}
-
-
-			}else{
-				callback(400, {'Error': 'Specified token NOT there'})
+			if(err || !tokenData){
+				return callback(400, {'Error': 'Specified token NOT there'})
+			}
+			
+			let notExpired = tokenData.expires > Date.now()
+			//check for EXPIRED token
+			if(!notExpired){
+				return callback(400, {'Error': 'The token has already expired & cannot be extended'})
 			}
 
+			//set expiration of the token an hour from now
+			tokenData.expires = Date.now()  + 1000 * 60 * 60;
+
+			//store the new token data
+			dataLib.update('tokens', id, tokenData, (err) => {
+
+				if(!err){
+					callback(200)
+				}else{
+					callback(500, {'Error': 'Couldnt update the token exp for some reason'})
+				}
+
+			})
 		})
 
 	}else{
@@ -467,33 +443,29 @@ routeHandlers.doTokens.delete = (data, callback) => {
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(id){
-
-		//lookup the token from the filesystem
-		dataLib.read('tokens',id, (err, storedUserData) => {
-			
-			if(!err && storedUserData){
-
-				//REMOVE user
-				dataLib.delete('tokens', id, (err) => {
-
-					if(!err){
-						callback(200, {'DELETED': 'Successfully'})
-					}else{
-						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-					}
-
-				})
-			}else{
-				//NOT FOUND USER
-				callback(400, {'Error': 'Couldnt Find token by id'})
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing id field'})
+	if(!id){
+		return callback(400, {'Error': 'Seems like Missing id field'})
 	}
 
+	//lookup the token from the filesystem
+	dataLib.read('tokens',id, (err, storedUserData) => {
+		
+		//sanity check the token/user data
+		if(err || !storedUserData){
+			return callback(400, {'Error': 'Couldnt Find token by id'})
+		}
+
+		//REMOVE user
+		dataLib.delete('tokens', id, (err) => {
+
+			if(!err){
+				callback(200, {'DELETED': 'Successfully'})
+			}else{
+				callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+			}
+
+		})
+	})
 }
 
 
