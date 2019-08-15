@@ -327,34 +327,32 @@ routeHandlers.doTokens.post = (data, callback) => {
 		const hashedPW = helpers.hash(pw);
 
 		//check if hashed pw is same as SAVED hashed pw
-		if(hashedPW == userData.hashedPW){
-
-			//create new TOKEN for this user
-			const tokenId = helpers.createRandomString(20);
-
-			//set exp date 1 hour in the future
-			const expDate = Date.now() + 1000 * 60 * 60;
-
-			//store the tokenId as a 'token Object'
-			const tokenObj = {
-				phone: pn,
-				tokenId: tokenId,
-				expires: expDate
-			}
-
-			//store the tokenObj
-			//NAME the file the tokenID
-			dataLib.create('tokens', tokenId, tokenObj, (err) => {
-				if(!err){
-					callback(200, tokenObj)
-				}else{
-					callback(500, {'Error' : 'Couldnt create new token'})
-				}
-			})
-
-		}else{
-			callback(400, {'Error': 'PW did not match the stored pw'})
+		if(hashedPW !== userData.hashedPW){
+			return callback(400, {'Error': 'PW did not match the stored pw'})
 		}
+
+		//create new TOKEN for this user
+		const tokenId = helpers.createRandomString(20);
+
+		//set exp date 1 hour in the future
+		const expDate = Date.now() + 1000 * 60 * 60;
+
+		//store the tokenId as a 'token Object'
+		const tokenObj = {
+			phone: pn,
+			tokenId: tokenId,
+			expires: expDate
+		}
+
+		//store the tokenObj
+		//NAME the file the tokenID
+		dataLib.create('tokens', tokenId, tokenObj, (err) => {
+			if(!err){
+				callback(200, tokenObj)
+			}else{
+				callback(500, {'Error' : 'Couldnt create new token'})
+			}
+		})
 	})
 }
 
