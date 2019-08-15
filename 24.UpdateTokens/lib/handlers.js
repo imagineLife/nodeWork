@@ -313,58 +313,53 @@ routeHandlers.doTokens.post = (data, callback) => {
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
-	if(pn && pw){
-
-		//lookup user who matches the phoneNumber
-		dataLib.read('users', pn, (err, userData) => {
-
-			if(!err && userData){
-
-				//hash pw to compare to STORED hashed pw
-				const hashedPW = helpers.hash(pw);
-
-				//check if hashed pw is same as SAVED hashed pw
-				if(hashedPW == userData.hashedPW){
-
-					//create new TOKEN for this user
-					const tokenId = helpers.createRandomString(20);
-
-					//set exp date 1 hour in the future
-					const expDate = Date.now() + 1000 * 60 * 60;
-
-					//store the tokenId as a 'token Object'
-					const tokenObj = {
-						phone: pn,
-						tokenId: tokenId,
-						expires: expDate
-					}
-
-					//store the tokenObj
-					//NAME the file the tokenID
-					dataLib.create('tokens', tokenId, tokenObj, (err) => {
-						if(!err){
-							callback(200, tokenObj)
-						}else{
-							callback(500, {'Error' : 'Couldnt create new token'})
-						}
-					})
-
-				}else{
-					callback(400, {'Error': 'PW did not match the stored pw'})
-				}
-
-			}else{
-				callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
-			}
-
-		})
-
-		//match the user against the pw
-
-	}else{
+	if(!pn || !pw){
 		callback(400,{'Error': 'Missing phone or pw'})
 	}
 
+	//lookup user who matches the phoneNumber
+	dataLib.read('users', pn, (err, userData) => {
+
+		if(!err && userData){
+
+			//hash pw to compare to STORED hashed pw
+			const hashedPW = helpers.hash(pw);
+
+			//check if hashed pw is same as SAVED hashed pw
+			if(hashedPW == userData.hashedPW){
+
+				//create new TOKEN for this user
+				const tokenId = helpers.createRandomString(20);
+
+				//set exp date 1 hour in the future
+				const expDate = Date.now() + 1000 * 60 * 60;
+
+				//store the tokenId as a 'token Object'
+				const tokenObj = {
+					phone: pn,
+					tokenId: tokenId,
+					expires: expDate
+				}
+
+				//store the tokenObj
+				//NAME the file the tokenID
+				dataLib.create('tokens', tokenId, tokenObj, (err) => {
+					if(!err){
+						callback(200, tokenObj)
+					}else{
+						callback(500, {'Error' : 'Couldnt create new token'})
+					}
+				})
+
+			}else{
+				callback(400, {'Error': 'PW did not match the stored pw'})
+			}
+
+		}else{
+			callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
+		}
+
+	})
 }
 
 //Tokens get
