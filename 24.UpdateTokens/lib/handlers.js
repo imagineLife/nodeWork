@@ -347,11 +347,12 @@ routeHandlers.doTokens.post = (data, callback) => {
 		//store the tokenObj
 		//NAME the file the tokenID
 		dataLib.create('tokens', tokenId, tokenObj, (err) => {
-			if(!err){
-				callback(200, tokenObj)
-			}else{
-				callback(500, {'Error' : 'Couldnt create new token'})
+			
+			if(err){
+				return callback(500, {'Error' : 'Couldnt create new token'});
 			}
+
+			return callback(200, tokenObj)
 		})
 	})
 }
