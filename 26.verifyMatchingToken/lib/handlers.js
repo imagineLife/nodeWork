@@ -56,48 +56,61 @@ routeHandlers.doUsers.post = function(data,callback){
 		return callback(400,{'Error': 'Missing Reqd fields'})
 	}
 
-	/*
-		make sure that user doesn't already exist
-		USING the CRUD handlers from the data directory as a dependence above
-		READ from users data using this data
-	*/
+	//get token
+	const passedToken = data.headers.token || null;
+	
+	if(!passedToken){
+		return callback(403, {"Error": "missing token in header"})
+	}
 
-	//check if user phoneNumber already exists
-	//takes dir, fileName,callback
-	dataLib.read('users', pn, (err,result) => {
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
 
-		//User already exists
-		if(!err){
-			return callback(400,{'Error': 'A User with that number already exists'})
+		if(tokenIsValid !== true){
+			return callback(403, {"ERROR": "invalid token"})
 		}
-		//Hash the password using built in library called crypto,
-		//created in HELPERS file,
-		//included in dependencies
-		const hashedPW = helpers.hash(pw);
+		/*
+			make sure that user doesn't already exist
+			USING the CRUD handlers from the data directory as a dependence above
+			READ from users data using this data
+		*/
 
-		//if the hashing succeeded save the user data
-		//else below
-		if(!hashedPW){
-			return callback(500, {'ERROR': 'Could not hash'})
-		}
-		//create a user object from user data
-		let userObj = {
-			firstName: fn,
-			lastName: ln,
-			phone: pn,
-			hashedPW: hashedPW,
-			tosAgreement: true
-		}
+		//check if user phoneNumber already exists
+		//takes dir, fileName,callback
+		dataLib.read('users', pn, (err,result) => {
 
-		//STORE this user to disk
-		//create method takes dir,fileName,data,callback
-		dataLib.create('users',pn,userObj,(err) => {
+			//User already exists
 			if(!err){
-				callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
-			}else{
-				console.log(err)
-				callback(500, {'ERROR': 'Could not create the new user'})
+				return callback(400,{'Error': 'A User with that number already exists'})
 			}
+			//Hash the password using built in library called crypto,
+			//created in HELPERS file,
+			//included in dependencies
+			const hashedPW = helpers.hash(pw);
+
+			//if the hashing succeeded save the user data
+			//else below
+			if(!hashedPW){
+				return callback(500, {'ERROR': 'Could not hash'})
+			}
+			//create a user object from user data
+			let userObj = {
+				firstName: fn,
+				lastName: ln,
+				phone: pn,
+				hashedPW: hashedPW,
+				tosAgreement: true
+			}
+
+			//STORE this user to disk
+			//create method takes dir,fileName,data,callback
+			dataLib.create('users',pn,userObj,(err) => {
+				if(!err){
+					callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
+				}else{
+					console.log(err)
+					callback(500, {'ERROR': 'Could not create the new user'})
+				}
+			})
 		})
 	})
 }
@@ -176,8 +189,6 @@ routeHandlers.doUsers.put = function(data,callback){
 }
 
 //Users GET
-// TODO - - - - NOTE: only let an authenticated users access their obj.
-//	
 routeHandlers.doUsers.get = function(data,callback){
 
 	//TEST this by using postman with
@@ -225,9 +236,6 @@ routeHandlers.doUsers.get = function(data,callback){
 }
 
 //Users DELETE
-//ONLY let auth'd users delete
-//DONT let them delete OTHERS' accts
-//CLEANUP other data files associated with this user
 routeHandlers.doUsers.delete = function(data,callback){
 	
 	//check that phone is valid
@@ -238,20 +246,34 @@ routeHandlers.doUsers.delete = function(data,callback){
 		return callback(400, {'Error': 'Seems like Missing phoneNumber field'})
 	}
 
-	//lookup the user from the filesystem
-	dataLib.read('users',phoneNumber, (err, storedUserData) => {
-		
-		//NOT FOUND USER
-		if(err || !storedUserData){
-			return callback(400, {'Error': 'Couldnt Find user'})
+	//get token
+	const passedToken = data.headers.token || null;
+	
+	if(!passedToken){
+		return callback(403, {"Error": "missing token in header"})
+	}
+
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+
+		if(tokenIsValid !== true){
+			return callback({403: "Invalid token"})
 		}
 
-		//REMOVE user
-		dataLib.delete('users', phoneNumber, (err) => {
-			if(err){
-			  return callback(500, {'Error' :'Couldnt delete this user for some odd reason'});
+		//lookup the user from the filesystem
+		dataLib.read('users',phoneNumber, (err, storedUserData) => {
+			
+			//NOT FOUND USER
+			if(err || !storedUserData){
+				return callback(400, {'Error': 'Couldnt Find user'})
 			}
-			return callback(200, {'DELETED': 'Successfully'})
+
+			//REMOVE user
+			dataLib.delete('users', phoneNumber, (err) => {
+				if(err){
+				  return callback(500, {'Error' :'Couldnt delete this user for some odd reason'});
+				}
+				return callback(200, {'DELETED': 'Successfully'})
+			})
 		})
 	})
 }
