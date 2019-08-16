@@ -189,6 +189,7 @@ routeHandlers.doUsers.put = function(data,callback){
 // TODO - - - - NOTE: only let an authenticated users access their obj.
 //	
 routeHandlers.doUsers.get = function(data,callback){
+	console.log('GET HERE!!');
 
 	//TEST this by using postman with
 	// http://localhost:3000/users?phoneNumber=1238675309
@@ -199,6 +200,15 @@ routeHandlers.doUsers.get = function(data,callback){
 
 	//if phone is valid
 	if(phoneNumber){
+
+		//get token
+		const passedToken = data.headers.token || null;
+		console.log('passedToken')
+		console.log(passedToken)
+		
+		if(!passedToken){
+			callback(403, {"Error": "missing token in header"})
+		}
 
 		//lookup the user from the filesystem
 		dataLib.read('users',phoneNumber, (err, storedUserData) => {
@@ -485,7 +495,6 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,phoneNumber,callback)
 			callback(false)
 		}
 
-		callback(true)
 	})
 }
 
