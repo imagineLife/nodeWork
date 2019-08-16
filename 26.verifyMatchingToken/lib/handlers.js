@@ -29,7 +29,7 @@ routeHandlers.users = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doUsers[data.method](data,callback);
 	}else{
-		callback(405)
+		return callback(405)
 	}
 }
 
@@ -105,10 +105,10 @@ routeHandlers.doUsers.post = function(data,callback){
 			//create method takes dir,fileName,data,callback
 			dataLib.create('users',pn,userObj,(err) => {
 				if(!err){
-					callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
+					return callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
 				}else{
 					console.log(err)
-					callback(500, {'ERROR': 'Could not create the new user'})
+					return callback(500, {'ERROR': 'Could not create the new user'})
 				}
 			})
 		})
@@ -223,12 +223,12 @@ routeHandlers.doUsers.get = function(data,callback){
 
 				//REMOVE hashed pw from the user object before showing the user
 				delete storedUserData.hashedPW;
-				callback(200, storedUserData);
+				return callback(200, storedUserData);
 
 			}else{
 
 				//NOT FOUND USER
-				callback(404)
+				return callback(404)
 			}
 		})
 	})
@@ -280,11 +280,11 @@ routeHandlers.doUsers.delete = function(data,callback){
 
 //ping handler
 routeHandlers.ping = function(data, callback){
-	callback(200)
+	return callback(200)
 }
 
 routeHandlers.notFound = function(data, callback){
-	callback(404)
+	return callback(404)
 }
 
 
@@ -302,7 +302,7 @@ routeHandlers.tokens = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doTokens[data.method](data,callback);
 	}else{
-		callback(405)
+		return callback(405)
 	}
 }
 
@@ -393,7 +393,7 @@ routeHandlers.doTokens.get = (data, callback) => {
 		}
 
 		//REMOVE hashed pw from the user object before showing the user
-		callback(200, storedTokenData);
+		return callback(200, storedTokenData);
 	})
 }
 
