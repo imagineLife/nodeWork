@@ -95,7 +95,6 @@ routeHandlers.doUsers.post = function(data,callback){
 			if(!err){
 				callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
 			}else{
-				console.log('create user error')
 				console.log(err)
 				callback(500, {'ERROR': 'Could not create the new user'})
 			}
@@ -130,7 +129,7 @@ routeHandlers.doUsers.put = function(data,callback){
 		return callback(403, {"Error": "missing token in header"})
 	}
 
-	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (err, tokenIsValid) => {
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
 		
 		if(!tokenIsValid){
 			return callback(403, {"ERROR": "invalid token"})
@@ -167,7 +166,6 @@ routeHandlers.doUsers.put = function(data,callback){
 				if(!err){
 					return callback(200)
 				}else{
-					console.log('err!')
 					console.log(err)
 					return callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
@@ -186,6 +184,7 @@ routeHandlers.doUsers.get = function(data,callback){
 	// http://localhost:3000/users?phoneNumber=1238675309
 	// should return the user object
 
+
 	//check that the phoneNumber is value
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
@@ -198,12 +197,12 @@ routeHandlers.doUsers.get = function(data,callback){
 	const passedToken = data.headers.token || null;
 	
 	if(!passedToken){
-		callback(403, {"Error": "missing token in header"})
+		return callback(403, {"Error": "missing token in header"})
 	}
 
-	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (err, tokenIsValid) => {
-		
-		if(!tokenIsValid){
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+
+		if(tokenIsValid !== true){
 			return callback(403, {"ERROR": "invalid token"})
 		}
 
@@ -455,7 +454,7 @@ routeHandlers.doTokens.delete = (data, callback) => {
 
 //VERIFY that a given tokenID MATCHES a given user
 routeHandlers.doTokens.verifyTokenMatch = function(tokenID,phoneNumber,callback){
-
+	
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
 
@@ -464,8 +463,10 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,phoneNumber,callback)
 			return callback(false)
 		}
 
+		const tokenStillValid = storedTokenData.expires > Date.now();
+
 		//Check that the tokenID MATCHES the given user AND has not expired
-		if(storedTokenData.phone !== phoneNumber || storedTokenData.expires > Date.now()){
+		if((storedTokenData.phone !== phoneNumber) || (tokenStillValid !== true)){
 			return callback(false)
 		}
 
