@@ -189,7 +189,6 @@ routeHandlers.doUsers.put = function(data,callback){
 // TODO - - - - NOTE: only let an authenticated users access their obj.
 //	
 routeHandlers.doUsers.get = function(data,callback){
-	console.log('GET HERE!!');
 
 	//TEST this by using postman with
 	// http://localhost:3000/users?phoneNumber=1238675309
@@ -203,26 +202,31 @@ routeHandlers.doUsers.get = function(data,callback){
 
 		//get token
 		const passedToken = data.headers.token || null;
-		console.log('passedToken')
-		console.log(passedToken)
 		
 		if(!passedToken){
 			callback(403, {"Error": "missing token in header"})
 		}
 
-		//lookup the user from the filesystem
-		dataLib.read('users',phoneNumber, (err, storedUserData) => {
-			if(!err && storedUserData){
-
-				//REMOVE hashed pw from the user object before showing the user
-				delete storedUserData.hashedPW;
-				callback(200, storedUserData);
-
-			}else{
-
-				//NOT FOUND USER
-				callback(404)
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (err, tokenIsValid) => {
+			
+			if(!tokenIsValid){
+				return callback(403, {"ERROR": "invalid token"})
 			}
+
+			//lookup the user from the filesystem
+			dataLib.read('users',phoneNumber, (err, storedUserData) => {
+				if(!err && storedUserData){
+
+					//REMOVE hashed pw from the user object before showing the user
+					delete storedUserData.hashedPW;
+					callback(200, storedUserData);
+
+				}else{
+
+					//NOT FOUND USER
+					callback(404)
+				}
+			})
 		})
 
 	}else{	
@@ -236,30 +240,20 @@ routeHandlers.doUsers.get = function(data,callback){
 //DONT let them delete OTHERS' accts
 //CLEANUP other data files associated with this user
 routeHandlers.doUsers.delete = function(data,callback){
-	console.log('starting routeHandler doUsers.delete')
-	console.log('- - - - -')
 	
 	//check that phone is valid
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
 	if(phoneNumber){
-		console.log('IS phone Number')
 
 		//lookup the user from the filesystem
 		dataLib.read('users',phoneNumber, (err, storedUserData) => {
-			console.log('READ userData')
-			console.log(storedUserData)
 			
 			if(!err && storedUserData){
 
 				//REMOVE user
 				dataLib.delete('users', phoneNumber, (err) => {
-					console.log('IN err fn of dataLib.delete')
-					console.log('the err...')
-					console.log(err)
-					console.log('- - - - -')
-
 					if(!err){
 						callback(200, {'DELETED': 'Successfully'})
 					}else{
@@ -492,8 +486,10 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,phoneNumber,callback)
 
 		//Check that the tokenID MATCHES the given user AND has not expired
 		if(storedTokenData.phone !== phoneNumber || storedTokenData.expires > Date.now()){
-			callback(false)
+			return callback(false)
 		}
+
+		return callback(true)
 
 	})
 }
