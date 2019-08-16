@@ -8,9 +8,10 @@ const dataLib = require('./data')
 const helpers = require('./helpers')
 const config = require('./config')
 
+const isString = str => typeof(str) == 'string';
 //request data checker fn
 function checkForLengthAndType(data){
-	let res = typeof(data) == 'string' && data.trim().length > 0 ? data.trim() : false;
+	let res = isString(data) && data.trim().length > 0 ? data.trim() : false;
 	return res
 }
 
@@ -48,7 +49,7 @@ routeHandlers.doUsers.post = function(data,callback){
 	//check that all req'd fields exist
 	const fn = checkForLengthAndType(data.payload.firstName)
 	const ln = checkForLengthAndType(data.payload.lastName)
-	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const pn = isString(dataPhone) && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
@@ -124,7 +125,7 @@ routeHandlers.doUsers.post = function(data,callback){
 routeHandlers.doUsers.put = function(data,callback){
 	
 	//check that the phoneNumber is value
-	const phoneNumber = typeof(data.payload.phoneNumber) == 'string' && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.payload.phoneNumber) && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
 
 	//check for optional fields
 	const fn = checkForLengthAndType(data.payload.firstName)
@@ -198,7 +199,7 @@ routeHandlers.doUsers.get = function(data,callback){
 
 
 	//check that the phoneNumber is value
-	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.queryStrObj.phoneNumber) && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
 	if(!phoneNumber){
@@ -240,7 +241,7 @@ routeHandlers.doUsers.get = function(data,callback){
 routeHandlers.doUsers.delete = function(data,callback){
 	
 	//check that phone is valid
-	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.queryStrObj.phoneNumber) && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
 	if(!phoneNumber){
@@ -319,7 +320,7 @@ routeHandlers.doTokens = {};
 routeHandlers.doTokens.post = (data, callback) => {
 	let dataPhone = data.payload.phoneNumber
 	//parse phone & pw
-	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const pn = isString(dataPhone) && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
 	if(!pn || !pw){
@@ -378,7 +379,7 @@ routeHandlers.doTokens.get = (data, callback) => {
 	// should return the user object
 
 	//check that the ID is value
-	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
+	const id = isString(data.queryStrObj.id) && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
 	if(!id || id == 'undefined'){
@@ -406,7 +407,7 @@ routeHandlers.doTokens.get = (data, callback) => {
 routeHandlers.doTokens.put = (data, callback) => {
 	
 	//get id & extend boolean from payload
-	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
+	const id = isString(data.payload.id) && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
 	if(!id || !(extend == true)){
@@ -447,7 +448,7 @@ routeHandlers.doTokens.put = (data, callback) => {
 routeHandlers.doTokens.delete = (data, callback) => {
 	
 	//check that id is valid
-	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
+	const id = isString(data.queryStrObj.id) && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
 	if(!id){
@@ -534,29 +535,17 @@ routeHandlers.doChecks = {};
 */
 routeHandlers.doChecks.post = (data, callback) => {
 
-	console.log('data.payload')
-	console.log(data)
 	//check if protocall is in post data
-	var sentProtocol = typeof(data.payload.protocol) == 'string' && ['http','https'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
-	var sentUrl = typeof(data.payload.url) == 'string' && data.payload.url.length > 0 ? data.payload.url : false;
-	var sentMethod = typeof(data.payload.method) == 'string' && ['post','get','put','delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
+	var sentProtocol = isString(data.payload.protocol) && ['http','https'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
+	var sentUrl = isString(data.payload.url) && data.payload.url.length > 0 ? data.payload.url : false;
+	var sentMethod = isString(data.payload.method) && ['post','get','put','delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
 	var sentSuccessCodes = typeof(data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length > 0 ? data.payload.successCodes : false;
 	var sentTimeout = typeof(data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
 
-	console.log('sentProtocol')
-	console.log(sentProtocol)
-	console.log('sentUrl')
-	console.log(sentUrl)
-	console.log('sentMethod')
-	console.log(sentMethod)
-	console.log('sentSuccessCodes')
-	console.log(sentSuccessCodes)
-	console.log('data.payload.timeoutSeconds')
-	console.log(data.payload.timeoutSeconds)
 	if(sentProtocol && sentUrl && sentMethod && sentSuccessCodes && sentTimeout){
 
 		//get & check if user sent a valid token
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		const passedToken = isString(data.headers.token) ? data.headers.token : false;
 
 		//lookup the user by reading the token
 		dataLib.read('tokens', passedToken, (err, tokenData) => {
