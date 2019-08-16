@@ -9,6 +9,7 @@ const helpers = require('./helpers')
 const config = require('./config')
 
 const isString = str => typeof(str) == 'string';
+const isLength = (val,thisLength) => val.trim().length == thisLength;
 //request data checker fn
 function checkForLengthAndType(data){
 	let res = isString(data) && data.trim().length > 0 ? data.trim() : false;
@@ -49,7 +50,7 @@ routeHandlers.doUsers.post = function(data,callback){
 	//check that all req'd fields exist
 	const fn = checkForLengthAndType(data.payload.firstName)
 	const ln = checkForLengthAndType(data.payload.lastName)
-	const pn = isString(dataPhone) && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const pn = isString(dataPhone) && isLength(dataPhone,10) ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord)
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
@@ -125,7 +126,7 @@ routeHandlers.doUsers.post = function(data,callback){
 routeHandlers.doUsers.put = function(data,callback){
 	
 	//check that the phoneNumber is value
-	const phoneNumber = isString(data.payload.phoneNumber) && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.payload.phoneNumber) && isLength(data.payload.phoneNumber, 10) ? data.payload.phoneNumber.trim() : false;
 
 	//check for optional fields
 	const fn = checkForLengthAndType(data.payload.firstName)
@@ -199,7 +200,7 @@ routeHandlers.doUsers.get = function(data,callback){
 
 
 	//check that the phoneNumber is value
-	const phoneNumber = isString(data.queryStrObj.phoneNumber) && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.queryStrObj.phoneNumber) && isLength(data.queryStrObj.phoneNumber, 10) ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
 	if(!phoneNumber){
@@ -241,7 +242,7 @@ routeHandlers.doUsers.get = function(data,callback){
 routeHandlers.doUsers.delete = function(data,callback){
 	
 	//check that phone is valid
-	const phoneNumber = isString(data.queryStrObj.phoneNumber) && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
+	const phoneNumber = isString(data.queryStrObj.phoneNumber) && isLength(data.queryStrObj.phoneNumber, 10) ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
 	if(!phoneNumber){
@@ -320,7 +321,7 @@ routeHandlers.doTokens = {};
 routeHandlers.doTokens.post = (data, callback) => {
 	let dataPhone = data.payload.phoneNumber
 	//parse phone & pw
-	const pn = isString(dataPhone) && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
+	const pn = isString(dataPhone) && isLength(dataPhone,10) ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
 	if(!pn || !pw){
