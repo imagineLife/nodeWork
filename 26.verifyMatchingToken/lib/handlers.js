@@ -470,25 +470,22 @@ routeHandlers.doTokens.delete = (data, callback) => {
 
 
 //VERIFY that a given tokenID MATCHES a given user
-routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenPhoneNumber,callback){
+routeHandlers.doTokens.verifyTokenMatch = function(tokenID,phoneNumber,callback){
 
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
-		console.log('STORED storedTokenData.phone...')
-		console.log(storedTokenData.phone)
-		console.log('givenPhoneNumber')
-		console.log(givenPhoneNumber)
-		console.log(storedTokenData.phone == givenPhoneNumber)
-		if(!err && storedTokenData){
-			//Check that the tokenID MATCHES the given user AND has not expired
-			if(storedTokenData.phone == givenPhoneNumber && storedTokenData.expires > Date.now()){
-				callback(true)
-			}else{
-				callback(false)
-			}
-		}else{
+
+		//sanity-checking
+		if(err || !storedTokenData){
+			return callback(false)
+		}
+
+		//Check that the tokenID MATCHES the given user AND has not expired
+		if(storedTokenData.phone !== phoneNumber || storedTokenData.expires > Date.now()){
 			callback(false)
 		}
+
+		callback(true)
 	})
 }
 
