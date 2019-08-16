@@ -59,9 +59,6 @@ routeHandlers.doUsers.post = function(data,callback){
 		return callback(400,{'Error': 'Missing Reqd fields'})
 	}
 
-	if(tokenIsValid !== true){
-		return callback(403, {"ERROR": "invalid token"})
-	}
 	/*
 		make sure that user doesn't already exist
 		USING the CRUD handlers from the data directory as a dependence above
