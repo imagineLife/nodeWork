@@ -380,7 +380,7 @@ routeHandlers.doTokens.get = (data, callback) => {
 	// should return the user object
 
 	//check that the ID is value
-	const id = isString(data.queryStrObj.id) && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
+	const id = isString(data.queryStrObj.id) && isLength(data.queryStrObj.id, 19) ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
 	if(!id || id == 'undefined'){
@@ -408,7 +408,7 @@ routeHandlers.doTokens.get = (data, callback) => {
 routeHandlers.doTokens.put = (data, callback) => {
 	
 	//get id & extend boolean from payload
-	const id = isString(data.payload.id) && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
+	const id = isString(data.payload.id) && isLength(data.payload.id, 19) ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
 	if(!id || !(extend == true)){
@@ -449,7 +449,7 @@ routeHandlers.doTokens.put = (data, callback) => {
 routeHandlers.doTokens.delete = (data, callback) => {
 	
 	//check that id is valid
-	const id = isString(data.queryStrObj.id) && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
+	const id = isString(data.queryStrObj.id) && isLength(data.queryStrObj.id, 19) ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
 	if(!id){
