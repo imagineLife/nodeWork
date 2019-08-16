@@ -235,31 +235,26 @@ routeHandlers.doUsers.delete = function(data,callback){
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
-	if(phoneNumber){
-
-		//lookup the user from the filesystem
-		dataLib.read('users',phoneNumber, (err, storedUserData) => {
-			
-			if(!err && storedUserData){
-
-				//REMOVE user
-				dataLib.delete('users', phoneNumber, (err) => {
-					if(!err){
-						callback(200, {'DELETED': 'Successfully'})
-					}else{
-						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-					}
-
-				})
-			}else{
-				//NOT FOUND USER
-				callback(400, {'Error': 'Couldnt Find user'})
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+	if(!phoneNumber){
+		return callback(400, {'Error': 'Seems like Missing phoneNumber field'})
 	}
+
+	//lookup the user from the filesystem
+	dataLib.read('users',phoneNumber, (err, storedUserData) => {
+		
+		//NOT FOUND USER
+		if(err || !storedUserData){
+			return callback(400, {'Error': 'Couldnt Find user'})
+		}
+
+		//REMOVE user
+		dataLib.delete('users', phoneNumber, (err) => {
+			if(err){
+			  return callback(500, {'Error' :'Couldnt delete this user for some odd reason'});
+			}
+			return callback(200, {'DELETED': 'Successfully'})
+		})
+	})
 }
 
 //ping handler
@@ -392,40 +387,36 @@ routeHandlers.doTokens.put = (data, callback) => {
 	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
 	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
-	if(id && (extend == true)){
-
-		//lookup token based on id
-		dataLib.read('tokens',id, (err,tokenData) => {
-
-			if(err || !tokenData){
-				return callback(400, {'Error': 'Specified token NOT there'})
-			}
-			
-			let notExpired = tokenData.expires > Date.now()
-			//check for EXPIRED token
-			if(!notExpired){
-				return callback(400, {'Error': 'The token has already expired & cannot be extended'})
-			}
-
-			//set expiration of the token an hour from now
-			tokenData.expires = Date.now()  + 1000 * 60 * 60;
-
-			//store the new token data
-			dataLib.update('tokens', id, tokenData, (err) => {
-
-				if(!err){
-					callback(200)
-				}else{
-					callback(500, {'Error': 'Couldnt update the token exp for some reason'})
-				}
-
-			})
-		})
-
-	}else{
-		callback(400, {'Error':'missing id or extendTrueVal'})
+	if(!id || !(extend == true)){
+		return callback(400, {'Error':'missing id or extendTrueVal'})
 	}
 
+	//lookup token based on id
+	dataLib.read('tokens',id, (err,tokenData) => {
+
+		if(err || !tokenData){
+			return callback(400, {'Error': 'Specified token NOT there'})
+		}
+		
+		let notExpired = tokenData.expires > Date.now()
+		//check for EXPIRED token
+		if(!notExpired){
+			return callback(400, {'Error': 'The token has already expired & cannot be extended'})
+		}
+
+		//set expiration of the token an hour from now
+		tokenData.expires = Date.now()  + 1000 * 60 * 60;
+
+		//store the new token data
+		dataLib.update('tokens', id, tokenData, (err) => {
+
+			if(err){
+			  return callback(500, {'Error': 'Couldnt update the token exp for some reason'})
+			}
+
+			return callback(200)
+		})
+	})
 }
 
 //Tokens delete
@@ -452,12 +443,11 @@ routeHandlers.doTokens.delete = (data, callback) => {
 		//REMOVE user
 		dataLib.delete('tokens', id, (err) => {
 
-			if(!err){
-				callback(200, {'DELETED': 'Successfully'})
-			}else{
-				callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+			if(err){
+				return callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
 			}
 
+			return callback(200, {'DELETED': 'Successfully'})
 		})
 	})
 }
