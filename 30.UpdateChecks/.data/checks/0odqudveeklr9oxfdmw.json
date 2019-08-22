@@ -1,1 +1,0 @@
-{"id":"0odqudveeklr9oxfdmw","userPhone":"1231234567","protocol":"http","url":"instagram.com","method":"get","successCodes":[200,201,401],"timeoutSeconds":5,"sentProtocol":"http","sentUrl":"instagram.com","sentMethod":"get","sentSuccessCodes":[200,201,403],"sentTimeout":5,"timeout":5}

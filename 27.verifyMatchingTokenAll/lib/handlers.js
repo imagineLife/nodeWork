@@ -198,7 +198,7 @@ routeHandlers.doUsers.get = function(data,callback){
 	const passedToken = data.headers.token || null;
 	
 	if(!passedToken){
-		callback(403, {"Error": "missing token in header"})
+		return callback(403, {"Error": "missing token in header"})
 	}
 
 	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (err, tokenIsValid) => {

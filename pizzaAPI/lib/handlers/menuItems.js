@@ -28,6 +28,7 @@ doMenuItems.get = (data, callback) => {
 			callback(403, {'Error': 'Non-Matching user token'})
 			return;
 		}
+		
 		let items;
 		try{
 			//lookup the menuItems from the filesystem

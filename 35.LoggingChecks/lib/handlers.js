@@ -691,7 +691,7 @@ routeHandlers.doChecks.post = (data, callback) => {
 routeHandlers.doChecks.get = (data, callback) => {
 
 	//TEST this by using postman with
-	// http://localhost:3000/users?phoneNumber=1238675309
+	// http://localhost:3000/checks?id=checkIdHere
 	// should return the user object
 
 	//check that the ID is value

@@ -650,73 +650,64 @@ routeHandlers.doChecks.put = (data, callback) => {
 
 
 	//if phone number exists, keep going
-	if(id){
+	if(!id){
+		//if phone is invalid, Error 
+		return callback(400, {'Error': 'Missing reqd ID field'})
+	}
 
-		//if at least one other field exists to update
-		if(sentProtocol || sentUrl || sentMethod || sentSuccessCodes || sentTimeout){
+	//if at least one other field exists to update
+	if(!sentProtocol || !sentUrl || !sentMethod || !sentSuccessCodes || !sentTimeout){
+		return callback(400, {'Error': 'Missing an updatable field'})
+	}
 
-			//lookup the user
-			dataLib.read('checks', id, (err, checkData) => {
-				
-				//check if file is error-less AND has userdata
-				if(!err && checkData){
-
-					//GET CHEKC from headers
-					const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-					//verify that token is valid for passed phoneNumber
-					routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
-						if(tokenIsValid){
-
-							//update the field in the userData 
-							if(sentProtocol){
-								checkData.protocol = sentProtocol;
-							}
-							if(sentUrl){
-								checkData.url = sentUrl;
-							}
-							if(sentMethod){
-								checkData.method = sentMethod;
-							}
-							if(sentSuccessCodes){
-								checkData.successCodes = sentSuccessCodes;
-							}
-							if(sentTimeout){
-								checkData.timeout = sentTimeout;
-							}
-
-							//Store the newly updated userData obj
-							dataLib.update('checks', id, checkData, (err) => {
-
-								if(!err){
-									callback(200)
-								}else{
-									callback(500, {'Error': 'Couldnt update this checkData with this info'})
-								}
-
-							})
-
-								}else{
-									callback(403, {'Error': 'Missing required token in header, or token invalid'})
-								}
-
-							})
-
-				//if error or no data for that file
-				}else{
-					callback(400, {'Error': 'No data or file exists for that'})
-				}
-			})
-
-
-		}else{
-			callback(400, {'Error': 'Missing an updatable field'})
+	//lookup the user
+	dataLib.read('checks', id, (err, checkData) => {
+		
+		//check if file is error-less AND has userdata
+		if(err || !checkData){
+			//if error or no data for that file
+			return callback(400, {'Error': 'No data or file exists for that'})
 		}
 
-	//if phone is invalid, Error 
-	}else{
-		callback(400, {'Error': 'Missing reqd ID field'})
-	}
+		//GET CHEKC from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+		//verify that token is valid for passed phoneNumber
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
+			
+			if(!tokenIsValid){
+				return callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			}
+
+			//update the field in the userData 
+			if(sentProtocol){
+				checkData.protocol = sentProtocol;
+			}
+			if(sentUrl){
+				checkData.url = sentUrl;
+			}
+			if(sentMethod){
+				checkData.method = sentMethod;
+			}
+			if(sentSuccessCodes){
+				checkData.successCodes = sentSuccessCodes;
+			}
+			if(sentTimeout){
+				checkData.timeout = sentTimeout;
+			}
+
+			//Store the newly updated userData obj
+			dataLib.update('checks', id, checkData, (err) => {
+
+				if(err){
+					return callback(500, {'Error': 'Couldnt update this checkData with this info'})
+				}
+				
+				callback(200)
+			})
+		})
+
+	})
 
 };
 

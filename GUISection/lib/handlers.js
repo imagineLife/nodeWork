@@ -434,6 +434,10 @@ routeHandlers.doUsers.delete = function(data,callback){
 
 //ping handler
 routeHandlers.ping = function(data, callback){
+	console.log('PING');
+	console.log('data')
+	console.log(data)
+	
 	callback(200)
 }
 

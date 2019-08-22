@@ -1,23 +1,22 @@
+
 # A Pizza-Delivery API
 
 *No NPM.*  
 *No Packages.*  
 *Just Node.*  
-This is an example API for a pizza-delivery company.  
+This is an API for a mock pizza-delivery company.  
   
-**3rd Party API Integration**  
+**3rd Party API Integrations**  
 This integrates with the sandbox of [Stripe](https://stripe.com/)for accepting user payment.  
 This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sending order receipts via email.  
   
 ## User Stories  
 **Users Can:**  
-- Create Account  
-	- storingName, Email & Street Address  
-- Edit stored info  
-- Delete account  
+- Create/Read/Update/Delete User account data
+	- storing Name, Email & Street Address  
 - Login & Logout  
 	- Creating & Destroying an access token  
-- GET PizzaShop Menu items (when logged in)  
+- Get PizzaShop Menu items (when logged in)  
 - Fill a 'shopping cart' with menu items (when logged in)  
 - Create an Order (when logged in)  
 	- input payment method  
@@ -28,24 +27,24 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 # API
 ## USERS  
 
-	/user  
+	/users  
 
 ***CREATE (post)***   
-required in body:  
+*required in body:*  
 - FirstName  
 - LastName  
-- userName  
+- phoneNumber  
 - emailAddress  
 - streetAddress  
-- acceptedTOSAgreement (terms of service)
+- password
+- tosAgreement (terms of service)
 
 ***UPDATE (put)***  
-required in body:  
+*required in url parameter:*  
+- email  
+  
+*required in body:*  
 - email
-- password  
-
-required in header:  
-- token  
 - at least one of the following for editing:  
 	- firstName  
 	- lastName  
@@ -53,11 +52,15 @@ required in header:
 	- emailAddress  
 	- userName  
 
-***DELETE***   
-required in url:  
+
+*required in header:* 
+- token  
+
+ ***DELETE***   
+*required in url:*  
    - email  
 
-required in header:  
+*required in header:*  
    - token  
 
 ## MENU ITEMS  
@@ -70,7 +73,7 @@ requires:
 - user email in request query string  
 
 ## CHARGE  
-***CREATE (post)***  
+***CREATE***  
 
 	/charge  
 

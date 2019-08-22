@@ -6,6 +6,8 @@ Library for storing & editing data to the file-system
 const fs = require('fs')
 const path = require('path')
 const helpers = require('./helpers')
+const u = require('util')
+const debug = u.debuglog('DATA')
 
 //2.Container for this module to be exported
 let lib = {}; 
@@ -43,14 +45,19 @@ lib.create = (dir,fileName,data,callback) => {
 			//take data, convert to string so that the str can be written to the file
 			const stringData = JSON.stringify(data)
 
-			//write the data to the file & close the file
-			/*
-				takes fileDescriptor and data
-			*/
+			// write the data to the file & close the file
+			// takes fileDescriptor and data
 			fs.writeFile(fileDescriptor,stringData,(err) => {
 				if(!err){
 					fs.close(fileDescriptor, err => {
 						if(!err){
+
+							debug(`\x1b[36m%s\x1b[0m`,`WROTE:`);
+							debug(`\x1b[36m%s\x1b[0m`,`${stringData}`);
+							debug(`\x1b[36m%s\x1b[0m`,`TO:`);
+							debug(`\x1b[36m%s\x1b[0m`,`${lib.baseDir}${dir}/${fileName}`);
+
+
 							//a good thing!
 							callback(false)
 						}else{
@@ -78,12 +85,22 @@ lib.read = (dir, fileName,callback) => {
 	fs.readFile(`${lib.baseDir}${dir}/${fileName}.json`,'utf8',(err, data) => {
 		if(!err && data){
 			let parsedData = helpers.parseJsonToObject(data)
+
+			debug(`\x1b[36m%s\x1b[0m`,`READ:`);
+			debug(`\x1b[36m%s\x1b[0m`,`${lib.baseDir}${dir}/${fileName}`);
+
 			callback(false,parsedData)
 		}else{
 			callback(err, data);
 		}
 		
 	})
+}
+
+//read data from a file
+//uses utf8 encoding
+lib.readSync = (dir, fileName) => {
+	return fs.readFileSync(`${lib.baseDir}${dir}/${fileName}.json`,'utf8')
 }
 
 //Update data inside a file
@@ -106,6 +123,7 @@ lib.update = (dir, fileName, data, callback) => {
 				if(!err){
 
 					//write to the file and close the file
+					//writeSync might not be worth it
 					fs.writeFile(fileDescriptor, stringData, (err) => {
 						if(!err){
 							fs.close(fileDescriptor, err => {
@@ -140,6 +158,15 @@ lib.delete = (dir, fileName, callback) => {
 	fs.unlink(`${lib.baseDir}${dir}/${fileName}.json`, (err) => {
 		callback(err);
 	})
+}
+
+lib.deleteSync = (dir, fileName, callback) => {
+	/*
+		'unlink' the file...
+		https://nodejs.org/api/fs.html#fs_fs_unlink_path_callback
+		DOES NOT WORK ON DIRECTORIES
+	*/
+	return fs.unlinkSync(`${lib.baseDir}${dir}/${fileName}.json`);
 }
 
 
