@@ -393,15 +393,16 @@ routeHandlers.doTokens.get = (data, callback) => {
 routeHandlers.doTokens.put = (data, callback) => {
 	
 	//get id & extend boolean from payload
-	const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 19 ? data.payload.id.trim() : false;
-	const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
+	const tokenID = typeof(data.payload.token) == 'string' && data.payload.token.trim().length == 19 ? data.payload.token.trim() : false;
+	// const extend = typeof(data.payload.extend) == 'boolean' && data.payload.extend == true ? true : false;
 
-	if(!id || !(extend == true)){
-		return callback(400, {'Error':'missing id or extendTrueVal'})
+	// if(!tokenID || !(extend == true)){
+	if(!tokenID){		
+		return callback(400, {'Error':'missing token'})
 	}
 
 	//lookup token based on id
-	dataLib.read('tokens',id, (err,tokenData) => {
+	dataLib.read('tokens',tokenID, (err,tokenData) => {
 
 		if(err || !tokenData){
 			return callback(400, {'Error': 'Specified token NOT there'})
@@ -417,13 +418,13 @@ routeHandlers.doTokens.put = (data, callback) => {
 		tokenData.expires = Date.now()  + 1000 * 60 * 60;
 
 		//store the new token data
-		dataLib.update('tokens', id, tokenData, (err) => {
+		dataLib.update('tokens', tokenID, tokenData, (err) => {
 
 			if(err){
 			  return callback(500, {'Error': 'Couldnt update the token exp for some reason'})
 			}
 
-			return callback(200)
+			return callback(200, {"Success": "Check Updated"})
 		})
 	})
 }
@@ -656,7 +657,7 @@ routeHandlers.doChecks.put = (data, callback) => {
 	}
 
 	//if at least one other field exists to update
-	if(!sentProtocol || !sentUrl || !sentMethod || !sentSuccessCodes || !sentTimeout){
+	if(!sentProtocol && !sentUrl && !sentMethod && !sentSuccessCodes && !sentTimeout){
 		return callback(400, {'Error': 'Missing an updatable field'})
 	}
 
@@ -693,8 +694,12 @@ routeHandlers.doChecks.put = (data, callback) => {
 				checkData.successCodes = sentSuccessCodes;
 			}
 			if(sentTimeout){
-				checkData.timeout = sentTimeout;
+				checkData.timeoutSeconds = sentTimeout;
 			}
+
+			console.log('checkData')
+			console.log(checkData)
+			
 
 			//Store the newly updated userData obj
 			dataLib.update('checks', id, checkData, (err) => {
@@ -703,7 +708,7 @@ routeHandlers.doChecks.put = (data, callback) => {
 					return callback(500, {'Error': 'Couldnt update this checkData with this info'})
 				}
 				
-				callback(200)
+				callback(200, {"Success": "Check Updated"})
 			})
 		})
 
