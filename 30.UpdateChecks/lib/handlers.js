@@ -697,10 +697,6 @@ routeHandlers.doChecks.put = (data, callback) => {
 				checkData.timeoutSeconds = sentTimeout;
 			}
 
-			console.log('checkData')
-			console.log(checkData)
-			
-
 			//Store the newly updated userData obj
 			dataLib.update('checks', id, checkData, (err) => {
 
