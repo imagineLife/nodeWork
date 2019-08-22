@@ -41,6 +41,9 @@ helpers.parseJsonToObject = function(str){
 	}
 }
 
+helpers.isString = (str) => typeof str === 'string' && str.length > 0; 
+helpers.isLength = (itm, l) => itm.length === l; 
+
 //create a str of RANDOM alphaNum chars of a length param
 helpers.createRandomString = (strLength) => {
 	strLength = typeof(strLength) == 'number' && strLength > 0 ? strLength : false;
