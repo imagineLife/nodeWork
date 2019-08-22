@@ -597,49 +597,37 @@ routeHandlers.doChecks.post = (data, callback) => {
 	})
 }
 
-//
 routeHandlers.doChecks.get = (data, callback) => {
-
-	//TEST this by using postman with
-	// http://localhost:3000/users?phoneNumber=1238675309
-	// should return the user object
 
 	//check that the ID is value
 	const passedID = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
-	if(passedID){
-
-		//LOOKUP the check
-		dataLib.read('checks', passedID, (err, checkData) => {
-
-			if(!err && checkData){
-
-				//GET token from headers
-				const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-				//verify that token is valid for user who created the check
-				routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
-
-					//IF token MATCHES passedID
-					if(tokenIsValid){
-
-						//return check data
-						callback(200, checkData)
-
-					}else{
-						callback(403)
-					}
-
-				})
-
-			}else{
-				callback(404)
-			}
-		})
-
-	}else{
-		callback(403, {'Error': 'Invalid ID from client'})
+	if(!passedID){
+		return callback(403, {'Error': 'Invalid ID from client'})
 	}
+
+	//LOOKUP the check
+	dataLib.read('checks', passedID, (err, checkData) => {
+
+		if(err || !checkData){
+			return callback(404)
+		}
+		
+		//GET token from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+		//verify that token is valid for user who created the check
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
+
+			//IF token MATCHES passedID
+			if(!tokenIsValid){
+				return callback(403)
+			}
+			
+			//return check data
+			return callback(200, checkData)
+		})
+	})
 
 }
 module.exports = routeHandlers;
