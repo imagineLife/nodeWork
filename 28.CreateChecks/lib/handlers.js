@@ -520,7 +520,6 @@ routeHandlers.doChecks = {};
 
 */
 routeHandlers.doChecks.post = (data, callback) => {
-	console.log('POST CHECKS!');
 
 	//check if protocall is in post data
 	var sentProtocol = helpers.isString(data.payload.protocol) && ['http','https'].indexOf(data.payload.protocol) > -1 ? data.payload.protocol : false;
@@ -534,14 +533,9 @@ routeHandlers.doChecks.post = (data, callback) => {
 	}
 	//get & check if user sent a valid token
 	const passedToken = helpers.isString(data.headers.token) ? data.headers.token : false;
-	console.log('passedToken')
-	console.log(passedToken)
 	
 	//lookup the user by reading the token
 	dataLib.read('tokens', passedToken, (err, tokenData) => {
-
-		console.log('tokenData')
-		console.log(tokenData)
 		
 		if(err || !tokenData){
 			return callback(403, {'Error': 'No Token Data'})
