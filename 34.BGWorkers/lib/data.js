@@ -112,39 +112,34 @@ lib.update = (dir, fileName, data, callback) => {
 			https://nodejs.org/api/fs.html#fs_file_system_flags
 	*/
 	fs.open(`${lib.baseDir}${dir}/${fileName}.json`,'r+', (err, fileDescriptor) => {
-		if(!err && fileDescriptor){
-			
-			// convert fileData to string
-			const stringData = JSON.stringify(data)
-
-			//truncate the file
-			fs.truncate(fileDescriptor, (err) => {
-				if(!err){
-
-					//write to the file and close the file
-					//writeSync might not be worth it
-					fs.writeFile(fileDescriptor, stringData, (err) => {
-						if(!err){
-							fs.close(fileDescriptor, err => {
-								if(!err){
-									callback(false)
-								}else{
-									callback('Error CLOSING file')
-								}
-							})
-						}else{
-							callback('Error Writing to existing file')
-						}
-					})
-
-				}else{
-					callback('Error truncating file')
-				}
-			})
-
-		}else{
-			calback('Could not open the file for editing. This file may not exist.')
+		if(err || !fileDescriptor){
+			return calback('Could not open the file for editing. This file may not exist.')
 		}
+			
+		// convert fileData to string
+		const stringData = JSON.stringify(data)
+
+		//truncate the file
+		fs.truncate(fileDescriptor, (err) => {
+			if(err){
+				return callback('Error truncating file')
+			}
+
+			//write to the file and close the file
+			//writeSync might not be worth it
+			fs.writeFile(fileDescriptor, stringData, (err) => {
+				if(err){
+					return callback('Error Writing to existing file')
+				}
+
+				fs.close(fileDescriptor, err => {
+					if(err){
+						return callback('Error CLOSING file')
+					}
+					
+					return callback(false)
+				})
+			})
 	})
 }
 
