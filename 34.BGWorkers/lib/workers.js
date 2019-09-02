@@ -21,31 +21,28 @@ workersObj.gatherAllChecks = () => {
 	//get a lits of all the checks
 	dataLib.listFiles('checks', (err, files) => {
 		
-		if(!err && files && files.length > 0){
-			
-			files.forEach(file => {
-
-				//Read in the check-file-data
-				//Called originalCheckData because originalCheckData will be changed
-				dataLib.read('checks', file, (err, originalCheckData) => {
-
-					if(!err && originalCheckData){
-
-						//pass the data to the check-Validator
-						//check-validator continues or logs errors
-						workersObj.validateCheckData(originalCheckData)
-
-					}else{
-						console.log('error reading one of the checks data...')
-					}
-
-				})
-			})
-
-		}else{
+		if(err || !files || !(files.length > 0)){
 			//log because this is a BG worker, not a typical call & response
-			console.log('couldnt find any checks!!')
+			console.log('couldnt find any checks!!');
+			return;
 		}
+			
+		files.forEach(file => {
+
+			//Read in the check-file-data
+			//Called originalCheckData because originalCheckData will be changed
+			dataLib.read('checks', file, (err, originalCheckData) => {
+
+				if(err || !originalCheckData){
+					console.log('error reading one of the checks data...')
+					return;
+				}
+
+				//pass the data to the check-Validator
+				//check-validator continues or logs errors
+				workersObj.validateCheckData(originalCheckData)
+			})
+		})
 	})
 }
 
