@@ -258,36 +258,37 @@ routeHandlers.doUsers.delete = function(data,callback){
 			//REMOVE user
 			dataLib.delete('users', phoneNumber, (err) => {
 
-			if(err){
-				return callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-			}
+				if(err){
+					return callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+				}
+					
+				//Delete users-associated checks
+				//get checks form userData
+				let userChecks = typeof(storedUserData.checks) == 'object' && storedUserData.checks instanceof Array ? storedUserData.checks : [];
 				
-			//Delete users-associated checks
-			//get checks form userData
-			let userChecks = typeof(storedUserData.checks) == 'object' && storedUserData.checks instanceof Array ? storedUserData.checks : [];
-			
-			const noOfChecks = userChecks.length;
-			
-			if(!(noOfChecks > 0)){
-				return callback(200)
-			}
+				const noOfChecks = userChecks.length;
+				
+				if(!(noOfChecks > 0)){
+					return callback(200)
+				}
 
-			let checksDeleted = 0;
-			let deleteErrs = false;
-			
-			userChecks.forEach(check => {
-				dataLib.delete('checks', check, (err) => {
-					if(err){
-						deleteErrs = true;
-					}
-					checksDeleted++;
-					if(checksDeleted == noOfChecks){
-						if(!deleteErrs){
-							callback(200)
-						}else{
-							callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
+				let checksDeleted = 0;
+				let deleteErrs = false;
+				
+				userChecks.forEach(check => {
+					dataLib.delete('checks', check, (err) => {
+						if(err){
+							deleteErrs = true;
 						}
-					}
+						checksDeleted++;
+						if(checksDeleted == noOfChecks){
+							if(!deleteErrs){
+								callback(200)
+							}else{
+								callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
+							}
+						}
+					})
 				})
 			})
 		})

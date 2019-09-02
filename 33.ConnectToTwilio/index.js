@@ -8,8 +8,8 @@ const fs = require('fs');
 const routeHandlers = require('./lib/handlers');
 const helpers = require('./lib/helpers')
 
-
-helpers.sendTwilioSms('8603194410','MicCheck', (err) => {
+//Auto-Invoke twilio sending function for demo purposes
+helpers.sendTwilioSms('8601234567','MicCheck', (err) => {
 	console.log('err?')
 	console.log(err)
 })
