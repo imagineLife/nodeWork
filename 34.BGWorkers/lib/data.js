@@ -169,15 +169,13 @@ lib.listFiles = (dir,callback) => {
 
 	//read directory
 	fs.readdir(`${lib.baseDir}${dir}/`, (err, data) => {
-		if(!err && data && data.length > 0){
-
-			//get arr of filenames
-			let trimmedFileNames = data.map(d => d.replace('.json',''))
-			callback(false, trimmedFileNames);
-
-		}else{
-			callback(err, data)
+		if(err || !data || !(data.length > 0)){
+			return callback(err, data)
 		}
+
+		//get arr of filenames
+		let trimmedFileNames = data.map(d => d.replace('.json',''))
+		return callback(false, trimmedFileNames);
 	})
 }
 
