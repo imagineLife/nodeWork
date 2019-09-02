@@ -82,64 +82,62 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 	phoneNumber = typeof(phoneNumber) == 'string' && phoneNumber.trim().length == 10? phoneNumber.trim() : false;
 	sendingMsg = typeof(sendingMsg) == 'string' && sendingMsg.trim().length > 0 && sendingMsg.trim().length < 1600 ? sendingMsg.trim() : false;
 
-	if(phoneNumber && sendingMsg){
+	if(!phoneNumber || !sendingMsg){
+		return callback('given twilio arams were missing OR invalid');
+	}
 
-		//config request object for Twilio
-		let reqObj = {
-			'From': config.twilioVars.fromPhoneNumber,
-			'To': `+1${phoneNumber}`,
-			'Body': sendingMsg
+	//config request object for Twilio
+	let reqObj = {
+		'From': config.twilioVars.fromPhoneNumber,
+		'To': `+1${phoneNumber}`,
+		'Body': sendingMsg
+	}
+
+	//stringify the reqObj
+	let strReqOj = queryString.stringify(reqObj)
+
+	//config request details
+	let reqDetails = {
+		'protocol': 'https:',
+		'hostname': 'api.twilio.com',
+		'method': 'POST',
+		'path': `/2010-04-01/Accounts/${config.twilioVars.accountSid}/Messages.json`,
+		'auth': `${config.twilioVars.accountSid}:${config.twilioVars.authToken}`,
+		'headers':{
+			'Content-Type':'application/x-www-form-urlencoded',
+			'Content-Length': Buffer.byteLength(strReqOj)
 		}
+	}
 
-		//stringify the reqObj
-		let strReqOj = queryString.stringify(reqObj)
+	//instantiate a req obj
+	let reqObjMethod = https.request(reqDetails, (res) => {
 
-		//config request details
-		let reqDetails = {
-			'protocol': 'https:',
-			'hostname': 'api.twilio.com',
-			'method': 'POST',
-			'path': `/2010-04-01/Accounts/${config.twilioVars.accountSid}/Messages.json`,
-			'auth': `${config.twilioVars.accountSid}:${config.twilioVars.authToken}`,
-			'headers':{
-				'Content-Type':'application/x-www-form-urlencoded',
-				'Content-Length': Buffer.byteLength(strReqOj)
-			}
-		}
+		//grab status of the request
+		let resStatus = res.statusCode;
 
-		//instantiate a req obj
-		let reqObjMethod = https.request(reqDetails, (res) => {
-
-			//grab status of the request
-			let resStatus = res.statusCode;
-
-			res.on('data', (chunk) => {
-				console.log('chunk!')
-				console.log(chunk.toString())
-			})
-
-			//callback the success
-			if(resStatus == 200 || resStatus == 201){
-				callback(false)
-			}else{
-				callback('Status code returned was '+resStatus);
-			}
-		});
-
-		//Bind to the error event SO the error does not get thrown
-		reqObjMethod.on('error', err => {
-			callback(e)
+		res.on('data', (chunk) => {
+			console.log('chunk!')
+			console.log(chunk.toString())
 		})
 
-		//add request obj to request
-		reqObjMethod.write(strReqOj)
+		//callback the success
+		if(resStatus == 200 || resStatus == 201){
+			callback(false)
+		}else{
+			callback('Status code returned was '+resStatus);
+		}
+	});
 
-		//end request
-		reqObjMethod.end();
+	//Bind to the error event SO the error does not get thrown
+	reqObjMethod.on('error', err => {
+		callback(e)
+	})
 
-	}else{
-		callback('given twilio arams were missing OR invalid');
-	}
+	//add request obj to request
+	reqObjMethod.write(strReqOj)
+
+	//end request
+	reqObjMethod.end();
 }
 
 
