@@ -49,28 +49,26 @@ helpers.parseJsonToObject = function(str){
 helpers.createRandomString = (strLength) => {
 	strLength = typeof(strLength) == 'number' && strLength > 0 ? strLength : false;
 
-	if(strLength){
-
-		//define all POSSIBLE cars that COULD go into str
-		const possibleChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-
-		//start the rndm str
-		let str = '';
-
-		//make the str
-		for(let i = 1; i < strLength; i++){
-			//get random char
-			const rndmChr =  possibleChars.charAt(Math.floor(Math.random() * possibleChars.length))
-
-			//append char to str
-			str += rndmChr;
-		}
-
-		return str
-
-	}else{
+	if(!strLength){
 		return false
 	}
+
+	//define all POSSIBLE cars that COULD go into str
+	const possibleChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+	//start the rndm str
+	let str = '';
+
+	//make the str
+	for(let i = 1; i < strLength; i++){
+		//get random char
+		const rndmChr =  possibleChars.charAt(Math.floor(Math.random() * possibleChars.length))
+
+		//append char to str
+		str += rndmChr;
+	}
+
+	return str
 }
 
 
@@ -120,12 +118,12 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 			console.log(chunk.toString())
 		})
 
-		//callback the success
-		if(resStatus == 200 || resStatus == 201){
-			callback(false)
-		}else{
-			callback('Status code returned was '+resStatus);
+		//callback the success / error
+		if(resStatus !== 200 || resStatus !== 201){
+			return callback('Status code returned was '+resStatus);
 		}
+		
+		return callback(false)
 	});
 
 	//Bind to the error event SO the error does not get thrown
