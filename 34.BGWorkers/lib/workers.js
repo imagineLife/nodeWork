@@ -215,11 +215,19 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 	console.log(checkOutcome)
 	console.log('* * * * * ')
 
-	//decide if check is considered up or down
-	let upOrDown = !checkOutcome.error && checkOutcome.responseCode && originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ? 'up' : 'down';
+	/*
+		decide if check is considered up or down
+		UP if no err && successCode is as expected
+	*/
+	let upOrDown = !checkOutcome.error && 
+		checkOutcome.responseCode && 
+		originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ?
+		'up' : 'down';
 
-	//checking if alert should happen
-	let alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== upOrDown ? true : false;
+	//alert if IS last-checked AND check state has changed from previous check-state
+	let alertWarranted = originalCheckData.lastChecked 
+		&& originalCheckData.state !== upOrDown 
+		? true : false;
 
 	//Prepare to save the check in DB with last check time & new state
 	const newCheckData = originalCheckData;
@@ -228,22 +236,20 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 
 	//SAVE the new data
 	dataLib.update('checks', newCheckData.id, newCheckData, (err) => {
-		if(!err){
-
-			//SEnd the new check data along 
-			if(alertWarranted){
-
-				workersObj.alertUserToCheckStatusChange(newCheckData)
-			
-			}else{
-				console.log('Check outcome has NOT changed, not alert needed')
-			}
-
-		}else{
+		if(err){
 			console.log('ERROR Trying to save updates to one of the checks...')
 			console.log(newCheckData)
 			console.log('- - - - -')
+			return;
 		}
+
+		//SEnd the new check data along 
+		if(!alertWarranted){
+			console.log('Check outcome has NOT changed, not alert needed')
+			return;
+		}
+
+		workersObj.alertUserToCheckStatusChange(newCheckData)
 	})
 }
 
