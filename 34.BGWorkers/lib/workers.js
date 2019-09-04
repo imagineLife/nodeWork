@@ -81,15 +81,11 @@ workersObj.validateCheckData = (origChData) => {
 	//default to false if DOWN
 	origChData.lastChecked == typeof(origChData.lastChecked) == 'number' && origChData.lastChecked > 0 ? origChData.lastChecked : false;
 
+	//destructure keys
+	let { id, userPhone, protocol, url, method, successCodes, timeoutSeconds } = origCheckData;
+	
 	//if all checks pass, continue
-	if(origChData.id
-		&& origChData.userPhone 
-		&& origChData.protocol
-		&& origChData.url
-		&& origChData.method
-		&& origChData.successCodes
-		&& origChData.timeoutSeconds
-	){
+	if(id && userPhone && protocol && url && method && successCodes && timeoutSeconds ){
 		workersObj.performCheck(origChData)
 	}else{
 		console.log('error, ONE of the checks is not properly formatted...')
@@ -111,9 +107,13 @@ workersObj.validateCheckData = (origChData) => {
 
 }
 
-//perform the check
-//send the originalCheckData
-//send the outcome of the check-process to the next step
+/* 
+	look @ url
+	make http(s) req to url
+	send the originalCheckData &&
+	send the outcome of the check-process 
+		to the next step
+*/
 workersObj.performCheck = (originalCheckData) => {
 	// console.log('--Performing Check--');
 	// console.log('originalCheckData')
@@ -135,10 +135,8 @@ workersObj.performCheck = (originalCheckData) => {
 	//THIS is needed for sending to the twilio API
 	let parsedUrl = url.parse(`${originalCheckData.protocol}:${originalCheckData.url}`,true)
 
-	let hostName = parsedUrl.hostname;
-
 	//using PATH not PATH NAME because we want the query string from the path
-	let path = parsedUrl.path;
+	let {hostName, path } = parsedUrl;
 
 	//construyct the reqObj
 	let reqObj = {
