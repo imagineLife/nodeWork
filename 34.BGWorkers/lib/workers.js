@@ -12,7 +12,7 @@ const https = require('https');
 const http = require('http');
 const helpersLib = require('./helpers');
 const url = require('url');
-
+const { isString, isLength } = helpersLib;
 let workersObj = {};
 
 //lookup all checks, get their data, send to a validator - make sure checks are valid
@@ -26,19 +26,18 @@ workersObj.gatherAllChecks = () => {
 			console.log('couldnt find any checks!!');
 			return;
 		}
-			
+
+		/*
+			Read the check-file-data
+			pass the data to the check-Validator
+			check-validator continues or logs errors
+		*/
 		files.forEach(file => {
-
-			//Read in the check-file-data
 			dataLib.read('checks', file, (err, originalCheckData) => {
-
 				if(err || !originalCheckData){
 					console.log('error reading one of the checks data...')
 					return;
 				}
-
-				//pass the data to the check-Validator
-				//check-validator continues or logs errors
 				workersObj.validateCheckData(originalCheckData)
 			})
 		})
@@ -51,19 +50,19 @@ workersObj.validateCheckData = (origChData) => {
 	origChData = typeof(origChData) == 'object' && origChData !== null ? origChData : {};
 	
 	//checks ID
-	origChData.id == typeof(origChData) == 'string' && origChData.id.trim().length == 19 ? origChData.id.trim() : false;
+	origChData.id == isString(origChData.id) && origChData.id.trim().length == 19 ? origChData.id.trim() : false;
 
 	//checks phone
-	origChData.userPhone == typeof(origChData.userPhone) == 'string' && origChData.userPhone.trim().length == 10 ? origChData.userPhone.trim() : false;
+	origChData.userPhone == isString(origChData.userPhone) && origChData.userPhone.trim().length == 10 ? origChData.userPhone.trim() : false;
 
 	//checks protocol
-	origChData.protocol == typeof(origChData.protocol) == 'string' && ['http', 'https'].indexOf(origChData.protocol) > -1 ? origChData.protocol : false;
+	origChData.protocol == isString(origChData.protocol) && ['http', 'https'].indexOf(origChData.protocol) > -1 ? origChData.protocol : false;
 
 	//checks url
-	origChData.url == typeof(origChData.url) == 'string' && origChData.url.trim().length > 0 ? origChData.url.trim() : false;
+	origChData.url == isString(origChData.url) && origChData.url.trim().length > 0 ? origChData.url.trim() : false;
 
 	//checks method
-	origChData.method == typeof(origChData.method) == 'string' && ['post','get','put','delete'].indexOf(origChData.method) > -1 ? origChData.method : false;
+	origChData.method == isString(origChData.method) && ['post','get','put','delete'].indexOf(origChData.method) > -1 ? origChData.method : false;
 
 	//checks successCodes
 	origChData.successCodes == typeof(origChData.successCodes) == 'object' && origChData.successCodes instanceof Array && origChData.successCodes.length > 0 ? origChData.successCodes : false;
