@@ -82,7 +82,7 @@ workersObj.validateCheckData = (origChData) => {
 	origChData.lastChecked == typeof(origChData.lastChecked) == 'number' && origChData.lastChecked > 0 ? origChData.lastChecked : false;
 
 	//destructure keys
-	let { id, userPhone, protocol, url, method, successCodes, timeoutSeconds } = origCheckData;
+	let { id, userPhone, protocol, url, method, successCodes, timeoutSeconds } = origChData;
 	
 	//if all checks pass, continue
 	if(id && userPhone && protocol && url && method && successCodes && timeoutSeconds ){
@@ -138,7 +138,7 @@ workersObj.performCheck = (originalCheckData) => {
 	//using PATH not PATH NAME because we want the query string from the path
 	let {hostName, path } = parsedUrl;
 
-	//construyct the reqObj
+	//construyct the reqObj to send to the url
 	let reqObj = {
 		'protocol': `${originalCheckData.protocol}:`,
 		'hostname': hostName,
@@ -147,7 +147,7 @@ workersObj.performCheck = (originalCheckData) => {
 		'timeout': originalCheckData.timeoutSeconds * 1000
 	}
 
-	//get module to use
+	//get module to use (http OR https)
 	let modToUse = originalCheckData.protocol == 'http' ? http : https;
 
 	let finishedReq = modToUse.request(reqObj, function(res){
@@ -161,6 +161,7 @@ workersObj.performCheck = (originalCheckData) => {
 		//pass on to next phase if hasnt been sent
 		if(!outcomeSent){
 			workersObj.processCheckOutcome(originalCheckData, checkOutcome);
+			outcomeSent = true;
 		}
 
 	})
@@ -179,6 +180,7 @@ workersObj.performCheck = (originalCheckData) => {
 		//pass on to next phase if hasnt been sent
 		if(!outcomeSent){
 			workersObj.processCheckOutcome(originalCheckData, checkOutcome);
+			outcomeSent = true;
 		}
 	})
 
