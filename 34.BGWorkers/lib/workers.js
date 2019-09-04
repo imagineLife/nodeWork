@@ -50,10 +50,10 @@ workersObj.validateCheckData = (origChData) => {
 	origChData = typeof(origChData) == 'object' && origChData !== null ? origChData : {};
 	
 	//checks ID
-	origChData.id == isString(origChData.id) && origChData.id.trim().length == 19 ? origChData.id.trim() : false;
+	origChData.id == isString(origChData.id) && isLength(19) ? origChData.id.trim() : false;
 
 	//checks phone
-	origChData.userPhone == isString(origChData.userPhone) && origChData.userPhone.trim().length == 10 ? origChData.userPhone.trim() : false;
+	origChData.userPhone == isString(origChData.userPhone) && isLength(19) ? origChData.userPhone.trim() : false;
 
 	//checks protocol
 	origChData.protocol == isString(origChData.protocol) && ['http', 'https'].indexOf(origChData.protocol) > -1 ? origChData.protocol : false;
@@ -115,6 +115,11 @@ workersObj.validateCheckData = (origChData) => {
 //send the originalCheckData
 //send the outcome of the check-process to the next step
 workersObj.performCheck = (originalCheckData) => {
+	// console.log('--Performing Check--');
+	// console.log('originalCheckData')
+	// console.log(originalCheckData)
+	// console.log('// - - - - - //')
+	
 
 	//prep initial check outcome
 	let checkOutcome = {
