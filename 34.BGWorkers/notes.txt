@@ -28,8 +28,10 @@ gather all checks
 	NEED to add a 'list all docs in dir' in the lib directory
 	see data.js
 
+* * * * * * * * * * * *
+* * * * TESTING * * * *
+* * * * * * * * * * * *
 
-TESTING
 go to postman
 create a few checks with a user
 start app up and see if checks are getting processed normally
