@@ -120,7 +120,7 @@ lib.update = (dir, fileName, data, callback) => {
 		const stringData = JSON.stringify(data)
 
 		//truncate the file
-		fs.truncate(fileDescriptor, (err) => {
+		fs.ftruncate(fileDescriptor, (err) => {
 			if(err){
 				return callback('Error truncating file')
 			}
@@ -140,6 +140,7 @@ lib.update = (dir, fileName, data, callback) => {
 					return callback(false)
 				})
 			})
+		})
 	})
 }
 
