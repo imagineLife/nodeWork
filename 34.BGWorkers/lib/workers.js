@@ -15,7 +15,7 @@ const url = require('url');
 
 let workersObj = {};
 
-//lookup all checks, get their data, send to a validator
+//lookup all checks, get their data, send to a validator - make sure checks are valid
 workersObj.gatherAllChecks = () => {
 
 	//get a lits of all the checks
@@ -30,7 +30,6 @@ workersObj.gatherAllChecks = () => {
 		files.forEach(file => {
 
 			//Read in the check-file-data
-			//Called originalCheckData because originalCheckData will be changed
 			dataLib.read('checks', file, (err, originalCheckData) => {
 
 				if(err || !originalCheckData){
@@ -270,11 +269,13 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 		if(!err){
 			console.log(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
 			console.log(alertMsg)
+			return;
 		}else{
 			console.log('ERROR sending sms to user who had a state change in their check')
 			console.log('checkData')
 			console.log(checkData)
 			console.log('- - - - -')
+			return;
 		}
 	})
 }
