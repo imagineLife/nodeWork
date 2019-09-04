@@ -47,33 +47,31 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 	
 
 	fs.readdir(logsLib.baseDir, (err, res) => {
-		if(!err && res && res.length > 0){
-			
-			//collector of file names
-			const trimmedFileNames = [];
-
-			//loop through & deal with the log files
-			res.forEach(fileName => {
-
-				//collect existing log files
-				//remove log fileExtension
-				if(fileName.indexOf('.log') > -1){
-					trimmedFileNames.push(fileName.replace('.log',''));
-				}
-
-				//add gz files to compressed file(s)
-				//remove .gz fileExtensions
-				if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
-					trimmedFileNames.push(fileName.replace('.gz.b64',''));	
-				}
-
-			})
-
-			callback(false, trimmedFileNames);
-
-		}else{
-			callback(err,data)
+		if(err || !res || !(res.length > 0)){
+			return callback(err,data)
 		}
+			
+		//collector of file names
+		const trimmedFileNames = [];
+
+		//loop through & deal with the log files
+		res.forEach(fileName => {
+
+			//collect existing log files
+			//remove log fileExtension
+			if(fileName.indexOf('.log') > -1){
+				trimmedFileNames.push(fileName.replace('.log',''));
+			}
+
+			//add gz files to compressed file(s)
+			//remove .gz fileExtensions
+			if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
+				trimmedFileNames.push(fileName.replace('.gz.b64',''));	
+			}
+
+		})
+
+		callback(false, trimmedFileNames);
 	})
 }
 
