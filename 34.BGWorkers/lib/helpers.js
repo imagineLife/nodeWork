@@ -31,6 +31,9 @@ helpers.hash = function(str){
 }
 
 
+helpers.isString = (str) => typeof str === 'string' && str.length > 0; 
+helpers.isLength = (itm, l) => itm.length === l;
+
 //parses a json STRING to an object in all cases without throwing erro
 helpers.parseJsonToObject = function(str){
 	console.log('parsing str')
