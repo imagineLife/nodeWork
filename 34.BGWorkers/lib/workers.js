@@ -276,17 +276,18 @@ workersObj.alertUserToCheckStatusChange = (checkData) => {
 
 	const alertMsg = `ALERT: your check for ${checkData.method.toUpperCase()} ${checkData.protocol}://${checkData.url} is currently ${checkData.state}`
 	helpersLib.sendTwilioSms(checkData.userPhone, alertMsg, (err, callback) => {
-		if(!err){
-			console.log(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
-			console.log(alertMsg)
-			return;
-		}else{
+		if(err){
 			console.log('ERROR sending sms to user who had a state change in their check')
 			console.log('checkData')
 			console.log(checkData)
 			console.log('- - - - -')
 			return;
 		}
+
+		console.log(`SUCCESS!! User was alerted to a status change in their check via SMS!`)
+		console.log(alertMsg)
+		return;
+	
 	})
 }
 
