@@ -18,7 +18,8 @@ logsLib.baseDir = path.join(__dirname,'/../.logs/');
 logsLib.append = (fileName, stringToAppend, callback) => {
 
 	//open the file for appending
-	//a switch is opening for appending
+	//a switch is present for creating IF not present
+	// https://nodejs.org/api/fs.html#fs_file_system_flags
 	fs.open(`${logsLib.baseDir}${fileName}.log`,'a', (err, fileDescriptor) => {
 
 		if(err || !fileDescriptor){
