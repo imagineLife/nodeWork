@@ -21,29 +21,24 @@ logsLib.append = (fileName, stringToAppend, callback) => {
 	//a switch is opening for appending
 	fs.open(`${logsLib.baseDir}${fileName}.log`,'a', (err, fileDescriptor) => {
 
-		if(!err && fileDescriptor){
-
-			//Append to file and close the file
-			fs.appendFile(fileDescriptor,`${stringToAppend}\n`, err => {
-				if(!err){
-
-					//close the file
-					fs.close(fileDescriptor, (err) => {
-						if(!err){
-							callback(false)
-						}else{
-							callback('error closing file being appended')
-						}
-					})
-
-				}else{
-					callback('error appending and closing the file')
-				}
-			})
-
-		}else{
-			callback('Couldnt open file for appending')
+		if(err || !fileDescriptor){
+			return callback('Couldnt open file for appending')
 		}
+
+		//Append to file and close the file
+		fs.appendFile(fileDescriptor,`${stringToAppend}\n`, err => {
+			if(err){
+				return callback('error appending and closing the file')
+			}
+
+			//close the file
+			fs.close(fileDescriptor, (err) => {
+				if(err){
+					return callback('error closing file being appended')
+				}
+				callback(false)
+			})
+		})
 	})
 }
 
