@@ -37,7 +37,7 @@ logsLib.append = (fileName, stringToAppend, callback) => {
 				if(err){
 					return callback('error closing file being appended')
 				}
-				callback(false)
+				return callback(false)
 			})
 		})
 	})
