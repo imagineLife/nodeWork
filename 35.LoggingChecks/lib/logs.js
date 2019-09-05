@@ -1,7 +1,5 @@
 /*
-	A library for storing & rotating logs
-
-	functions/methods ->
+	A library for storing & rotating logs, methods include:
 	
 	APPEND:
 		appends a string to a file
@@ -80,15 +78,17 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 		//loop through & deal with the log files
 		res.forEach(fileName => {
 
+			let isLogFile = fileName.indexOf('.log') > -1
 			//collect existing log files
 			//remove log fileExtension
-			if(fileName.indexOf('.log') > -1){
+			if(isLogFile){
 				trimmedFileNames.push(fileName.replace('.log',''));
 			}
 
+			let isZippedFile = fileName.indexOf('.gz.b64') > -1
 			//add gz files to compressed file(s)
 			//remove .gz fileExtensions
-			if(fileName.indexOf('.gz.b64') > -1 && includeCompressedLogs){
+			if(isZippedFile && includeCompressedLogs){
 				trimmedFileNames.push(fileName.replace('.gz.b64',''));	
 			}
 
