@@ -1,5 +1,26 @@
 /*
 	A library for storing & rotating logs
+
+	functions/methods ->
+	
+	APPEND:
+		appends a string to a file
+		creates the file if not present
+
+	LIST-LOGS:
+		lists ALL the logs in the log directory
+		optionally show compressed logs
+
+	COMPRESS
+		Compresses the contents of a single .log file
+		into a .gz.b64 file within the same directory
+
+	DECOMPRESS
+		decompresses a .gz.b64 file into a str
+
+	TRUNCATE
+		truncate a log file
+	
 */
 
 //Dependencies
