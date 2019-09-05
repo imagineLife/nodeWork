@@ -293,6 +293,14 @@ workersObj.startLoop = () => {
 	},(1000 * 10)) //1 log every 10
 }
 
+//TIMER to execute the log-rotation process,
+// runs 'daily'
+workersObj.initRotateLogLoop = function(){
+	setInterval(function(){
+		workersObj.rotateLogs()
+	}, 100 * 60 * 60 * 24)
+}
+
 //init script
 workersObj.init = () => {
 	
@@ -301,6 +309,12 @@ workersObj.init = () => {
 
 	//Call a loop so that the checks continue on their own
 	workersObj.startLoop();
+
+	// Compress All logs immediately
+	workersObj.rotateLogs()
+
+	// Call a compression LOOP to compress logs later on
+	workersObj.initRotateLogLoop()
 
 }
 
