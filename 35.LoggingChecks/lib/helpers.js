@@ -31,6 +31,9 @@ helpers.hash = function(str){
 }
 
 
+helpers.isString = (str) => typeof str === 'string' && str.length > 0; 
+helpers.isLength = (itm, l) => itm.length === l;
+
 //parses a json STRING to an object in all cases without throwing erro
 helpers.parseJsonToObject = function(str){
 	console.log('parsing str')
@@ -115,7 +118,7 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 
 			//callback the success
 			if(resStatus == 200 || resStatus == 201){
-				callback(false)
+				return callback(false)
 			}else{
 				callback('Status code returned was '+resStatus);
 			}
@@ -123,7 +126,7 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 
 		//Bind to the error event SO the error does not get thrown
 		reqObjMethod.on('error', err => {
-			callback(e)
+			return callback(e)
 		})
 
 		//add request obj to request
@@ -133,7 +136,7 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 		reqObjMethod.end();
 
 	}else{
-		callback('given twilio arams were missing OR invalid');
+		return callback('given twilio arams were missing OR invalid');
 	}
 }
 
