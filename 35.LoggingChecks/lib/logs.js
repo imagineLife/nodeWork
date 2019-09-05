@@ -14,6 +14,7 @@
 	COMPRESS
 		Compresses the contents of a single .log file
 		into a .gz.b64 file within the same directory
+		this happens daily
 
 	DECOMPRESS
 		decompresses a .gz.b64 file into a str

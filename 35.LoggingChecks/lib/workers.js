@@ -293,6 +293,43 @@ workersObj.startLoop = () => {
 	},(1000 * 10)) //1 log every 10
 }
 
+workersObj.rotateLogs = function(){
+
+	//list logs in log dir
+	logsLib.listLogs(false, (err, logList) => {
+		if(err || !logList){
+			return console.log('ERROR: no logs to rotate')
+		}
+
+		logList.forEach(function(singleLogFile){
+
+			//clean-up logID
+			const logID = singleLogFile.replace('.log', '');
+
+			//make NEW log file name, including date
+			const newFileID = `${logID}-${Date.now()}`
+
+			logsLib.compress(logID, newFileID, (err) => {
+				if(err){
+					console.log('ERROR compressing one of the log files:');
+					return console.log(err);
+				}
+				
+				logsLib.truncate(logID, err => {
+					if(err){
+						return console.log('ERROR truncating a log file')
+					}
+
+					console.log('SUCCESS truncating a log file!')
+				})
+
+			})
+		})
+
+	})
+
+}
+
 //TIMER to execute the log-rotation process,
 // runs 'daily'
 workersObj.initRotateLogLoop = function(){
