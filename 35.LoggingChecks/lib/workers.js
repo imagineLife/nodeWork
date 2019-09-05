@@ -13,6 +13,8 @@ const http = require('http');
 const helpersLib = require('./helpers');
 const url = require('url');
 const { isString, isLength } = helpersLib;
+const logsLib = require('./logs')
+
 let workersObj = {};
 
 //lookup all checks, get their data, send to a validator - make sure checks are valid
@@ -234,6 +236,9 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 	newCheckData.state = upOrDown;
 	newCheckData.lastChecked = Date.now();
 
+	//write activity to a log file
+	workersObj.logToFile(originalCheckData, checkOutcome, upOrDown,alertWarranted, newCheckData.lastChecked)
+	
 	//SAVE the new data
 	dataLib.update('checks', newCheckData.id, newCheckData, (err) => {
 		if(err){
@@ -253,11 +258,39 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 	})
 }
 
+// Log to a file
+workersObj.logToFile = function(originalCheckData, checkOutcome, upOrDown, alertWarranted, lastChecked){
+	
+	//put params in an obj
+	const logDataObj = {
+		checkData: originalCheckData, 
+		checkOutcome,
+		upOrDown,
+		alertWarranted, 
+		lastChecked
+	}
+
+	//convert to string
+	const logString = JSON.stringify(logDataObj)
+
+	//get NAME of log file FROM check Data, the ID of the check
+	const logFileName = originalCheckData.id
+
+	//append the logString to the file
+	logsLib.append(logFileName,logString, (err)=> {
+		if(err){
+			return console.log('Logging-to-file FAILED')
+		}
+
+		return console.log('Logging-to-file SUCCEEDED!!')
+	})
+}
+
 //Timer, executing the worker-process once per minute
 workersObj.startLoop = () => {
 	setInterval(() => {
 		workersObj.gatherAllChecks();
-	},(1000 * 10)) //once-per-minute
+	},(1000 * 10)) //1 log every 10
 }
 
 //init script
