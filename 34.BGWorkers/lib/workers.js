@@ -257,7 +257,7 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 workersObj.startLoop = () => {
 	setInterval(() => {
 		workersObj.gatherAllChecks();
-	},(1000 * 60)) //once-per-minute
+	},(1000 * 10)) //once-per-minute
 }
 
 //init script

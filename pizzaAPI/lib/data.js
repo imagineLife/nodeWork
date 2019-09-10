@@ -83,17 +83,16 @@ lib.read = (dir, fileName,callback) => {
 	//uses utf8 encoding
 	//
 	fs.readFile(`${lib.baseDir}${dir}/${fileName}.json`,'utf8',(err, data) => {
-		if(!err && data){
-			let parsedData = helpers.parseJsonToObject(data)
-
-			debug(`\x1b[36m%s\x1b[0m`,`READ:`);
-			debug(`\x1b[36m%s\x1b[0m`,`${lib.baseDir}${dir}/${fileName}`);
-
-			callback(false,parsedData)
-		}else{
-			callback(err, data);
+		if(err || !data){
+			return callback(err, data);
 		}
 		
+		let parsedData = helpers.parseJsonToObject(data)
+
+		debug(`\x1b[36m%s\x1b[0m`,`READ:`);
+		debug(`\x1b[36m%s\x1b[0m`,`${lib.baseDir}${dir}/${fileName}`);
+
+		return callback(false,parsedData)
 	})
 }
 
@@ -113,39 +112,35 @@ lib.update = (dir, fileName, data, callback) => {
 			https://nodejs.org/api/fs.html#fs_file_system_flags
 	*/
 	fs.open(`${lib.baseDir}${dir}/${fileName}.json`,'r+', (err, fileDescriptor) => {
-		if(!err && fileDescriptor){
-			
-			// convert fileData to string
-			const stringData = JSON.stringify(data)
-
-			//truncate the file
-			fs.truncate(fileDescriptor, (err) => {
-				if(!err){
-
-					//write to the file and close the file
-					//writeSync might not be worth it
-					fs.writeFile(fileDescriptor, stringData, (err) => {
-						if(!err){
-							fs.close(fileDescriptor, err => {
-								if(!err){
-									callback(false)
-								}else{
-									callback('Error CLOSING file')
-								}
-							})
-						}else{
-							callback('Error Writing to existing file')
-						}
-					})
-
-				}else{
-					callback('Error truncating file')
-				}
-			})
-
-		}else{
-			calback('Could not open the file for editing. This file may not exist.')
+		if(err || !fileDescriptor){
+			return calback('Could not open the file for editing. This file may not exist.')
 		}
+			
+		// convert fileData to string
+		const stringData = JSON.stringify(data)
+
+		//truncate the file
+		fs.ftruncate(fileDescriptor, (err) => {
+			if(err){
+				return callback('Error truncating file')
+			}
+
+			//write to the file and close the file
+			//writeSync might not be worth it
+			fs.writeFile(fileDescriptor, stringData, (err) => {
+				if(err){
+					return callback('Error Writing to existing file')
+				}
+
+				fs.close(fileDescriptor, err => {
+					if(err){
+						return callback('Error CLOSING file')
+					}
+					
+					return callback(false)
+				})
+			})
+		})
 	})
 }
 
@@ -175,15 +170,13 @@ lib.listFiles = (dir,callback) => {
 
 	//read directory
 	fs.readdir(`${lib.baseDir}${dir}/`, (err, data) => {
-		if(!err && data && data.length > 0){
-
-			//get arr of filenames
-			let trimmedFileNames = data.map(d => d.replace('.json',''))
-			callback(false, trimmedFileNames);
-
-		}else{
-			callback(err, data)
+		if(err || !data || !(data.length > 0)){
+			return callback(err, data)
 		}
+
+		//get arr of filenames
+		let trimmedFileNames = data.map(d => d.replace('.json',''))
+		return callback(false, trimmedFileNames);
 	})
 }
 
