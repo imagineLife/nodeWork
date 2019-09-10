@@ -33,11 +33,10 @@ doMenuItems.get = (data, callback) => {
 		try{
 			//lookup the menuItems from the filesystem
 			items = dataLib.readSync('menuItems','menuItems');
-			callback(200, {'MenuItems': JSON.parse(items)})
+			return callback(200, {'MenuItems': JSON.parse(items)})
 		}
 		catch(err){
-			callback(403, {'Error': err.code})
-			return;
+			return callback(403, {'Error': err.code});
 		}
 	})
 }
