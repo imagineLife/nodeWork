@@ -18,7 +18,7 @@ const doUsers = {}
 
 //Users POST
 //REQ FIELDS: first, last, phone, pw, tosAgreement, NO optional Data
-routeHandlers.doUsers.post = function(data,callback){
+doUsers.post = function(data,callback){
 	
 	//GET all req'd fields from request payload
 	const dataPhone = data.payload.phoneNumber
@@ -87,7 +87,7 @@ routeHandlers.doUsers.post = function(data,callback){
 //OPTIONAL - firstName, lastName, pw (at least ONE MUST be specified)
 //@TODO only let auth user update their own obj. don't let them update others
 
-routeHandlers.doUsers.put = function(data,callback){
+doUsers.put = function(data,callback){
 	
 	//check that the phoneNumber is value
 	const phoneNumber = typeof(data.payload.phoneNumber) == 'string' && data.payload.phoneNumber.trim().length == 10 ? data.payload.phoneNumber.trim() : false;
@@ -156,7 +156,7 @@ routeHandlers.doUsers.put = function(data,callback){
 }
 
 //Users GET
-routeHandlers.doUsers.get = function(data,callback){
+doUsers.get = function(data,callback){
 
 	//TEST this by using postman with
 	// http://localhost:3000/users?phoneNumber=1238675309
@@ -203,7 +203,7 @@ routeHandlers.doUsers.get = function(data,callback){
 }
 
 //Users DELETE
-routeHandlers.doUsers.delete = function(data,callback){
+doUsers.delete = function(data,callback){
 	
 	//check that phone is valid
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
