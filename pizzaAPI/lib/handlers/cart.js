@@ -114,6 +114,10 @@ doCart.put = function(data,callback){
 		return;	
 	}
 
+	if(!data.headers.token){
+		return callback(404,{'Error':'Missing token in header'})
+	}
+
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
