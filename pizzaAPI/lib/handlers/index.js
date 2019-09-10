@@ -37,7 +37,7 @@ routeHandlers.users = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doUsers[data.method](data,callback);
 	}else{
-		callback(405)
+		return callback(405)
 	}
 }
 
@@ -55,7 +55,7 @@ routeHandlers.tokens = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doTokens[data.method](data,callback);
 	}else{
-		callback(405)
+		return callback(405)
 	}
 }
 
@@ -70,7 +70,7 @@ routeHandlers.menuItems = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doMenuItems[data.method](data,callback);
 	}else{
-		callback(405)
+		return callback(405)
 	}
 }
 
