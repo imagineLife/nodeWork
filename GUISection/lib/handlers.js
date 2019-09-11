@@ -546,27 +546,21 @@ routeHandlers.doTokens.get = (data, callback) => {
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(id){
-
-		//lookup the user from the filesystem
-		dataLib.read('tokens',id, (err, storedTokenData) => {
-			
-			if(!err && storedTokenData){
-
-				//REMOVE hashed pw from the user object before showing the user
-				callback(200, storedTokenData);
-
-			}else{
-
-				//NOT FOUND USER
-				callback(404)
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like incorrect token id'})
+	if(!id){
+		return callback(400, {'Error': 'Seems like incorrect token id'})
 	}
 
+	//lookup the user from the filesystem
+	dataLib.read('tokens',id, (err, storedTokenData) => {
+		
+		if(err || !storedTokenData){
+			//NOT FOUND USER
+			return callback(404)
+		}
+
+		//REMOVE hashed pw from the user object before showing the user
+		return callback(200, storedTokenData);
+	})
 }
 
 /*
@@ -605,7 +599,7 @@ routeHandlers.doTokens.put = (data, callback) => {
 			if(err){
 				return callback(500, {'Error': 'Couldnt update the token exp for some reason'})
 			}
-				callback(200)
+				return callback(200)
 		})
 	})
 }
