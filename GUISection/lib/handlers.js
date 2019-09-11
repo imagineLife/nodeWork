@@ -868,57 +868,56 @@ routeHandlers.doChecks.put = (data, callback) => {
 		return callback(400, {'Error': 'Missing reqd ID field'})
 	}
 
-		//if at least one other field exists to update
-		if(!sentProtocol || !sentUrl || !sentMethod || !sentSuccessCodes || !sentTimeout){
-			return callback(400, {'Error': 'Missing an updatable field'})
+	//if at least one other field exists to update
+	if(!sentProtocol || !sentUrl || !sentMethod || !sentSuccessCodes || !sentTimeout){
+		return callback(400, {'Error': 'Missing an updatable field'})
+	}
+
+	//lookup the user
+	dataLib.read('checks', id, (err, checkData) => {
+		
+		//check if file is error-less AND has userdata
+		if(err || !checkData){
+			//if error or no data for that file
+			return callback(400, {'Error': 'No data or file exists for that'})
 		}
 
-		//lookup the user
-		dataLib.read('checks', id, (err, checkData) => {
-			
-			//check if file is error-less AND has userdata
-			if(err || !checkData){
-				//if error or no data for that file
-				return callback(400, {'Error': 'No data or file exists for that'})
+		//GET CHEKC from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+		//verify that token is valid for passed phoneNumber
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
+			if(!tokenIsValid){
+				return callback(403, {'Error': 'Missing required token in header, or token invalid'})
 			}
 
-			//GET CHEKC from headers
-			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-			//verify that token is valid for passed phoneNumber
-			routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
-				if(!tokenIsValid){
-					return callback(403, {'Error': 'Missing required token in header, or token invalid'})
-				}
-
-				//update the field in the userData 
-				if(sentProtocol){
-					checkData.sentProtocol = sentProtocol;
-				}
-				if(sentUrl){
-					checkData.url = sentUrl;
-				}
-				if(sentMethod){
-					checkData.method = sentMethod;
-				}
-				if(sentSuccessCodes){
-					checkData.successCodes = sentSuccessCodes;
-				}
-				if(sentTimeout){
-					checkData.timeout = sentTimeout;
-				}
-
-				//Store the newly updated userData obj
-				dataLib.update('checks', id, checkData, (err) => {
-
-					if(err){
-						return callback(500, {'Error': 'Couldnt update this checkData with this info'})
-					}
-						callback(200)
-				})
+			//update the field in the userData 
+			if(sentProtocol){
+				checkData.sentProtocol = sentProtocol;
 			}
+			if(sentUrl){
+				checkData.url = sentUrl;
+			}
+			if(sentMethod){
+				checkData.method = sentMethod;
+			}
+			if(sentSuccessCodes){
+				checkData.successCodes = sentSuccessCodes;
+			}
+			if(sentTimeout){
+				checkData.timeout = sentTimeout;
+			}
+
+			//Store the newly updated userData obj
+			dataLib.update('checks', id, checkData, (err) => {
+
+				if(err){
+					return callback(500, {'Error': 'Couldnt update this checkData with this info'})
+				}
+					callback(200)
+			})
 		})
-	}
+	})
 
 };
 
