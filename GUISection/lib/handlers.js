@@ -654,7 +654,7 @@ routeHandlers.doTokens.delete = (data, callback) => {
 		})
 
 	}else{	
-		callback(400, {'Error': 'Seems like Missing id field'})
+		return callback(400, {'Error': 'Seems like Missing id field'})
 	}
 
 }
@@ -941,73 +941,60 @@ routeHandlers.doChecks.delete = function(data,callback){
 	const deletingCheckID = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(deletingCheckID){
-
-		//lookup the check
-		dataLib.read('checks', deletingCheckID, (err, checkData) => {
-			if(!err && checkData){
-
-				//GET token from headers
-				const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-				//verify that token is valid for passed id
-				routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
-					if(tokenIsValid){
-
-						//delete check data
-						dataLib.delete('checks', deletingCheckID, (err) => {
-							if(!err){
-
-								//Lookup user, remove check from thier user data
-								dataLib.read('users', checkData.userPhone, (err, userData) => {
-									if(!err && userData){
-
-										//get users checks data
-										const userChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
-
-										//remove the check from their checks
-										var checkPos = userChecks.indexOf(deletingCheckID)
-										if(checkPos > -1){
-											
-											userChecks.splice(checkPos, 1)
-											
-											//re-save the users data without the check
-											dataLib.update('users', checkData.userPhone, userData, (err) => {
-												if(!err){
-													callback(200)	
-												}else{
-													callback(500, {'Error': 'Couldnt update the user data'})
-												}
-												
-											})
-
-										}else{
-											callback(500, {'err': 'Couldnt find the check, funny result'})
-										}
-
-									}else{
-										callback(500, {'Error': 'Could not find the user for this check'})
-									}
-								})
-
-							}else{
-								callback(50, {"err": "couldnt delete check"})
-							}
-						})
-
-					}else{
-						callback(403, {'Error': 'Missing required token in header, or token invalid'})
-					}
-				})
-
-			}else{
-				callback(400, {'Error': 'This checkID didnt show up'})
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing id field'})
+	if(!deletingCheckID){
+		return callback(400, {'Error': 'Seems like Missing id field'})
 	}
+
+	//lookup the check
+	dataLib.read('checks', deletingCheckID, (err, checkData) => {
+		if(err || !checkData){
+			return callback(400, {'Error': 'This checkID didnt show up'})
+		}
+
+		//GET token from headers
+		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+		//verify that token is valid for passed id
+		routeHandlers.doTokens.verifyTokenMatch(passedToken, checkData.userPhone, (tokenIsValid) => {
+			if(!tokenIsValid){
+				return callback(403, {'Error': 'Missing required token in header, or token invalid'})
+			}
+
+			//delete check data
+			dataLib.delete('checks', deletingCheckID, (err) => {
+				if(err){
+					return callback(50, {"err": "couldnt delete check"})
+				}
+				//Lookup user, remove check from thier user data
+				dataLib.read('users', checkData.userPhone, (err, userData) => {
+					if(err || !userData){
+						return callback(500, {'Error': 'Could not find the user for this check'})
+					}
+
+					//get users checks data
+					const userChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
+
+					//remove the check from their checks
+					var checkPos = userChecks.indexOf(deletingCheckID)
+					
+					if(!(checkPos > -1)){
+						return callback(500, {'err': 'Couldnt find the check, funny result'})
+					}
+						
+					userChecks.splice(checkPos, 1)
+					
+					//re-save the users data without the check
+					dataLib.update('users', checkData.userPhone, userData, (err) => {
+						if(err){
+							return callback(500, {'Error': 'Couldnt update the user data'})
+						}
+
+						return callback(200)
+					})
+				})
+			})
+		})
+	})
 }
 
 module.exports = routeHandlers;
