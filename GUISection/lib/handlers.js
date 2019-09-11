@@ -363,73 +363,65 @@ routeHandlers.doUsers.delete = function(data,callback){
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
-	if(phoneNumber){
-
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-		//verify that token is valid for passed phoneNumber
-		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
-			if(tokenIsValid){
-
-				//lookup the user from the filesystem
-				dataLib.read('users',phoneNumber, (err, storedUserData) => {
-					
-					if(!err && storedUserData){
-
-						//REMOVE user
-						dataLib.delete('users', phoneNumber, (err) => {
-
-							if(!err){
-								
-								//Delete users-associated checks
-								//get checks form userData
-								let userChecks = typeof(storedUserData.checks) == 'object' && storedUserData.checks instanceof Array ? storedUserData.checks : [];
-								const noOfChecks = userChecks.length;
-								
-								if(noOfChecks > 0){
-
-									let checksDeleted = 0;
-									let deleteErrs = false;
-									userChecks.forEach(check => {
-										dataLib.delete('checks', check, (err) => {
-											if(err){
-												deleteErrs = true;
-											}
-											checksDeleted++;
-											if(checksDeleted == noOfChecks){
-												if(!deleteErrs){
-													callback(200)
-												}else{
-													callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
-												}
-											}
-										})
-									})
-
-								}else{
-									callback(200)
-								}
-
-							}else{
-								callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-							}
-
-						})
-					}else{
-						//NOT FOUND USER
-						callback(400, {'Error': 'Couldnt Find user'})
-					}
-				})
-
-			}else{
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+	if(!phoneNumber){
+		return callback(400, {'Error': 'Seems like Missing phoneNumber field'})
 	}
+
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+	//verify that token is valid for passed phoneNumber
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+		if(!tokenIsValid){
+			return callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		}
+
+		//lookup the user from the filesystem
+		dataLib.read('users',phoneNumber, (err, storedUserData) => {
+			
+			if(err || !storedUserData){
+				//NOT FOUND USER
+				return callback(400, {'Error': 'Couldnt Find user'})
+			}
+
+			//REMOVE user
+			dataLib.delete('users', phoneNumber, (err) => {
+
+				if(err){
+					return callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+				}
+					
+				//Delete users-associated checks
+				//get checks form userData
+				let userChecks = typeof(storedUserData.checks) == 'object' && storedUserData.checks instanceof Array ? storedUserData.checks : [];
+				const noOfChecks = userChecks.length;
+				
+				if(!(noOfChecks > 0)){
+					return callback(200)
+				}
+
+				let checksDeleted = 0;
+				let deleteErrs = false;
+				userChecks.forEach(check => {
+					dataLib.delete('checks', check, (err) => {
+						
+						if(err){
+							deleteErrs = true;
+						}
+						
+						checksDeleted++;
+						
+						if(checksDeleted == noOfChecks){
+							if(deleteErrs){
+								return callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
+							}
+							return callback(200)
+						}
+					})
+				})
+			})
+		})
+	})
 }
 
 //ping handler
