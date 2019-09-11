@@ -721,83 +721,71 @@ routeHandlers.doChecks.post = (data, callback) => {
 	var sentSuccessCodes = typeof(data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length > 0 ? data.payload.successCodes : false;
 	var sentTimeout = typeof(data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
 
-	if(sentProtocol && sentUrl && sentMethod && sentSuccessCodes && sentTimeout){
-
-		//get & check if user sent a valid token
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
-		//lookup the user by reading the token
-		dataLib.read('tokens', passedToken, (err, tokenData) => {
-			if(!err && tokenData){
-
-				//get users phone Number from token data
-				const tokenPhone = tokenData.phone;
-
-				//lookup user data by phone#
-				dataLib.read('users', tokenPhone, (err, userData) => {
-					if(!err && userData){
-
-						//get checks form userData
-						const userChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
-
-						//verify that the user has LESS than maxChecks from config
-						if(userChecks.length < config.maxChecks){
-
-							//CREATE new check
-							//rndm ID
-							const rndmID = helpers.createRandomString(20);
-
-							const checkObj = {
-								id: rndmID,
-								userPhone: tokenPhone,
-								protocol: sentProtocol,
-								url: sentUrl,
-								method: sentMethod,
-								successCodes: sentSuccessCodes,
-								timeoutSeconds: sentTimeout
-							};
-
-							//save checks to disk
-							dataLib.create('checks', rndmID, checkObj, (err) => {
-								if(!err){
-
-									//add the checkID to the USER obj
-									userData.checks = userChecks
-									userData.checks.push(rndmID)
-
-									//SAVE the new checks to userData
-									dataLib.update('users', tokenPhone, userData, (err) => {
-										if(!err){
-
-											//return data to requester
-											callback(200, checkObj)
-
-										}else{
-											callback(500, {'Error': 'couldnt update the user with this check'})
-										}
-									})
-
-								}else{
-									callback(500, {'Error': 'couldnt create check'})
-								}
-							})
-
-						}else{
-							callback(400, {'Error': `User has max number of checks: ${config.maxChecks}`})
-						}
-					}else{
-						callback(403)
-					}
-				})
-
-			}else{
-				callback(403)
-			}
-		})
-
-	}else{
-		callback(400, {'Error': 'Missing reqd inputs or invalid inputs'})
+	if(!sentProtocol || !sentUrl || !sentMethod || !sentSuccessCodes || !sentTimeout){
+		return callback(400, {'Error': 'Missing reqd inputs or invalid inputs'})
 	}
+
+	//get & check if user sent a valid token
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+
+	//lookup the user by reading the token
+	dataLib.read('tokens', passedToken, (err, tokenData) => {
+		if(err || !tokenData){
+			return callback(403)
+		}
+
+		//get users phone Number from token data
+		const tokenPhone = tokenData.phone;
+
+		//lookup user data by phone#
+		dataLib.read('users', tokenPhone, (err, userData) => {
+			if(err || !userData){
+				return callback(403)
+			}
+
+			//get checks form userData
+			const userChecks = typeof(userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
+
+			//verify that the user has LESS than maxChecks from config
+			if(!(userChecks.length < config.maxChecks)){
+				return callback(400, {'Error': `User has max number of checks: ${config.maxChecks}`})
+			}
+
+			//CREATE new check
+			//rndm ID
+			const rndmID = helpers.createRandomString(20);
+
+			const checkObj = {
+				id: rndmID,
+				userPhone: tokenPhone,
+				protocol: sentProtocol,
+				url: sentUrl,
+				method: sentMethod,
+				successCodes: sentSuccessCodes,
+				timeoutSeconds: sentTimeout
+			};
+
+			//save checks to disk
+			dataLib.create('checks', rndmID, checkObj, (err) => {
+				if(err){
+					return callback(500, {'Error': 'couldnt create check'})
+				}
+
+				//add the checkID to the USER obj
+				userData.checks = userChecks
+				userData.checks.push(rndmID)
+
+				//SAVE the new checks to userData
+				dataLib.update('users', tokenPhone, userData, (err) => {
+					if(err){
+						return callback(500, {'Error': 'couldnt update the user with this check'})
+					}
+					//return data to requester
+					callback(200, checkObj)
+				})
+			})
+		})
+	})
 }
 
 //
