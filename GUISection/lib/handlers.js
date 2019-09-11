@@ -630,33 +630,27 @@ routeHandlers.doTokens.delete = (data, callback) => {
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(id){
-
-		//lookup the token from the filesystem
-		dataLib.read('tokens',id, (err, storedUserData) => {
-			
-			if(!err && storedUserData){
-
-				//REMOVE user
-				dataLib.delete('tokens', id, (err) => {
-
-					if(!err){
-						callback(200, {'DELETED': 'Successfully'})
-					}else{
-						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-					}
-
-				})
-			}else{
-				//NOT FOUND USER
-				callback(400, {'Error': 'Couldnt Find token by id'})
-			}
-		})
-
-	}else{	
+	if(!id){
 		return callback(400, {'Error': 'Seems like Missing id field'})
 	}
 
+	//lookup the token from the filesystem
+	dataLib.read('tokens',id, (err, storedUserData) => {
+		
+		if(err || !storedUserData){
+			//NOT FOUND USER
+			return callback(400, {'Error': 'Couldnt Find token by id'})
+		}
+
+		//REMOVE user
+		dataLib.delete('tokens', id, (err) => {
+
+			if(err){
+				return callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+			}
+				return callback(200, {'DELETED': 'Successfully'})
+		})
+	})
 }
 
 
