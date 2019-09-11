@@ -138,6 +138,8 @@ helpers.sendTwilioSms = (phoneNumber, sendingMsg, callback) => {
 //gets the string content of a template by name
 /*
 	templateStringName: String
+	dataObj: variables to insert into html
+		by using in helpers.interpolate()
 	cb: Fn 
 */
 helpers.getTemplate = (templateStringName, dataObj, cb) => {
@@ -195,13 +197,14 @@ helpers.interpolate = (str,dataObj) => {
 		}
 	}
 	
+	//REPLACE the variables in the html with the variables from dataObj
 	for(let keyName in dataObj){
 		if(dataObj.hasOwnProperty(keyName) && typeof(dataObj[keyName] == 'string')){
-			const replace = dataObj[keyName]
+			const replaceVar = dataObj[keyName]
 			const findVal = `{${keyName}}`
 
 			//update string
-			str = str.replace(findVal, replace)
+			str = str.replace(findVal, replaceVar)
 		}
 	}
 	
