@@ -106,7 +106,14 @@ serverObj.sharedServer = (req, res) => {
 
 		curIncomingString += decoder.end();
 		
-		//choose the handler this request should go to
+		/*
+			choose the handler this request should go to
+			Calls-back 3 fields,
+			- statusCode (default 200 if not sent back)
+			- payload (def  to {}     if not sent)
+			- contentType (def to json if not sent)
+
+		*/
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
 
 		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? routeHandlers.public : chosenHandler;
