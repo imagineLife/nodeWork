@@ -665,15 +665,14 @@ routeHandlers.doTokens.verifyTokenMatch = function(tokenID,givenPhoneNumber,call
 
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
-		if(!err && storedTokenData){
-			//Check that the tokenID MATCHES the given user AND has not expired
-			if(storedTokenData.phone == givenPhoneNumber && storedTokenData.expires > Date.now()){
-				callback(true)
-			}else{
-				callback(false)
-			}
+		if(err || !storedTokenData){
+			return callback(false)
+		}
+		//Check that the tokenID MATCHES the given user AND has not expired
+		if(storedTokenData.phone == givenPhoneNumber && storedTokenData.expires > Date.now()){
+			return callback(true)
 		}else{
-			callback(false)
+			return callback(false)
 		}
 	})
 }
