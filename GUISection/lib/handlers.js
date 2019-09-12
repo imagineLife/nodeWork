@@ -162,65 +162,55 @@ routeHandlers.doUsers.post = function(data,callback){
 	const tosAg = typeof(dataTos) == 'boolean' && dataTos == true ? true : false;
 
 
-	//continue is fall reqd fields are present
-	if(fn && ln && pn && pw && tosAg){
-
-		/*
-			make sure that user doesn't already exist
-			USING the CRUD handlers from the data directory as a dependence above
-			READ from users data using this data
-		*/
-
-		//check if user phoneNumber already exists
-		//takes dir, fileName,callback
-		dataLib.read('users', pn, (err,result) => {
-
-			//if it comes back with an error,
-			// that means there IS no phone number
-			if(err){
-				//Hash the password using built in library called crypto,
-				//created in HELPERS file,
-				//included in dependencies
-				const hashedPW = helpers.hash(pw);
-
-				//if the hashing succeeded save the user data
-				//else below
-				if(hashedPW){
-					//create a user object from user data
-					let userObj = {
-						firstName: fn,
-						lastName: ln,
-						phone: pn,
-						hashedPW: hashedPW,
-						tosAgreement: true
-					}
-
-					//STORE this user to disk
-					//create method takes dir,fileName,data,callback
-					dataLib.create('users',pn,userObj,(err) => {
-						if(!err){
-							callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
-						}else{
-							callback(500, {'ERROR': 'Could not create the new user'})
-						}
-					})
-				}else{
-					callback(500, {'ERROR': 'Could not hash'})
-				}
-
-
-			}else{
-				//User already exists
-				callback(400,{'Error': 'A User with that number already exists'})
-			}
-		})
-
-	
-	}else{
-	//THROW ERROR if payload doesn't contain req'd fields
-		callback(400,{'Error': 'Missing Reqd fields'})
+	if(!fn || !ln || !pn || !pw || !tosAg){
+		//THROW ERROR if payload doesn't contain req'd fields
+		return callback(400,{'Error': 'Missing Reqd fields'})
 	}
 
+
+	/*
+		make sure that user doesn't already exist
+		USING the CRUD handlers from the data directory as a dependence above
+		READ from users data using this data
+	*/
+
+	//check if user phoneNumber already exists
+	//takes dir, fileName,callback
+	dataLib.read('users', pn, (err,result) => {
+
+		//if it comes back with an error,
+		// that means there IS no phone number
+		if(!err){
+			return callback(400,{'Error': 'A User with that number already exists'})
+		}
+		//Hash the password using built in library called crypto,
+		//created in HELPERS file,
+		//included in dependencies
+		const hashedPW = helpers.hash(pw);
+
+		//if the hashing succeeded save the user data
+		//else below
+		if(!hashedPW){
+			return callback(500, {'ERROR': 'Could not hash'})
+		}
+		//create a user object from user data
+		let userObj = {
+			firstName: fn,
+			lastName: ln,
+			phone: pn,
+			hashedPW: hashedPW,
+			tosAgreement: true
+		}
+
+		//STORE this user to disk
+		//create method takes dir,fileName,data,callback
+		dataLib.create('users',pn,userObj,(err) => {
+			if(err){
+				return callback(500, {'ERROR': 'Could not create the new user'})
+			}
+			return callback(200, {'Success!': `User ${userObj.firstName} created successfully!`})
+		})
+	})
 }
 
 //Users PUT
