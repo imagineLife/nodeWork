@@ -40,7 +40,6 @@ routeHandlers.index = (data, callback) => {
 		stringTemplateData = {
 			'head.title': 'Demo Title',
 			'head.description': 'demo meta description',
-			'body.title': 'demo body title',
 			'body.class': 'demo-body-class'
 		}
 
