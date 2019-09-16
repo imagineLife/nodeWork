@@ -196,7 +196,7 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   
   // If account creation was successful, try to immediately log the user in
   if(formId == 'accountCreate'){
-  
+  	console.log('ACCOUNT-CREATE SENT!');
   }
 };
 
