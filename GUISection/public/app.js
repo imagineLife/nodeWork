@@ -188,3 +188,25 @@ app.bindForms = function(){
     }
   }
 };
+
+// Form response processor
+app.formResponseProcessor = function(formId,requestPayload,responsePayload){
+  
+  var functionToCall = false;
+  
+  // If account creation was successful, try to immediately log the user in
+  if(formId == 'accountCreate'){
+  
+  }
+};
+
+app.init = () => {
+
+	//Bind the form submissions
+	app.bindForms()
+}
+
+//init the app after the window loads
+window.onload = () => {
+	app.init()
+}
