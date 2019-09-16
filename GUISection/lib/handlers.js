@@ -92,6 +92,34 @@ routeHandlers.accountCreate = (data, callback) => {
 	})
 }
 
+// Create New Session
+routeHandlers.sessionCreate = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Login to your account.',
+    'head.description' : 'Please enter your phone number and password to access your account.',
+    'body.class' : 'sessionCreate'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('sessionCreate',templateData,function(err,str){
+    if(err || !str){
+			return callback(500,undefined,'html');
+    }
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      callback(200,str,'html');
+    });
+  });
+};
+
 // Favicon handler
 routeHandlers.favicon = (data, cb) => {
 	
