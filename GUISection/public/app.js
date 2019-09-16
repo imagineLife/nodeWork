@@ -1,13 +1,26 @@
+/*
+	Frontend Logic
+*/
+
 let app = {}
 
 app.config = {
 	'sessionToken': false
 }
 
-//AJAX client holder, for rest api
+/*
+	AJAX client holder, for rest api
+	contains
+	request
+*/
 app.client = {}
 
-//maker of API call
+/*
+	maker of API call
+	NOTE: this can be tested in-browser
+	in the browser console, via the /ping route:
+	app.client.request(undefined, '/ping','GET',undefined,undefined,function(statusCode,payload){console.log('DONE!',statusCode,payload)})
+*/
 app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	
 	//defaults
@@ -18,7 +31,7 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	payload = typeof(payload) == 'object' && payload !== null ? payload : {};
 	cb = typeof(cb) == 'function' ? cb : false;
 
-	//placeholder vals
+	//placeholder vals, awaiting params via the '?'
 	let reqURL = `${path}?`;
 	let counter = 0;
 
@@ -35,16 +48,12 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 		}
 	}
 
-	console.log('reqURL')
-	console.log(reqURL)
-	
-
 	//build the request
 	let reqObj = new XMLHttpRequest();
 	reqObj.open(method, reqURL, true);
 	reqObj.setRequestHeader('Content-Type', 'application/json');
 
-	//add each header  ot the request
+	//add each header from the passed request headers
 	for(let hK in headers){
 		if(headers.hasOwnProperty(hK)){
 			reqObj.setRequestHeader(hK, headers[hK])
