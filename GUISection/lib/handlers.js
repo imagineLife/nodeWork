@@ -96,6 +96,27 @@ routeHandlers.public = (data, cb) => {
 		return cb(404)
 	}
 
+	helpers.getContentFromAsset= (asst) => {
+		//default content-type
+		let contentType = 'plain';
+
+		//conditional content-type
+		if(asst.indexOf('.css') > -1){
+			contentType = 'css'
+		}
+		if(asst.indexOf('.png') > -1){
+			contentType = 'png'
+		}
+		if(asst.indexOf('.jpg') > -1){
+			contentType = 'jpg'
+		}
+		if(asst.indexOf('.ico') > -1){
+			contentType = 'favicon'
+		}
+
+		return contentType;
+	}
+
 	//get the asset
 	helpers.getStaticAsset(trimmedAsset, (err, assetData)=> {
 		
@@ -104,22 +125,7 @@ routeHandlers.public = (data, cb) => {
 			return cb(500)
 		}
 
-		//default content-type
-		let contentType = 'plain';
-
-		//conditional content-type
-		if(trimmedAsset.indexOf('.css') > -1){
-			contentType = 'css'
-		}
-		if(trimmedAsset.indexOf('.png') > -1){
-			contentType = 'png'
-		}
-		if(trimmedAsset.indexOf('.jpg') > -1){
-			contentType = 'jpg'
-		}
-		if(trimmedAsset.indexOf('.ico') > -1){
-			contentType = 'favicon'
-		}
+		let contentType = helpers.getContentFromAsset(trimmedAsset)
 
 		cb(200, assetData, contentType);
 	})
