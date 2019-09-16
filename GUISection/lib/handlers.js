@@ -978,7 +978,7 @@ routeHandlers.doChecks.delete = function(data,callback){
 }
 
 // Dashboard (view all checks)
-handlers.doChecks.list = function(data,callback){
+routeHandlers.doChecks.list = function(data,callback){
   // Reject any request that isn't a GET
   if(data.method !== 'get'){
   	return callback(405,undefined,'html');
@@ -993,9 +993,10 @@ handlers.doChecks.list = function(data,callback){
     if(err || !str){
     	return callback(500,undefined,'html');
     }
+    
     // Add the universal header and footer
-    helpers.addUniversalTemplates(str,templateData,function(err,str){
-      if(!err && str){
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
       	return callback(500,undefined,'html');
       }
       // Return that page as HTML
