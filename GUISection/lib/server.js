@@ -54,7 +54,7 @@ serverObj.myRouter = {
 	// 'account/deletet': routeHandlers.account.deletet,
 	'session/create': routeHandlers.sessionCreate,
 	// 'session/deleted': routeHandlers.session.deleted,
-	'checks/all': routeHandlers.checks.all,
+	'checks/all': routeHandlers.doChecks.list,
 	// 'checks/create': routeHandlers.checks.create,
 	// 'checks/edit': routeHandlers.checks.edit,
 	'ping': routeHandlers.ping,
