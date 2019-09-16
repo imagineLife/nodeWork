@@ -56,6 +56,42 @@ routeHandlers.index = (data, callback) => {
 	})
 }
 
+// Create-Account
+routeHandlers.accountCreate = (data, callback) => {
+	
+	//some template data for html string interpolation
+	let stringTemplateData = {
+		'head.title': 'Create An Account',
+		'head.description': 'Sign Up is easy, & only takes a few seconds.',
+		'body.class': 'accountCreate'
+	} 
+
+	//error-handling
+	if(data.method !== 'get'){
+		callback(405,undefined,'html')
+	}
+
+	//fetch template
+	helpers.getTemplate('accountCreate', stringTemplateData, (err, resStr) => {
+		
+		//error-handling
+		if(!(!err && resStr)){
+			callback(500, undefined, 'html')
+		}
+
+		helpers.addHeaderFooter(resStr, stringTemplateData, (err, resultStr) => {
+
+			//error-handling
+			if(err || !resultStr){
+				return callback(500, undefined, 'html')
+			}
+
+			return callback(200, resultStr, 'html')
+		})
+
+	})
+}
+
 // Favicon handler
 routeHandlers.favicon = (data, cb) => {
 	
