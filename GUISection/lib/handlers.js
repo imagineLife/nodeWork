@@ -977,4 +977,31 @@ routeHandlers.doChecks.delete = function(data,callback){
 	})
 }
 
+// Dashboard (view all checks)
+handlers.doChecks.list = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Dashboard',
+    'body.class' : 'checksList'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('checksList',templateData,function(err,str){
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+    // Add the universal header and footer
+    helpers.addUniversalTemplates(str,templateData,function(err,str){
+      if(!err && str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      return callback(200,str,'html');
+    });
+  });
+};
+
 module.exports = routeHandlers;
