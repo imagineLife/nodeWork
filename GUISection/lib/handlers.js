@@ -138,7 +138,7 @@ routeHandlers.sessionDeleted = function(data,callback){
     	return callback(500,undefined,'html');
     }
     // Add the universal header and footer
-    helpers.addUniversalTemplates(str,templateData,function(err,str){
+    helpers.addHeaderFooter(str,templateData,function(err,str){
       if(err || !str){
       	return callback(500,undefined,'html');
       }
