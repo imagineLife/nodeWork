@@ -67,7 +67,6 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 
 	//when the req comes back, handle response
 	reqObj.onreadystatechange = () => {
-		console.log('onreadystatechange');
 		if(reqObj.readyState == XMLHttpRequest.DONE){
 			let thisStatus = reqObj.status;
 			let resTxt = reqObj.responseText;
@@ -75,7 +74,6 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 			//cb if requested
 			if(cb){
 				try{
-					console.log('CB HERE');
 					let parsedRes = JSON.parse(resTxt)
 					cb(thisStatus, parsedRes)
 				}catch(e){
@@ -160,7 +158,6 @@ app.bindForms = function(){
 
         // Call the API
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
-        	console.log('requested!!')
         	
           // Display an error on the form if needed
           if(statusCode !== 200){
@@ -219,7 +216,6 @@ app.logUserOut = function(redirectUser){
 // Form response processor
 app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   
-  console.log('formRespProcessing!');
   var functionToCall = false;
   // If account creation was successful, try to immediately log the user in
   if(formId == 'accountCreate'){
@@ -230,11 +226,6 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
     };
 
     app.client.request(undefined,'api/tokens','POST',undefined,newPayload,function(newStatusCode,newResponsePayload){
-      
-    	console.log('newStatusCode')
-    	console.log(newStatusCode)
-    	console.log('newResponsePayload')
-    	console.log(newResponsePayload)
     	
       // Display an error on the form if needed
       if(newStatusCode !== 200){
@@ -300,8 +291,6 @@ app.getSessionToken = function(){
     try{
       var token = JSON.parse(tokenString);
       app.config.sessionToken = token;
-      console.log('getSessionToken typeof(token)')
-      console.log(typeof(token))
       
       if(typeof(token) == 'object'){
         app.setLoggedInClass(true);
@@ -320,12 +309,10 @@ app.getSessionToken = function(){
 
 // Set (or remove) the loggedIn class from the body
 app.setLoggedInClass = function(add){
-  console.log('setLoggedInClass');
   var target = document.querySelector("body");
   if(add){
     target.classList.add('loggedIn');
   } else {
-    console.log('REMOVING LOGGED IN');
     target.classList.remove('loggedIn');
   }
 };
