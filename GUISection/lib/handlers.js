@@ -120,6 +120,34 @@ routeHandlers.sessionCreate = function(data,callback){
   });
 };
 
+// Session has been deleted
+routeHandlers.sessionDeleted = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Logged Out',
+    'head.description' : 'You have been logged out of your account.',
+    'body.class' : 'sessionDeleted'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('sessionDeleted',templateData,function(err,str){
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+    // Add the universal header and footer
+    helpers.addUniversalTemplates(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      return callback(200,str,'html');
+    });
+  });
+};
+
 // Favicon handler
 routeHandlers.favicon = (data, cb) => {
 	

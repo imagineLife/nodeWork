@@ -332,13 +332,38 @@ app.renewToken = function(callback){
   }
 };
 
+// Bind the logout button
+app.bindLogoutButton = function(){
+  document.getElementById("logoutButton").addEventListener("click", function(e){
+
+    // Stop it from redirecting anywhere
+    e.preventDefault();
+
+    // Log the user out
+    app.logUserOut();
+
+  });
+};
+
+// Loop to renew token often
+app.tokenRenewalLoop = function(){
+  setInterval(function(){
+    app.renewToken(function(err){
+      if(!err){
+        console.log("Token renewed successfully @ "+Date.now());
+      }
+    });
+  },1000 * 60);
+};
+
+
 app.init = () => {
 
   // Bind all form submissions
   app.bindForms();
 
   // Bind logout logout button
-  app.bindLogoutButton();
+  // app.bindLogoutButton();
 
   // Get the token from localstorage
   app.getSessionToken();
@@ -347,7 +372,7 @@ app.init = () => {
   app.tokenRenewalLoop();
 
   // Load data on page
-  app.loadDataOnPage();
+  // app.loadDataOnPage();
 }
 
 //init the app after the window loads
