@@ -191,6 +191,31 @@ app.bindForms = function(){
   }
 };
 
+// Log the user out then redirect them
+app.logUserOut = function(redirectUser){
+  // Set redirectUser to default to true
+  // redirectUser = typeof(redirectUser) == 'boolean' ? redirectUser : true;
+
+  // Get the current token id
+  var tokenId = typeof(app.config.sessionToken.id) == 'string' ? app.config.sessionToken.id : false;
+
+  // Send the current token to the tokens endpoint to delete it
+  var queryStringObject = {
+    'id' : tokenId
+  };
+
+  app.client.request(undefined,'api/tokens','DELETE',queryStringObject,undefined,function(statusCode,responsePayload){
+    // Set the app.config token as false
+    app.setSessionToken(false);
+
+    // Send the user to the logged out page
+    // if(redirectUser){
+      window.location = '/session/deleted';
+    // }
+
+  });
+};
+
 // Form response processor
 app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   
@@ -275,24 +300,32 @@ app.getSessionToken = function(){
     try{
       var token = JSON.parse(tokenString);
       app.config.sessionToken = token;
+      console.log('getSessionToken typeof(token)')
+      console.log(typeof(token))
+      
       if(typeof(token) == 'object'){
         app.setLoggedInClass(true);
+        return;
       } else {
         app.setLoggedInClass(false);
+        return;
       }
     }catch(e){
       app.config.sessionToken = false;
       app.setLoggedInClass(false);
+      return;
     }
   }
 };
 
 // Set (or remove) the loggedIn class from the body
 app.setLoggedInClass = function(add){
+  console.log('setLoggedInClass');
   var target = document.querySelector("body");
   if(add){
     target.classList.add('loggedIn');
   } else {
+    console.log('REMOVING LOGGED IN');
     target.classList.remove('loggedIn');
   }
 };
@@ -300,36 +333,33 @@ app.setLoggedInClass = function(add){
 // Renew the token
 app.renewToken = function(callback){
   var currentToken = typeof(app.config.sessionToken) == 'object' ? app.config.sessionToken : false;
-  if(currentToken){
-    // Update the token with a new expiration
-    var payload = {
-      'id' : currentToken.id,
-      'extend' : true,
-    };
-    app.client.request(undefined,'api/tokens','PUT',undefined,payload,function(statusCode,responsePayload){
-      // Display an error on the form if needed
-      if(statusCode == 200){
-        // Get the new token details
-        var queryStringObject = {'id' : currentToken.id};
-        app.client.request(undefined,'api/tokens','GET',queryStringObject,undefined,function(statusCode,responsePayload){
-          // Display an error on the form if needed
-          if(statusCode == 200){
-            app.setSessionToken(responsePayload);
-            callback(false);
-          } else {
-            app.setSessionToken(false);
-            callback(true);
-          }
-        });
-      } else {
-        app.setSessionToken(false);
-        callback(true);
-      }
-    });
-  } else {
+  if(!currentToken){
     app.setSessionToken(false);
-    callback(true);
+    return callback(true);
   }
+  // Update the token with a new expiration
+  var payload = {
+    'id' : currentToken.id,
+    'extend' : true,
+  };
+  app.client.request(undefined,'api/tokens','PUT',undefined,payload,function(statusCode,responsePayload){
+    // Display an error on the form if needed
+    if(statusCode !== 200){
+      app.setSessionToken(false);
+      return callback(true);
+    }
+    // Get the new token details
+    var queryStringObject = {'id' : currentToken.id};
+    app.client.request(undefined,'api/tokens','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+      // Display an error on the form if needed
+      if(statusCode !== 200){
+        app.setSessionToken(false);
+        return callback(true);
+      }
+      app.setSessionToken(responsePayload);
+      return callback(false);
+    });
+  });
 };
 
 // Bind the logout button
@@ -363,7 +393,7 @@ app.init = () => {
   app.bindForms();
 
   // Bind logout logout button
-  // app.bindLogoutButton();
+  app.bindLogoutButton();
 
   // Get the token from localstorage
   app.getSessionToken();
