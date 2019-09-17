@@ -50,8 +50,8 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 serverObj.myRouter = {
 	'' : routeHandlers.index,
 	'account/create': routeHandlers.accountCreate,
-	// 'account/edit': routeHandlers.account.edit,
-	// 'account/deletet': routeHandlers.account.deletet,
+	'account/edit': routeHandlers.accountEdit,
+	// 'account/delete': routeHandlers.account.deletet,
 	'session/create': routeHandlers.sessionCreate,
 	// 'session/deleted': routeHandlers.session.deleted,
 	'checks/all': routeHandlers.doChecks.list,
