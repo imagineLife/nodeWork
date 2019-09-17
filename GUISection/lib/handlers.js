@@ -148,6 +148,36 @@ routeHandlers.sessionDeleted = function(data,callback){
   });
 };
 
+// editAccount
+routeHandlers.accountEdit = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Account Settings',
+    'body.class' : 'accountEdit'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('accountEdit',templateData,function(err,str){
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+
+      // Return that page as HTML
+      callback(200,str,'html');
+      return;
+    });
+  });
+};
+
 // Favicon handler
 routeHandlers.favicon = (data, cb) => {
 	
@@ -326,67 +356,57 @@ routeHandlers.doUsers.put = function(data,callback){
 	const pw = checkForLengthAndType(data.payload.passWord)
 
 	//if phone number exists, keep going
-	if(phoneNumber){
+	if(!phoneNumber){
+		//if phone is invalid, Error 
+		return callback(400, {'Error': 'Missing reqd field'})
+	}
 
-		//if at least one other field exists to update
-		if(fn || ln || pw){
+	//if at least one other field exists to update
+	if(!fn && !ln && !pw){
+		return callback(400, {'Error': 'Missing updatable field'})
+	}
 
-			//GET token from headers
-			const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-			//verify that token is valid for passed phoneNumber
-			routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
-				if(tokenIsValid){
+	//verify that token is valid for passed phoneNumber
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+		if(!tokenIsValid){
+			return callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		}
 
-					//lookup the user
-					dataLib.read('users', phoneNumber, (err, userData) => {
-						
-						//check if file is error-less AND has userdata
-						if(!err && userData){
+		//lookup the user
+		dataLib.read('users', phoneNumber, (err, userData) => {
+			
+			//check if file is error-less AND has userdata
+			if(err || !userData){
+				//if error or no data for that file
+				return callback(400, {'Error': 'No data or file exists for that'})
+			}
 
-							//update the field in the userData 
-							if(fn){
-								userData.firstName = fn;
-							}
-							if(ln){
-								userData.lastName = ln;
-							}
-							if(pw){
-								userData.passWord = helpers.hash(pw);
-							}
+			//update the field in the userData 
+			if(fn){
+				userData.firstName = fn;
+			}
+			if(ln){
+				userData.lastName = ln;
+			}
+			if(pw){
+				userData.passWord = helpers.hash(pw);
+			}
 
-							//Store the newly updated userData obj
-							dataLib.update('users', phoneNumber, userData, (err) => {
+			//Store the newly updated userData obj
+			dataLib.update('users', phoneNumber, userData, (err) => {
 
-								if(!err){
-									callback(200)
-								}else{
-									callback(500, {'Error': 'Couldnt update this user with this info'})
-								}
-
-							})
-
-
-						//if error or no data for that file
-						}else{
-							callback(400, {'Error': 'No data or file exists for that'})
-						}
-					})
-
+				if(!err){
+					callback(200)
 				}else{
-					callback(403, {'Error': 'Missing required token in header, or token invalid'})
+					callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
 
 			})
-
-		}else{
-			callback(400, {'Error': 'Missing updatable field'})
-		}
-
-	//if phone is invalid, Error 
-	}else{
-		callback(400, {'Error': 'Missing reqd field'})
-	}
+		})
+	})
 }
 
 //Users GET
@@ -402,42 +422,33 @@ routeHandlers.doUsers.get = function(data,callback){
 	const phoneNumber = typeof(data.queryStrObj.phoneNumber) == 'string' && data.queryStrObj.phoneNumber.trim().length == 10 ? data.queryStrObj.phoneNumber.trim() : false;
 
 	//if phone is valid
-	if(phoneNumber){
+	if(!phoneNumber){
+		return callback(400, {'Error': 'Seems like Missing phoneNumber field'})
+	}
 
-		//GET token from headers
-		const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	//GET token from headers
+	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
 
-		//verify that token is valid for passed phoneNumber
-		routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
+	//verify that token is valid for passed phoneNumber
+	routeHandlers.doTokens.verifyTokenMatch(passedToken, phoneNumber, (tokenIsValid) => {
 
-			//IF token MATCHES phoneNumber
-			if(tokenIsValid){
+		//IF token MATCHES phoneNumber
+		if(!tokenIsValid){
+			return callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		}
 
-				//lookup the user from the filesystem
-				dataLib.read('users',phoneNumber, (err, storedUserData) => {
-					if(!err && storedUserData){
-
-						//REMOVE hashed pw from the user object before showing the user
-						delete storedUserData.hashedPW;
-						callback(200, storedUserData);
-
-					}else{
-
-						//NOT FOUND USER
-						callback(404)
-					}
-				})
-
-			}else{
-				callback(403, {'Error': 'Missing required token in header, or token invalid'})
+		//lookup the user from the filesystem
+		dataLib.read('users',phoneNumber, (err, storedUserData) => {
+			if(err || !storedUserData){
+				//NOT FOUND USER
+				return callback(404, {'Error': "User not found"})
 			}
 
+				//REMOVE hashed pw from the user object before showing the user
+				delete storedUserData.hashedPW;
+				return callback(200, storedUserData);
 		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing phoneNumber field'})
-	}
-	
+	})
 }
 
 //Users DELETE
