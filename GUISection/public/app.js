@@ -221,8 +221,8 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   if(formId == 'accountCreate'){
     // Take the phone and password, and use it to log the user in
     var newPayload = {
-      'phone' : requestPayload.phoneNumber,
-      'password' : requestPayload.passWord
+      'phoneNumber' : requestPayload.phoneNumber,
+      'passWord' : requestPayload.passWord
     };
 
     app.client.request(undefined,'api/tokens','POST',undefined,newPayload,function(newStatusCode,newResponsePayload){
