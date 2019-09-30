@@ -51,7 +51,7 @@ serverObj.myRouter = {
 	'' : routeHandlers.index,
 	'account/create': routeHandlers.accountCreate,
 	'account/edit': routeHandlers.accountEdit,
-	// 'account/delete': routeHandlers.account.deletet,
+	'account/delete': routeHandlers.accountDeleted,
 	'session/create': routeHandlers.sessionCreate,
 	// 'session/deleted': routeHandlers.session.deleted,
 	'checks/all': routeHandlers.doChecks.list,
