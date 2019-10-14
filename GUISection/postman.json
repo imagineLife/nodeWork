@@ -136,28 +136,147 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "MAKE a token",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"phoneNumber\" : \"1234567896\",\n\t\"passWord\":\"myPassword\"\n}"
+			"name": "Tokens",
+			"item": [
+				{
+					"name": "MAKE a token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"phoneNumber\" : \"1234567896\",\n\t\"passWord\":\"myPassword\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/tokens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"tokens"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:3000/api/tokens",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"tokens"
-					]
+				{
+					"name": "ID in header",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/tokens?id=5or08z09dsfj8qegswt",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"tokens"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5or08z09dsfj8qegswt"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "id in header",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"phoneNumber\" : \"1234567890\",\n\t\"passWord\":\"myPassword\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/tokens?id=1oorffi2czim1mwektv",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"tokens"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1oorffi2czim1mwektv"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EXTEND with body",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "token",
+								"value": "lf1ee6h5czui801cmx0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\" : \"1oorffi2czim1mwektv\",\n\t\"extend\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/tokens",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"tokens"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4rhbq2hcdus86esqzsl",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}
