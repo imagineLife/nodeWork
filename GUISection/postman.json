@@ -1,0 +1,164 @@
+{
+	"info": {
+		"_postman_id": "922da1e8-9011-41d5-a8d0-461cf7a2bf03",
+		"name": "API-With-GUI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Make a user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"cc\",\n\t\"lastName\": \"dd\",\n\t\"phoneNumber\" : \"1234567896\",\n\t\"tosAgreement\":true,\n\t\"passWord\":\"myPassword\",\n\t\"address\": \"321 Main st\",\n\t\"email\": \"cc@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a user by phoneNumber",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "5hhtyjhtrfhe8uuw0um"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users?phoneNumber=1234567896",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "phoneNumber",
+									"value": "1234567896"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by phoneNumber",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "5hhtyjhtrfhe8uuw0um"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users?phoneNumber=1234567896",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "phoneNumber",
+									"value": "1234567896"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "5or08z09dsfj8qegswt",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"abe\",\n    \"lastName\": \"zxcvb\",\n    \"phoneNumber\" : \"1231234567\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						},
+						"description": "token in header\nfields in body"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "MAKE a token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"phoneNumber\" : \"1234567896\",\n\t\"passWord\":\"myPassword\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tokens",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tokens"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
