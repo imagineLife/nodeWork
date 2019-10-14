@@ -1104,4 +1104,32 @@ routeHandlers.doChecks.list = function(data,callback){
   });
 };
 
+//edit a check
+routeHandlers.doChecks.editChecks = function(data,callback){
+	// Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Check Details',
+    'body.class' : 'checksEdit'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('checksEdit',templateData,function(err,str){
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+    
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      return callback(200,str,'html');
+    });
+  });
+}
+
 module.exports = routeHandlers;
