@@ -277,6 +277,143 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Checks",
+			"item": [
+				{
+					"name": "MAKE a check",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "1oorffi2czim1mwektv"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"protocol\":\"http\",\n\t\"url\":\"instagram.com\",\n\t\"method\":\"get\",\n\t\"successCodes\": [200,201],\n\t\"timeoutSeconds\":5\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/checks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"checks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SingleCheck",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "1oorffi2czim1mwektv"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/checks?id=tvridtnbukvfdhg8tic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"checks"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "tvridtnbukvfdhg8tic"
+								}
+							]
+						},
+						"description": "Id in url\ntoken in header"
+					},
+					"response": []
+				},
+				{
+					"name": "EDIT a single check",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "1oorffi2czim1mwektv"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"tvridtnbukvfdhg8tic\",\n    \"phoneNumber\": \"1231234567\",\n    \"protocol\": \"http\",\n    \"url\": \"say-what.netlify.com\",\n    \"method\": \"get\",\n    \"successCodes\": [\n        200,\n        201,\n        369\n    ],\n    \"timeoutSeconds\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/checks?id=yyiis8r3qwuupwhgyb9",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"checks"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "yyiis8r3qwuupwhgyb9"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE a single check",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "token",
+								"value": "1oorffi2czim1mwektv"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"yyiis8r3qwuupwhgyb9\",\n    \"userPhone\": \"9999876543\",\n    \"protocol\": \"http\",\n    \"url\": \"google.com\",\n    \"method\": \"get\",\n    \"successCodes\": [\n        200,\n        201,\n        369\n    ],\n    \"timeoutSeconds\": 3\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/checks?id=tvridtnbukvfdhg8tic",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"checks"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "tvridtnbukvfdhg8tic"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}
