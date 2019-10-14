@@ -394,11 +394,11 @@ app.loadAccountEditPage = function(){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
       return app.logUserOut();
     }
-
+    
     // Put the data into the forms as values where needed
     document.querySelector("#accountEdit1 .firstNameInput").value = responsePayload.firstName;
     document.querySelector("#accountEdit1 .lastNameInput").value = responsePayload.lastName;
-    document.querySelector("#accountEdit1 .displayPhoneInput").value = responsePayload.phoneNumber;
+    document.querySelector("#accountEdit1 .displayPhoneInput").value = responsePayload.phone;
 
     // Put the hidden phone field into both forms
     var hiddenPhoneInputs = document.querySelectorAll("input.hiddenPhoneNumberInput");
