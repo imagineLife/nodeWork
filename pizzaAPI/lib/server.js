@@ -54,6 +54,10 @@ serverObj.myRouter = {
 	'api/menuItems' : routeHandlers.menuItems,
 	'api/cart' : routeHandlers.cart,
 	'api/charge': routeHandlers.charge,
+	// 'createAccount' routeHandlers.createAccount,
+	// 'menu': routeHandlers.menu,
+	// 'cart': routeHandlers.cart,
+	// 'checkout': routeHandlers.checkout
 	'notFound' : function(data, callback){ callback(404) }
 }
 
