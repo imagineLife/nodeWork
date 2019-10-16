@@ -57,7 +57,9 @@ serverObj.myRouter = {
 	// 'createAccount' routeHandlers.createAccount,
 	// 'menu': routeHandlers.menu,
 	// 'cart': routeHandlers.cart,
-	// 'checkout': routeHandlers.checkout
+	// 'checkout': routeHandlers.checkout,
+	// "session/create" : routeHandlers.sessionCreate,
+ //  "session/deleted" : routeHandlers.sessionDeleted,
 	'notFound' : function(data, callback){ callback(404) }
 }
 
