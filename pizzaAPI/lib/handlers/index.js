@@ -9,11 +9,12 @@ const helpers = require('../helpers')
 const config = require('../config')
 
 //handlers from sibling handler files
-const doUsers = require('./users');
-const doTokens = require('./tokens')
-const doMenuItems = require('./menuItems')
-const doCart = require('./cart')
-const doCharges = require('./charge')
+const doUsers = require('./api/users');
+const doTokens = require('./api/tokens')
+const doMenuItems = require('./api/menuItems')
+const doCart = require('./api/cart')
+const doCharges = require('./api/charge')
+const doIndex = require('./frontend/index')
 // const doCharges = require('../../chargeHelp')
 
 //handlers
@@ -74,7 +75,6 @@ routeHandlers.menuItems = (data, callback) => {
 	}
 }
 
-
 // USER CART handling
 //FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.cart = (data, callback) => {
@@ -95,5 +95,12 @@ routeHandlers.charge = (data, callback) => {
 		routeHandlers.doCharges[data.method](data, callback);
 	}
 
+}
+
+/*
+	Frontend Handlers
+*/
+routeHandlers.doIndex = (data, callback) => {
+	callback(undefined, undefined, 'html')
 }
 module.exports = routeHandlers;
