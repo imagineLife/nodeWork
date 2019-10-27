@@ -54,6 +54,7 @@ serverObj.myRouter = {
 	'api/menuItems' : routeHandlers.menuItems,
 	'api/cart' : routeHandlers.cart,
 	'api/charge': routeHandlers.charge,
+	'helloWorld': routeHandlers.doIndex,
 	// 'createAccount' routeHandlers.createAccount,
 	// 'menu': routeHandlers.menu,
 	// 'cart': routeHandlers.cart,
@@ -112,7 +113,53 @@ serverObj.sharedServer = (req, res) => {
 			payload: helpers.parseJsonToObject(curIncomingString)
 		}
 
-		chosenHandler(dataToReturn, (statusCode, payload) =>{
+		chosenHandler(dataToReturn, (statusCode, payload, contentType) => {
+
+
+			let payloadStr = ''
+
+			//defaults if none given
+			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
+			//make type-of-response
+			contentType = typeof(contentType) == 'string' ? contentType : 'json';
+
+			//json response types (api)
+			if(contentType == 'json'){
+				res.setHeader('Content-Type', 'application/json');
+				payload = typeof(payload) === 'object' ? payload : {};
+				payloadStr = JSON.stringify(payload);
+			}
+
+			//html response types (html)
+			if(contentType == 'html'){
+				res.setHeader('Content-Type', 'text/html');
+				payloadStr = typeof(payload) == 'string' ? payload : '';
+			}	
+
+			if(contentType == 'favicon'){
+				res.setHeader('Content-Type', 'image/x-icon');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'css'){
+				res.setHeader('Content-Type', 'text/css');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'png'){
+				res.setHeader('Content-Type', 'image/png');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'jpg'){
+				res.setHeader('Content-Type', 'image/jpeg');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
+
+			if(contentType == 'plain'){
+				res.setHeader('Content-Type', 'text/plain');
+				payloadStr = typeof(payload) !== 'undefined' ? payload : '';
+			}
 
 			//log some details
 			//response, request method & path
@@ -121,21 +168,14 @@ serverObj.sharedServer = (req, res) => {
 				debug('\x1b[32m%s\x1b[0m',`PATH: ${trimmedPathTxt.toUpperCase()}`)
 				debug('\x1b[32m%s\x1b[0m',`METHOD: ${reqMethod.toUpperCase()}`)
 			}
-			if(statusCode !== 200){
+			else{
 				debug('server NON-200 response! reqMethod & payloadStr')
 				debug('\x1b[31m%s\x1b[0m',`PATH: ${trimmedPathTxt.toUpperCase()}`)
 				debug('\x1b[31m%s\x1b[0m',`METHOD: ${reqMethod.toUpperCase()}`)
 			}
 
-			//defaults if none given
-			statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
-			payload = typeof(payload) === 'object' ? payload : {};
-
-			const payloadStr = JSON.stringify(payload)
-
 			//prepare response
 			//writeHead comes on a response object, writitng the status code to the head
-			res.setHeader('Content-Type', 'application/json');
 			res.writeHead(statusCode);
 			res.end(payloadStr);
 
