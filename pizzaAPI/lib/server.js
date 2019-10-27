@@ -61,6 +61,8 @@ serverObj.myRouter = {
 	// 'checkout': routeHandlers.checkout,
 	// "session/create" : routeHandlers.sessionCreate,
  //  "session/deleted" : routeHandlers.sessionDeleted,
+ 'favicon.ico': routeHandlers.favicon,
+ 'public': routeHandlers.publicFolder,
 	'notFound' : function(data, callback){ callback(404) }
 }
 
