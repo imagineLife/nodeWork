@@ -14,7 +14,7 @@ const doTokens = require('./api/tokens')
 const doMenuItems = require('./api/menuItems')
 const doCart = require('./api/cart')
 const doCharges = require('./api/charge')
-const doIndex = require('./frontend/index')
+// const doIndex = require('./frontend/index')
 // const doCharges = require('../../chargeHelp')
 
 //handlers
@@ -128,6 +128,80 @@ routeHandlers.doIndex = (data, callback) => {
 
 			return callback(200, resultStr, 'html')
 		})
+	})
+
+}
+
+// Favicon handler
+routeHandlers.favicon = (data, cb) => {
+	console.log('Favicon Handler!');
+	
+	//error-handling
+	if(data.method !== 'get'){
+		return cb(405)
+	}
+
+	//get the asset
+	helpers.getStaticAsset('favicon.ico', (err, assetData) => {
+		
+		//error-handling
+		if(err || !data){
+			return cb(500)
+		}
+
+		cb(200, assetData, 'favicon')
+
+	})
+}
+
+// public asset handler
+routeHandlers.public = (data, cb) => {
+	
+	//method checking
+	if(data.method !== 'get'){
+		return cb(405)
+	}
+
+	//get just the file-name
+	const trimmedAsset = data.trimmedPath.replace('public/','').trim()
+	
+	//sanity check the asset name
+	if(!(trimmedAsset.length > 0)){
+		return cb(404)
+	}
+
+	helpers.getContentFromAsset= (asst) => {
+		//default content-type
+		let contentType = 'plain';
+
+		//conditional content-type
+		if(asst.indexOf('.css') > -1){
+			contentType = 'css'
+		}
+		if(asst.indexOf('.png') > -1){
+			contentType = 'png'
+		}
+		if(asst.indexOf('.jpg') > -1){
+			contentType = 'jpg'
+		}
+		if(asst.indexOf('.ico') > -1){
+			contentType = 'favicon'
+		}
+
+		return contentType;
+	}
+
+	//get the asset
+	helpers.getStaticAsset(trimmedAsset, (err, assetData)=> {
+		
+		//error-handling
+		if(err || !data){
+			return cb(500)
+		}
+
+		let contentType = helpers.getContentFromAsset(trimmedAsset)
+
+		cb(200, assetData, contentType);
 	})
 
 }
