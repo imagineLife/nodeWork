@@ -115,6 +115,78 @@ helpers.btoa = function btoa(str) {
 	return buffer.toString('base64');
 };
 
+// finds && replaces keys within a string
+// using config data
+/*
+	str: string
+	dataObj: object
+		contains keys && values that get replaced in the string
+*/
+helpers.interpolate = (str,dataObj) => {
+	
+	//'sanity' check
+	str = typeof(str) == 'string' && str.length > 0 ? str : ''
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {}
+	
+	// add the template globals to the data obj
+	for(let keyName in config.globalTemplate){
+		if(config.globalTemplate.hasOwnProperty(keyName)){
+	
+			// prepend the key names with 'global'
+			dataObj[`global.${keyName}`] = config.globalTemplate[keyName];
+		}
+	}
+	
+	//REPLACE the variables in the html with the variables from dataObj
+	for(let keyName in dataObj){
+		if(dataObj.hasOwnProperty(keyName) && typeof(dataObj[keyName] == 'string')){
+			const replaceVar = dataObj[keyName]
+			const findVal = `{${keyName}}`
+
+			//update string
+			str = str.replace(findVal, replaceVar)
+		}
+	}
+	
+	return str
+}
+
+/*
+	templateStringName: String
+	dataObj: variables to insert into html
+		by using in helpers.interpolate()
+	cb: Fn 
+*/
+helpers.getTemplate = (templateStringName, dataObj, cb) => {
+	
+	//sanity-checking the template string && data
+	templateStringName = typeof(templateStringName) == 'string' && templateStringName.length > 0 ? templateStringName : false;
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {};
+
+	//error-handling
+	if(!templateStringName){
+		cb('A valid template was not specified')
+		return;
+	}
+
+	//template directory
+	const tempDir = path.join(__dirname, '/../templates/');
+	
+	//look for the template html file
+	fs.readFile(`${tempDir}${templateStringName}.html`, 'utf8', (err, strRes) => {		
+		
+		//sanity-checking template response
+		if(err || !strRes || !(strRes.length > 0)){
+			return cb('no template found');
+		}
+
+		//see helpers.interpolate
+		let interpolatedStr = helpers.interpolate(strRes, dataObj)
+		
+		return cb(false, interpolatedStr)
+	})
+}
+
 
 module.exports = helpers;
 
