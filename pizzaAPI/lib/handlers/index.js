@@ -101,15 +101,33 @@ routeHandlers.charge = (data, callback) => {
 	Frontend Handlers
 */
 routeHandlers.doIndex = (data, callback) => {
+	//request-method validation
 	if(data.method !== 'get'){
 		return callback(405, undefined, 'html')
 	}
 	
-	helpers.getTemplate('index', (err, templateStr) => {
-		if(err || !str){
-			return callback(500, undefined, 'html')
+	let stringTemplateData = {
+		'head.title': "Sall-ease Apizza",
+		'head.description': 'Best Pizza On Earth',
+		'body.title': "Sall-Ease",
+		'body.class': 'index'
+	}
+
+	helpers.getTemplate('index', stringTemplateData, (err, templateStr) => {
+		//error-handling
+		if(!(!err && templateStr)){
+			callback(500, undefined, 'html')
 		}
-		callback(200, str, 'html')
+
+		helpers.addHeaderFooter(templateStr, stringTemplateData, (err, resultStr) => {
+
+			//error-handling
+			if(err || !resultStr){
+				return callback(500, undefined, 'html')
+			}
+
+			return callback(200, resultStr, 'html')
+		})
 	})
 
 }
