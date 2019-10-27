@@ -9,6 +9,8 @@ const crypto = require('crypto');
 const config = require('./config');
 const https = require('https');
 const queryString = require('querystring');
+const path = require('path')
+const fs = require('fs')
 
 //container of helpers
 let helpers  = {};
@@ -184,6 +186,46 @@ helpers.getTemplate = (templateStringName, dataObj, cb) => {
 		let interpolatedStr = helpers.interpolate(strRes, dataObj)
 		
 		return cb(false, interpolatedStr)
+	})
+}
+
+/*
+	Wrap the header && footer around the given template string
+	str: template string
+	data: a configuration  data object for the header && foter
+	cb : a callback fn
+*/
+helpers.addHeaderFooter = (str,dataObj,cb) => {
+	
+	//sanity Check
+	str = typeof(str) == 'string' && str.length > 0 ? str : '';
+	dataObj = typeof(dataObj) == 'object' && dataObj !== null ? dataObj : {}
+
+	//get header template
+	helpers.getTemplate('_header', dataObj, (err,headerString) => {
+		
+		//error-handling
+		if(err || !headerString){
+
+			cb(`Couldn't find header template`)
+			return;
+		}
+
+		//get footer template
+		helpers.getTemplate('_footer', dataObj, (err,footerString) => {
+			
+			//error-handling
+			if(err || !footerString){
+
+				cb(`Couldn't find footer template`)
+				return;
+			}
+
+			const wrappedResult = headerString+str+footerString;
+			cb(false, wrappedResult)
+			return;
+		})
+
 	})
 }
 
