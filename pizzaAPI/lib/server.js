@@ -55,7 +55,7 @@ serverObj.myRouter = {
 	'api/cart' : routeHandlers.cart,
 	'api/charge': routeHandlers.charge,
 	'': routeHandlers.doIndex,
-	// 'createAccount' routeHandlers.createAccount,
+	'account/create': routeHandlers.accountCreate,
 	// 'menu': routeHandlers.menu,
 	// 'cart': routeHandlers.cart,
 	// 'checkout': routeHandlers.checkout,
