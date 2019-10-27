@@ -62,7 +62,7 @@ serverObj.myRouter = {
 	// "session/create" : routeHandlers.sessionCreate,
  //  "session/deleted" : routeHandlers.sessionDeleted,
  'favicon.ico': routeHandlers.favicon,
- 'public': routeHandlers.publicFolder,
+ 'public': routeHandlers.public,
 	'notFound' : function(data, callback){ callback(404) }
 }
 
@@ -101,9 +101,12 @@ serverObj.sharedServer = (req, res) => {
 	req.on('end', () => {
 
 		curIncomingString += decoder.end();
-
+		
 		//choose the handler this request should go to
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
+		
+		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? routeHandlers.public : chosenHandler;
+		
 		debug('\x1b[32m%s\x1b[0m', `handling ${chosenHandler}`)
 		// object to send to the handler
 		//PARSING the paload data with helpers method
