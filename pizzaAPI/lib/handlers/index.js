@@ -101,11 +101,17 @@ routeHandlers.charge = (data, callback) => {
 	Frontend Handlers
 */
 routeHandlers.doIndex = (data, callback) => {
-	if(data.method == 'get'){
-		callback(undefined, undefined, 'html')
-	}else{
-		callback(405, undefined, 'html')
+	if(data.method !== 'get'){
+		return callback(405, undefined, 'html')
 	}
+	
+	helpers.getTemplate('index', (err, templateStr) => {
+		if(err || !str){
+			return callback(500, undefined, 'html')
+		}
+		callback(200, str, 'html')
+	})
+
 }
 
 module.exports = routeHandlers;
