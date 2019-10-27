@@ -1,5 +1,5 @@
 //dependencies
-const dataLib = require('../data')
+const dataLib = require('../../data')
 const doTokens = require('./tokens')
 
 

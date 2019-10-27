@@ -1,6 +1,6 @@
-const dataLib = require('../data')
-const helpers = require('../helpers')
-const routeHandlers = require('./index')
+const dataLib = require('../../data')
+const helpers = require('../../helpers')
+const routeHandlers = require('../index')
 const doTokens = require('./tokens')
 const u = require('util')
 const debug = u.debuglog('USERS')
@@ -100,6 +100,9 @@ doUsers.post = function(data,callback){
 //@TODO only let auth user update their own obj. don't let them update others
 
 doUsers.put = function(data,callback){
+	console.log('- - - -users put - - -');
+	console.log('data')
+	console.log(data)
 	
 	//check that the email is value
 	const email = isEmailValid(data.queryStrObj.email)
@@ -109,13 +112,17 @@ doUsers.put = function(data,callback){
 	const ln = checkForLengthAndType(data.payload.lastName)
 	const pw = checkForLengthAndType(data.payload.passWord)
 
+	console.log('email')
+	console.log(email)
+	
 	//sanity checking email field
 	if(!email){
-		callback(400, {'Error': 'Missing required email'})
+		return callback(400, {'Error': 'Missing required email'})
 	}
 
+	let updatableFields = [fn, ln, pw];
 	//if at least one other field exists to update
-	if(!fn || !ln || !pw){
+	if(!updatableFields.some(itm => itm !== null)){
 		return callback(400, {'Error': 'Missing updatable field'})
 	}
 
@@ -156,6 +163,7 @@ doUsers.put = function(data,callback){
 				if(err){
 					return callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
+				console.log('- - - -No Error, success - - -');
 				return callback(200, {"Success!": `${userData.firstName} ${userData.lastName} updated successfully`})
 			})
 		})

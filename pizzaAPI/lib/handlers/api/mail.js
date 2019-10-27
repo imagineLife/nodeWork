@@ -1,7 +1,7 @@
 const doUsers = require('./users')
 const https = require('https');
 const querystring = require("querystring");
-const helpers = require('../helpers.js')
+const helpers = require('../../helpers.js')
 const u = require('util')
 const debug = u.debuglog('MAIL')
 

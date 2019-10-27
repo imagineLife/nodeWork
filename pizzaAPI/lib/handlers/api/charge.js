@@ -1,7 +1,7 @@
 //Dependencies
 const doTokens = require('./tokens')
-const dataLib = require('../data')
-const helpers = require('../helpers')
+const dataLib = require('../../data')
+const helpers = require('../../helpers')
 const doUsers = require('./users')
 const doMail = require('./mail')
 const queryString = require('querystring');
