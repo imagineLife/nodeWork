@@ -54,7 +54,7 @@ serverObj.myRouter = {
 	'api/menuItems' : routeHandlers.menuItems,
 	'api/cart' : routeHandlers.cart,
 	'api/charge': routeHandlers.charge,
-	'helloWorld': routeHandlers.doIndex,
+	'': routeHandlers.doIndex,
 	// 'createAccount' routeHandlers.createAccount,
 	// 'menu': routeHandlers.menu,
 	// 'cart': routeHandlers.cart,
@@ -106,7 +106,7 @@ serverObj.sharedServer = (req, res) => {
 		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
 		
 		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? routeHandlers.public : chosenHandler;
-		
+
 		debug('\x1b[32m%s\x1b[0m', `handling ${chosenHandler}`)
 		// object to send to the handler
 		//PARSING the paload data with helpers method
