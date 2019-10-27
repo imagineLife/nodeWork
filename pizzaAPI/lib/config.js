@@ -20,6 +20,12 @@ envs.staging = {
 	httpsPort: 3001,
 	friendlyEnvName: 'staging',
 	hashingSecret: 'thisIsASecret',
+	globalTemplate: {
+		appName: 'Sall-ease Pizza',
+		companyName: 'imagineLife Inc. Co. LLC',
+		yearCreated: '2019',
+		baseURL: 'http://localhost:3000'
+	}
 };
 
 //production environment
@@ -28,6 +34,12 @@ envs.prod = {
 	httpsPort: 5001,
 	friendlyEnvName: 'production',
 	hashingSecret: 'thisIsASecret',
+	globalTemplate: {
+		appName: 'Sall-ease Pizza',
+		companyName: 'imagineLife Inc. Co. LLC',
+		yearCreated: '2019',
+		baseURL: 'http://localhost:3000'
+	}
 };
 
 //Determines which env to export 
