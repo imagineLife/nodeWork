@@ -134,7 +134,6 @@ routeHandlers.doIndex = (data, callback) => {
 
 // Favicon handler
 routeHandlers.favicon = (data, cb) => {
-	console.log('Favicon Handler!');
 	
 	//error-handling
 	if(data.method !== 'get'){
