@@ -441,16 +441,22 @@ app.loadMenuItems = function(){
     'email' : email
   };
 
-  app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+  app.client.request(undefined,'api/menuItems','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+    console.log('responsePayload')
+    console.log(responsePayload)
+    console.log('statusCode')
+    console.log(statusCode)
+    
     if(statusCode !== 200){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
       app.logUserOut();
       return;
     }
     
-    // Determine how many checks the user has
-    var allChecks = typeof(responsePayload.checks) == 'object' && responsePayload.checks instanceof Array && responsePayload.checks.length > 0 ? responsePayload.checks : [];
-    if(allChecks.length < 1){
+    // ERROR-HANLDE missing menu items
+    var menuItems = responsePayload['MenuItems'];
+
+    if(!menuItems || menuItems.length < 1){
       // Show 'you have no checks' message
       document.getElementById("noChecksMessage").style.display = 'table-row';
 
@@ -459,40 +465,22 @@ app.loadMenuItems = function(){
       return;
     }
 
+    console.log('menuItems')
+    console.log(menuItems)
+    
+    var table = document.getElementById("checksListTable");
     // Show each created check as a new row in the table
-    allChecks.forEach(function(checkId){
-      // Get the data for the check
-      var newQueryStringObject = {
-        'id' : checkId
-      };
-      app.client.request(undefined,'api/checks','GET',newQueryStringObject,undefined,function(statusCode,responsePayload){
-        if(statusCode == 200){
-          var checkData = responsePayload;
+    menuItems.forEach(function(menuItemID){
           // Make the check data into a table row
-          var table = document.getElementById("checksListTable");
           var tr = table.insertRow(-1);
           tr.classList.add('checkRow');
           var td0 = tr.insertCell(0);
           var td1 = tr.insertCell(1);
           var td2 = tr.insertCell(2);
-          var td3 = tr.insertCell(3);
-          var td4 = tr.insertCell(4);
-          td0.innerHTML = responsePayload.method.toUpperCase();
-          td1.innerHTML = responsePayload.protocol+'://';
-          td2.innerHTML = responsePayload.url;
-          var state = typeof(responsePayload.state) == 'string' ? responsePayload.state : 'unknown';
-          td3.innerHTML = state;
-          td4.innerHTML = '<a href="/checks/edit?id='+responsePayload.id+'">View / Edit / Delete</a>';
-        } else {
-          console.log("Error trying to load check ID: ",checkId);
-        }
-      });
+          td0.innerHTML = menuItemID.name;
+          td1.innerHTML = menuItemID.price;
+          td2.innerHTML = `<input type="checkbox" class="multiselect intval" name="menuItemSelector" value="${menuItemID.name}">`;
     });
-
-    if(allChecks.length < 5){
-      // Show the createCheck CTA
-      document.getElementById("createCheckCTA").style.display = 'block';
-    }
   });
 };
 
