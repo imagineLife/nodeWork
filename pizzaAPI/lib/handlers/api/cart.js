@@ -138,15 +138,13 @@ doCart.put = function(data,callback){
 				return;
 			}
 
-		EDIT CART HERE
-
 			//Store the newly updated cartData obj
 			dataLib.update('cart', email, cartData, (err) => {
 
 				if(!err){
-					callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
+					return callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
 				}else{
-					callback(500, {'Error': 'Couldnt update this user with this info'})
+					return callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
 
 			})
