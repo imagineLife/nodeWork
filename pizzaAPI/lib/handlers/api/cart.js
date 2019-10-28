@@ -130,28 +130,28 @@ doCart.put = function(data,callback){
 		callback(200, {'MORE': 'need to update the code to update the cart'})
 
 		//lookup the cart
-		// dataLib.read('cart', email, (err, cartData) => {
+		dataLib.read('cart', email, (err, cartData) => {
 			
-		// 	//if error or no data for that file
-		// 	if(err){
-		// 		callback(400, {'Error': 'No cart exists for that user'})
-		// 		return;
-		// 	}
+			//if error or no data for that file
+			if(err){
+				callback(400, {'Error': 'No cart exists for that user'})
+				return;
+			}
 
-		//EDIT CART HERE
+		EDIT CART HERE
 
-		// 	//Store the newly updated cartData obj
-		// 	dataLib.update('cart', email, cartData, (err) => {
+			//Store the newly updated cartData obj
+			dataLib.update('cart', email, cartData, (err) => {
 
-		// 		if(!err){
-		// 			callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
-		// 		}else{
-		// 			callback(500, {'Error': 'Couldnt update this user with this info'})
-		// 		}
+				if(!err){
+					callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
+				}else{
+					callback(500, {'Error': 'Couldnt update this user with this info'})
+				}
 
-		// 	})
+			})
 
-		// })
+		})
 
 	})
 }
