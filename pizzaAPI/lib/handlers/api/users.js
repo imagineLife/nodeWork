@@ -100,9 +100,6 @@ doUsers.post = function(data,callback){
 //@TODO only let auth user update their own obj. don't let them update others
 
 doUsers.put = function(data,callback){
-	console.log('- - - -users put - - -');
-	console.log('data')
-	console.log(data)
 	
 	//check that the email is value
 	const email = isEmailValid(data.queryStrObj.email)
@@ -111,9 +108,6 @@ doUsers.put = function(data,callback){
 	const fn = checkForLengthAndType(data.payload.firstName)
 	const ln = checkForLengthAndType(data.payload.lastName)
 	const pw = checkForLengthAndType(data.payload.passWord)
-
-	console.log('email')
-	console.log(email)
 	
 	//sanity checking email field
 	if(!email){
@@ -211,10 +205,10 @@ doUsers.get = function(data,callback){
 
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-
+	
 	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, email, (tokenIsValid) => {
-
+		
 		//sanity check valid token
 		if(!tokenIsValid){
 			callback(403, {'Error': 'Missing required token in header, or token invalid'})
