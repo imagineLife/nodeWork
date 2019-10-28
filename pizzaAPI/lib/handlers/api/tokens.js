@@ -67,9 +67,9 @@ doTokens.post = (data, callback) => {
 		//NAME the file the tokenID
 		dataLib.create('tokens', tokenId, tokenObj, (err) => {
 			if(!err){
-				callback(200, tokenObj)
+				return callback(200, tokenObj)
 			}else{
-				callback(500, {'Error' : 'Couldnt create new token'})
+				return callback(500, {'Error' : 'Couldnt create new token'})
 			}
 		})
 
@@ -92,27 +92,19 @@ doTokens.get = (data, callback) => {
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
 	//if id is valid
-	if(id){
-
-		//lookup the user from the filesystem
-		dataLib.read('tokens',id, (err, storedTokenData) => {
-			
-			if(!err && storedTokenData){
-
-				//REMOVE hashed pw from the user object before showing the user
-				callback(200, storedTokenData);
-
-			}else{
-
-				//NOT FOUND USER
-				callback(404)
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like incorrect token id'})
+	if(!id){
+		return callback(400, {'Error': 'Seems like incorrect token id'})
 	}
 
+	//lookup the user from the filesystem
+	dataLib.read('tokens',id, (err, storedTokenData) => {
+		if(err || !storedTokenData){
+			//NOT FOUND USER
+			return callback(404)
+		}
+		//REMOVE hashed pw from the user object before showing the user
+		callback(200, storedTokenData);
+	})
 }
 
 /*
@@ -168,34 +160,28 @@ doTokens.delete = (data, callback) => {
 	//check that id is valid
 	const id = typeof(data.queryStrObj.id) == 'string' && data.queryStrObj.id.trim().length == 19 ? data.queryStrObj.id.trim() : false;
 
-	//if id is valid
-	if(id){
-
-		//lookup the token from the filesystem
-		dataLib.read('tokens',id, (err, storedUserData) => {
-			
-			if(!err && storedUserData){
-
-				//REMOVE user
-				dataLib.delete('tokens', id, (err) => {
-
-					if(!err){
-						callback(200, {'DELETED': 'Successfully'})
-					}else{
-						callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
-					}
-
-				})
-			}else{
-				//NOT FOUND USER
-				callback(400, {'Error': 'Couldnt Find token by id'})
-			}
-		})
-
-	}else{	
-		callback(400, {'Error': 'Seems like Missing id field'})
+	//if id is invalid
+	if(!id){
+		return callback(400, {'Error': 'Seems like Missing id field'})
 	}
 
+	//lookup the token from the filesystem
+	dataLib.read('tokens',id, (err, storedUserData) => {
+		//NOT FOUND USER
+		if(err || !storedUserData){
+			return callback(400, {'Error': 'Couldnt Find token by id'})
+		}
+
+		//REMOVE user
+		dataLib.delete('tokens', id, (err) => {
+			if(!err){
+				callback(200, {'DELETED': 'Successfully'})
+			}else{
+				callback(500, {'Error' :'Couldnt delete this user for some odd reason'})
+			}
+
+		})
+	})
 }
 
 
@@ -206,13 +192,13 @@ doTokens.verifyTokenMatch = function(tokenID,givenEmailAddr,callback){
 	debug(givenEmailAddr)
 	//read the token by id
 	dataLib.read('tokens',tokenID, (err, storedTokenData) => {
-		if(!err && storedTokenData){
-			//Check that the tokenID MATCHES the given user AND has not expired
-			if(storedTokenData.email == givenEmailAddr && storedTokenData.expires > Date.now()){
-				callback(true)
-			}else{
-				callback(false)
-			}
+		//error handling
+		if(err || !storedTokenData){
+			return callback(false)
+		}
+		//Check that the tokenID MATCHES the given user AND has not expired
+		if(storedTokenData.email == givenEmailAddr && storedTokenData.expires > Date.now()){
+			callback(true)
 		}else{
 			callback(false)
 		}
