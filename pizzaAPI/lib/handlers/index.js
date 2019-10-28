@@ -242,4 +242,68 @@ routeHandlers.accountCreate = (data, callback) => {
 	})
 }
 
+// Create New Session
+routeHandlers.sessionCreate = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Login to your account.',
+    'head.description' : 'Please enter your email address and password to access your account.',
+    'body.class' : 'sessionCreate'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('sessionCreate',templateData,function(err,str){
+    if(err || !str){
+			return callback(500,undefined,'html');
+    }
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      callback(200,str,'html');
+    });
+  });
+};
+
+// See Menu items
+routeHandlers.menu = (data, callback) => {
+	
+	//some template data for html string interpolation
+	let stringTemplateData = {
+		'head.title': 'Menu',
+		'head.description': 'Pizza Shop Menu Items',
+		'body.class': 'menuItems'
+	} 
+
+	//error-handling
+	if(data.method !== 'get'){
+		callback(405,undefined,'html')
+	}
+
+	//fetch template
+	helpers.getTemplate('menu', stringTemplateData, (err, resStr) => {
+		
+		//error-handling
+		if(!(!err && resStr)){
+			callback(500, undefined, 'html')
+		}
+
+		helpers.addHeaderFooter(resStr, stringTemplateData, (err, resultStr) => {
+
+			//error-handling
+			if(err || !resultStr){
+				return callback(500, undefined, 'html')
+			}
+
+			return callback(200, resultStr, 'html')
+		})
+
+	})
+}
+
 module.exports = routeHandlers;
