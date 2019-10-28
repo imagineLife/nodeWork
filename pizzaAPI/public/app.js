@@ -96,7 +96,7 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 */
 app.bindForms = function(){
   console.log('bindForms');
-  
+
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
@@ -328,13 +328,14 @@ app.setLoggedInClass = function(add){
 // Renew the token
 app.renewToken = function(callback){
   var currentToken = typeof(app.config.sessionToken) == 'object' ? app.config.sessionToken : false;
+  
   if(!currentToken){
     app.setSessionToken(false);
     return callback(true);
   }
   // Update the token with a new expiration
   var payload = {
-    'id' : currentToken.id,
+    'id' : currentToken.tokenId,
     'extend' : true,
   };
   app.client.request(undefined,'api/tokens','PUT',undefined,payload,function(statusCode,responsePayload){
@@ -344,7 +345,7 @@ app.renewToken = function(callback){
       return callback(true);
     }
     // Get the new token details
-    var queryStringObject = {'id' : currentToken.id};
+    var queryStringObject = {'id' : currentToken.tokenId};
     app.client.request(undefined,'api/tokens','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       // Display an error on the form if needed
       if(statusCode !== 200){
@@ -428,8 +429,6 @@ app.loadAccountEditPage = function(){
 
 // Load the menu items
 app.loadMenuItems = function(){
-  console.log('app.config.sessionToken')
-  console.log(app.config.sessionToken)
   
   // Get the email from the current token, or log the user out if none is there
   var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
@@ -441,13 +440,14 @@ app.loadMenuItems = function(){
   var queryStringObject = {
     'email' : email
   };
+
   app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
     if(statusCode !== 200){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
       app.logUserOut();
       return;
     }
-
+    
     // Determine how many checks the user has
     var allChecks = typeof(responsePayload.checks) == 'object' && responsePayload.checks instanceof Array && responsePayload.checks.length > 0 ? responsePayload.checks : [];
     if(allChecks.length < 1){
