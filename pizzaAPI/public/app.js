@@ -95,6 +95,8 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	- sends form input payload to api
 */
 app.bindForms = function(){
+  console.log('bindForms');
+  
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
@@ -219,10 +221,16 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   var functionToCall = false;
   // If account creation was successful, try to immediately log the user in
   if(formId == 'accountCreate'){
+  
+    let {email, passWord, firstName, lastName, address, tosAgreement} = requestPayload
     // Take the phone and password, and use it to log the user in
     var newPayload = {
-      'phoneNumber' : requestPayload.phoneNumber,
-      'passWord' : requestPayload.passWord
+      'email' : email,
+      'passWord' : passWord,
+      'firstName': firstName,
+      'lastName': lastName,
+      'address': address,
+      'tosAgreement': tosAgreement
     };
 
     app.client.request(undefined,'api/tokens','POST',undefined,newPayload,function(newStatusCode,newResponsePayload){
@@ -239,14 +247,14 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
       } else {
         // If successful, set the token and redirect the user
         app.setSessionToken(newResponsePayload);
-        window.location = '/checks/all';
+        window.location = '/menu';
       }
     });
   }
   // If login was successful, set the token in localstorage and redirect the user
   if(formId == 'sessionCreate'){
     app.setSessionToken(responsePayload);
-    window.location = '/checks/all';
+    window.location = '/menu';
   }
 
   // If forms saved successfully and they have success messages, show them
@@ -263,12 +271,12 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
 
   // If the user just created a new check successfully, redirect back to the dashboard
   if(formId == 'checksCreate'){
-    window.location = '/checks/all';
+    window.location = '/menu';
   }
 
   // If the user just deleted a check, redirect them to the dashboard
   if(formId == 'checksEdit2'){
-    window.location = '/checks/all';
+    window.location = '/menu';
   }
 };
 
@@ -374,8 +382,8 @@ app.loadDataOnPage = function(){
   }
 
   // Logic for dashboard page
-  if(primaryClass == 'checksList'){
-    app.loadChecksListPage();
+  if(primaryClass == 'menuItems'){
+    app.loadMenuItems();
   }
 
   // Logic for check details page
@@ -418,17 +426,20 @@ app.loadAccountEditPage = function(){
   });
 };
 
-// Load the dashboard page specifically
-app.loadChecksListPage = function(){
-  // Get the phone number from the current token, or log the user out if none is there
-  var phone = typeof(app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
-  if(!phone){
+// Load the menu items
+app.loadMenuItems = function(){
+  console.log('app.config.sessionToken')
+  console.log(app.config.sessionToken)
+  
+  // Get the email from the current token, or log the user out if none is there
+  var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+  if(!email){
     app.logUserOut();
     return;
   }
   // Fetch the user data
   var queryStringObject = {
-    'phoneNumber' : phone
+    'email' : email
   };
   app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
     if(statusCode !== 200){
@@ -490,7 +501,7 @@ app.loadChecksEditPage = function(){
   // Get the check id from the query string, if none is found then redirect back to dashboard
   var id = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 ? window.location.href.split('=')[1] : false;
   if(!id){
-    window.location = '/checks/all';
+    window.location = '/menu';
     return;
   }
   
@@ -501,7 +512,7 @@ app.loadChecksEditPage = function(){
   app.client.request(undefined,'api/checks','GET',queryStringObject,undefined,function(statusCode,responsePayload){
     if(statusCode !== 200){
       // If the request comes back as something other than 200, redirect back to dashboard
-      window.location = '/checks/all';
+      window.location = '/menu';
       return;
     }
 
@@ -541,6 +552,8 @@ app.tokenRenewalLoop = function(){
 
 
 app.init = () => {
+
+  console.log('app.init!!');
 
   // Bind all form submissions
   app.bindForms();
