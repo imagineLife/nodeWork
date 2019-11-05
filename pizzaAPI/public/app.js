@@ -271,7 +271,7 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
 
   // If the user just created a new check successfully, redirect back to the dashboard
   if(formId == 'checksCreate'){
-    window.location = '/menu';
+    // window.location = '/menu';
   }
 
   // If the user just deleted a check, redirect them to the dashboard
@@ -442,10 +442,6 @@ app.loadMenuItems = function(){
   };
 
   app.client.request(undefined,'api/menuItems','GET',queryStringObject,undefined,function(statusCode,responsePayload){
-    console.log('responsePayload')
-    console.log(responsePayload)
-    console.log('statusCode')
-    console.log(statusCode)
     
     if(statusCode !== 200){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
@@ -464,9 +460,6 @@ app.loadMenuItems = function(){
       document.getElementById("createCheckCTA").style.display = 'block';
       return;
     }
-
-    console.log('menuItems')
-    console.log(menuItems)
     
     var table = document.getElementById("checksListTable");
     // Show each created check as a new row in the table
@@ -479,10 +472,43 @@ app.loadMenuItems = function(){
           var td2 = tr.insertCell(2);
           td0.innerHTML = menuItemID.name;
           td1.innerHTML = menuItemID.price;
-          td2.innerHTML = `<input type="checkbox" class="multiselect intval" name="menuItemSelector" value="${menuItemID.name}">`;
+          td2.innerHTML = `<input type="checkbox" class="multiselect intval" name="${menuItemID.id}" value="${menuItemID.name}">`;
     });
+
+    // Put the hidden email field into both forms
+    var hiddenPhoneInputs = document.querySelectorAll("input.hiddenEmailInput");
+    for(var i = 0; i < hiddenPhoneInputs.length; i++){
+        hiddenPhoneInputs[i].value = email;
+    }
   });
 };
+
+app.prepMenuItems = () => {
+  const checkboxes = document.getElementsByClassName("multiselect")
+  // const rows = table.rows
+  let obj = {
+    email: app.config.sessionToken.email,
+    cart: []
+  }
+  
+  console.log('obj')
+  console.log(obj)
+  
+  for(let boxIndex = 0; boxIndex < checkboxes.length; boxIndex++){
+    let checked = checkboxes[boxIndex].checked;
+    if(checked){
+      obj.cart.push({
+        itemID: checkboxes[boxIndex].name,
+        count: 1
+      })
+    }
+  }
+
+  console.log('--- AFTER FOR LOOP ---');
+  console.log('obj.cart')
+  console.log(obj.cart)
+  
+}
 
 // Load the checks edit page specifically
 app.loadChecksEditPage = function(){
