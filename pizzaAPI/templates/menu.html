@@ -3,7 +3,8 @@
 <hr />
   <!-- Menu-Item Form -->
 	  <form id="checksCreate">
-	    <div class="formError"></div>
+	  <div class="formError"></div>
+    <div class="formSuccess">Your Cart has been Saved</div>
 
 			<table id="checksListTable">
 			  <tr>
@@ -15,6 +16,6 @@
 			  </tr>
 			</table>
 			<div class="inputWrapper ctaWrapper">
-		    <button type="submit" onClick="app.prepMenuItems()" class="cta green">Add Items to Cart</button>
+		    <button type="submit" onClick="app.handleCart()" class="cta green">Add Items to Cart</button>
 		  </div>
 	  </form>
