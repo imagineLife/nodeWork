@@ -460,6 +460,10 @@ app.loadMenuItems = function(){
       document.getElementById("createCheckCTA").style.display = 'block';
       return;
     }
+
+    console.log('menuItems')
+    console.log(menuItems)
+    
     
     var table = document.getElementById("checksListTable");
     // Show each created check as a new row in the table
@@ -472,7 +476,7 @@ app.loadMenuItems = function(){
           var td2 = tr.insertCell(2);
           td0.innerHTML = menuItemID.name;
           td1.innerHTML = menuItemID.price;
-          td2.innerHTML = `<input type="checkbox" class="multiselect intval" name="${menuItemID.id}" value="${menuItemID.name}">`;
+          td2.innerHTML = `<input type="checkbox" class="multiselect intval" name="${menuItemID.id}" value="${menuItemID.name}" data-price="${menuItemID.price}">`;
     });
 
     // Put the hidden email field into both forms
@@ -483,31 +487,33 @@ app.loadMenuItems = function(){
   });
 };
 
+//gather menu Items &&
 app.prepMenuItems = () => {
   const checkboxes = document.getElementsByClassName("multiselect")
   // const rows = table.rows
-  let obj = {
+  let cartPayload = {
     email: app.config.sessionToken.email,
     cart: []
   }
   
-  console.log('obj')
-  console.log(obj)
-  
   for(let boxIndex = 0; boxIndex < checkboxes.length; boxIndex++){
     let checked = checkboxes[boxIndex].checked;
     if(checked){
-      obj.cart.push({
+      cartPayload.cart.push({
         itemID: checkboxes[boxIndex].name,
-        count: 1
+        count: 1,
+        price: checkboxes[boxIndex].dataset.price
       })
     }
   }
-
-  console.log('--- AFTER FOR LOOP ---');
-  console.log('obj.cart')
-  console.log(obj.cart)
   
+  // headers, path, method, queryStrObj, payload, cb
+   app.client.request(undefined,'api/cart','POST',undefined,cartPayload,function(newStatusCode,newResponsePayload){
+    console.log('newStatusCode')
+    console.log(newStatusCode)
+    console.log('newResponsePayload')
+    console.log(newResponsePayload)
+   })
 }
 
 // Load the checks edit page specifically
