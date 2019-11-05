@@ -461,10 +461,6 @@ app.loadMenuItems = function(){
       return;
     }
 
-    console.log('menuItems')
-    console.log(menuItems)
-    
-    
     var table = document.getElementById("checksListTable");
     // Show each created check as a new row in the table
     menuItems.forEach(function(menuItemID){
@@ -487,8 +483,8 @@ app.loadMenuItems = function(){
   });
 };
 
-//gather menu Items &&
-app.prepMenuItems = () => {
+//gets cart-items from html && prepares in expected payload layout
+app.prepCart = () => {
   const checkboxes = document.getElementsByClassName("multiselect")
   // const rows = table.rows
   let cartPayload = {
@@ -506,7 +502,14 @@ app.prepMenuItems = () => {
       })
     }
   }
+  return cartPayload
+}
+
+//gather cart-handler
+app.handleCart = () => {
   
+  let cartPayload = app.prepCart()
+
   // headers, path, method, queryStrObj, payload, cb
    app.client.request(undefined,'api/cart','POST',undefined,cartPayload,function(newStatusCode,newResponsePayload){
     console.log('newStatusCode')
@@ -564,7 +567,7 @@ app.tokenRenewalLoop = function(){
   setInterval(function(){
     app.renewToken(function(err){
       if(!err){
-        console.log("Token renewed successfully @ "+Date.now());
+        return;
       }
     });
   },1000 * 60);
