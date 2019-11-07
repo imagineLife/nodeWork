@@ -241,6 +241,38 @@ routeHandlers.accountCreate = (data, callback) => {
 	})
 }
 
+// editAccount
+routeHandlers.accountEdit = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Account Settings',
+    'body.class' : 'accountEdit'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('accountEdit',templateData,function(err,str){
+  	
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,combinedStr){
+    	
+      if(err || !combinedStr){
+      	return callback(500,undefined,'html');
+      }
+
+      // Return that page as HTML
+      callback(200,combinedStr,'html');
+      return;
+    });
+  });
+};
+
 // Create New Session
 routeHandlers.sessionCreate = function(data,callback){
   // Reject any request that isn't a GET
@@ -265,6 +297,34 @@ routeHandlers.sessionCreate = function(data,callback){
       }
       // Return that page as HTML
       callback(200,str,'html');
+    });
+  });
+};
+
+// Session has been deleted
+routeHandlers.sessionDeleted = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method !== 'get'){
+  	return callback(405,undefined,'html');
+  }
+  // Prepare data for interpolation
+  var templateData = {
+    'head.title' : 'Logged Out',
+    'head.description' : 'You have been logged out of your account.',
+    'body.class' : 'sessionDeleted'
+  };
+  // Read in a template as a string
+  helpers.getTemplate('sessionDeleted',templateData,function(err,str){
+    if(err || !str){
+    	return callback(500,undefined,'html');
+    }
+    // Add the universal header and footer
+    helpers.addHeaderFooter(str,templateData,function(err,str){
+      if(err || !str){
+      	return callback(500,undefined,'html');
+      }
+      // Return that page as HTML
+      return callback(200,str,'html');
     });
   });
 };
