@@ -49,18 +49,18 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 })
 
 serverObj.myRouter = {
+	'': routeHandlers.doIndex,
 	'api/users': routeHandlers.users,
 	'api/tokens' : routeHandlers.tokens,
 	'api/menuItems' : routeHandlers.menuItems,
 	'api/cart' : routeHandlers.cart,
 	'api/charge': routeHandlers.charge,
-	'': routeHandlers.doIndex,
 	'account/create': routeHandlers.accountCreate,
+	'account/edit': routeHandlers.accountEdit,
 	'menu': routeHandlers.menu,
-	// 'cart': routeHandlers.cart,
 	// 'checkout': routeHandlers.checkout,
 	"session/create" : routeHandlers.sessionCreate,
- //  "session/deleted" : routeHandlers.sessionDeleted,
+  "session/deleted" : routeHandlers.sessionDeleted,
  'favicon.ico': routeHandlers.favicon,
  'public': routeHandlers.public,
 	'notFound' : function(data, callback){ callback(404) }
