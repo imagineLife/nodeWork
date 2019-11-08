@@ -221,24 +221,7 @@ routeHandlers.accountCreate = (data, callback) => {
 	}
 
 	//fetch template
-	helpers.getTemplate('accountCreate', stringTemplateData, (err, resStr) => {
-		
-		//error-handling
-		if(!(!err && resStr)){
-			callback(500, undefined, 'html')
-		}
-
-		helpers.addHeaderFooter(resStr, stringTemplateData, (err, resultStr) => {
-
-			//error-handling
-			if(err || !resultStr){
-				return callback(500, undefined, 'html')
-			}
-
-			return callback(200, resultStr, 'html')
-		})
-
-	})
+	helpers.getFrontend('accountCreate', stringTemplateData, callback)
 }
 
 // editAccount
@@ -253,24 +236,7 @@ routeHandlers.accountEdit = function(data,callback){
     'body.class' : 'accountEdit'
   };
   // Read in a template as a string
-  helpers.getTemplate('accountEdit',templateData,function(err,str){
-  	
-    if(err || !str){
-    	return callback(500,undefined,'html');
-    }
-
-    // Add the universal header and footer
-    helpers.addHeaderFooter(str,templateData,function(err,combinedStr){
-    	
-      if(err || !combinedStr){
-      	return callback(500,undefined,'html');
-      }
-
-      // Return that page as HTML
-      callback(200,combinedStr,'html');
-      return;
-    });
-  });
+  helpers.getFrontend('accountEdit', templateData, callback)
 };
 
 // Create New Session
@@ -286,19 +252,7 @@ routeHandlers.sessionCreate = function(data,callback){
     'body.class' : 'sessionCreate'
   };
   // Read in a template as a string
-  helpers.getTemplate('sessionCreate',templateData,function(err,str){
-    if(err || !str){
-			return callback(500,undefined,'html');
-    }
-    // Add the universal header and footer
-    helpers.addHeaderFooter(str,templateData,function(err,str){
-      if(err || !str){
-      	return callback(500,undefined,'html');
-      }
-      // Return that page as HTML
-      callback(200,str,'html');
-    });
-  });
+  helpers.getFrontend('sessionCreate', templateData, callback)
 };
 
 // Session has been deleted
@@ -314,19 +268,7 @@ routeHandlers.sessionDeleted = function(data,callback){
     'body.class' : 'sessionDeleted'
   };
   // Read in a template as a string
-  helpers.getTemplate('sessionDeleted',templateData,function(err,str){
-    if(err || !str){
-    	return callback(500,undefined,'html');
-    }
-    // Add the universal header and footer
-    helpers.addHeaderFooter(str,templateData,function(err,str){
-      if(err || !str){
-      	return callback(500,undefined,'html');
-      }
-      // Return that page as HTML
-      return callback(200,str,'html');
-    });
-  });
+  helpers.getFrontend('sessionDeleted', templateData, callback)
 };
 
 // See Menu items
@@ -345,24 +287,25 @@ routeHandlers.menu = (data, callback) => {
 	}
 
 	//fetch template
-	helpers.getTemplate('menu', stringTemplateData, (err, resStr) => {
-		
-		//error-handling
-		if(!(!err && resStr)){
-			callback(500, undefined, 'html')
-		}
+	helpers.getFrontend('menu', stringTemplateData, callback)
+}
 
-		helpers.addHeaderFooter(resStr, stringTemplateData, (err, resultStr) => {
+// See Users Cart
+routeHandlers.cartView = (data, callback) => {
+	
+	//some template data for html string interpolation
+	let stringTemplateData = {
+		'head.title': 'Cart',
+		'head.description': 'Pizza Shop Cart Items',
+		'body.class': 'menuItems'
+	} 
 
-			//error-handling
-			if(err || !resultStr){
-				return callback(500, undefined, 'html')
-			}
+	//error-handling
+	if(data.method !== 'get'){
+		callback(405,undefined,'html')
+	}
 
-			return callback(200, resultStr, 'html')
-		})
-
-	})
+	helpers.getFrontend('cart', stringTemplateData), callback;
 }
 
 module.exports = routeHandlers;

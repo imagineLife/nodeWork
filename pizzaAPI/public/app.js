@@ -22,7 +22,7 @@ app.client = {}
 	app.client.request(undefined, '/ping','GET',undefined,undefined,function(statusCode,payload){console.log('DONE!',statusCode,payload)})
 */
 app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
-	
+	console.log('client.req response...');
 	//defaults
 	headers = typeof(headers) == 'object' && headers !== null ? headers : {};
 	path = typeof(path) == 'string' ? path : '/';
@@ -85,6 +85,9 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 
 	//SEND the payload as JSON
 	let jsonStr = JSON.stringify(payload)
+  console.log('jsonStr')
+  console.log(jsonStr)
+  
 	reqObj.send(jsonStr)
 }
 
@@ -95,8 +98,7 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	- sends form input payload to api
 */
 app.bindForms = function(){
-  console.log('bindForms');
-
+  console.log('BIND FORMS');
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
@@ -120,6 +122,9 @@ app.bindForms = function(){
 
         // Turn the inputs into a payload
         var payload = {};
+        console.log('payload obj ')
+        console.log(payload)
+        
         var elements = this.elements;
         for(var i = 0; i < elements.length; i++){
           if(elements[i].type !== 'submit'){
@@ -154,13 +159,14 @@ app.bindForms = function(){
           }
         }
 
-
         // If the method is DELETE, the payload should be a queryStringObject instead
         var queryStringObject = method == 'DELETE' ? payload : {};
 
+        console.log('path')
+        console.log(path)
+        
         // Call the API
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
-        	
           // Display an error on the form if needed
           if(statusCode !== 200){
 
@@ -217,7 +223,8 @@ app.logUserOut = function(redirectUser){
 
 // Form response processor
 app.formResponseProcessor = function(formId,requestPayload,responsePayload){
-  
+    console.log('formResponseProcessor')
+    
   var functionToCall = false;
   // If account creation was successful, try to immediately log the user in
   if(formId == 'accountCreate'){
@@ -271,7 +278,7 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
 
   // If the user just created a new check successfully, redirect back to the dashboard
   if(formId == 'checksCreate'){
-    // window.location = '/menu';
+    window.location = '/menu';
   }
 
   // If the user just deleted a check, redirect them to the dashboard
@@ -294,6 +301,8 @@ app.setSessionToken = function(token){
 
 // Get the session token from localstorage and set it in the app.config object
 app.getSessionToken = function(){
+  console.log('getSessionToken')
+  
   var tokenString = localStorage.getItem('token');
   if(typeof(tokenString) == 'string'){
     try{
@@ -373,6 +382,7 @@ app.bindLogoutButton = function(){
 
 // Load data on the page
 app.loadDataOnPage = function(){
+  console.log('loadDataOnPage');
   // Get the current page from the body class
   var bodyClasses = document.querySelector("body").classList;
   var primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
@@ -395,16 +405,20 @@ app.loadDataOnPage = function(){
 
 // Load the account edit page specifically
 app.loadAccountEditPage = function(){
+  console.log('loadAccountEditPage');
 
-  // Get the phone number from the current token, or log the user out if none is there
-  var phone = typeof(app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
+  console.log('app.config.sessionToken')
+  console.log(app.config.sessionToken)
   
-  if(!phone){
+  // Get the email from the current token, or log the user out if none is there
+  var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+  
+  if(!email){
     return app.logUserOut();
   }
   // Fetch the user data
   var queryStringObject = {
-    'phoneNumber' : phone
+    'email' : email
   };
 
   app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
@@ -413,14 +427,18 @@ app.loadAccountEditPage = function(){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
       return app.logUserOut();
     }
+
+    console.log('responsePayload')
+    console.log(responsePayload)
+    
     
     // Put the data into the forms as values where needed
     document.querySelector("#accountEdit1 .firstNameInput").value = responsePayload.firstName;
     document.querySelector("#accountEdit1 .lastNameInput").value = responsePayload.lastName;
-    document.querySelector("#accountEdit1 .displayPhoneInput").value = responsePayload.phone;
+    document.querySelector("#accountEdit1 .displayEmailInput").value = responsePayload.email;
 
     // Put the hidden phone field into both forms
-    var hiddenPhoneInputs = document.querySelectorAll("input.hiddenPhoneNumberInput");
+    var hiddenPhoneInputs = document.querySelectorAll("input.hiddenEmail");
     for(var i = 0; i < hiddenPhoneInputs.length; i++){
         hiddenPhoneInputs[i].value = responsePayload.phone;
     }
@@ -512,10 +530,7 @@ app.handleCart = () => {
 
   // headers, path, method, queryStrObj, payload, cb
    app.client.request(undefined,'api/cart','POST',undefined,cartPayload,function(newStatusCode,newResponsePayload){
-    console.log('newStatusCode')
-    console.log(newStatusCode)
-    console.log('newResponsePayload')
-    console.log(newResponsePayload)
+    app.formResponseProcessor('checksCreate', cartPayload, newResponsePayload)
    })
 }
 
