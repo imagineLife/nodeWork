@@ -22,7 +22,6 @@ app.client = {}
 	app.client.request(undefined, '/ping','GET',undefined,undefined,function(statusCode,payload){console.log('DONE!',statusCode,payload)})
 */
 app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
-	console.log('client.req response...');
 	//defaults
 	headers = typeof(headers) == 'object' && headers !== null ? headers : {};
 	path = typeof(path) == 'string' ? path : '/';
@@ -85,9 +84,6 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 
 	//SEND the payload as JSON
 	let jsonStr = JSON.stringify(payload)
-  console.log('jsonStr')
-  console.log(jsonStr)
-  
 	reqObj.send(jsonStr)
 }
 
@@ -98,7 +94,6 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	- sends form input payload to api
 */
 app.bindForms = function(){
-  console.log('BIND FORMS');
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
@@ -112,7 +107,6 @@ app.bindForms = function(){
         if(formId == 'checksCreate'){
           app.handleCart();
         }else{
-          console.log('IN ELSE');
           var path = this.action;
           var method = this.method.toUpperCase();
 
@@ -127,8 +121,6 @@ app.bindForms = function(){
 
           // Turn the inputs into a payload
           var payload = {};
-          console.log('payload obj')
-          console.log(payload)
           
           var elements = this.elements;
           for(var i = 0; i < elements.length; i++){
@@ -166,9 +158,6 @@ app.bindForms = function(){
 
           // If the method is DELETE, the payload should be a queryStringObject instead
           var queryStringObject = method == 'DELETE' ? payload : {};
-
-          console.log('path')
-          console.log(path)
           
           // Call the API
           app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
@@ -229,7 +218,6 @@ app.logUserOut = function(redirectUser){
 
 // Form response processor
 app.formResponseProcessor = function(formId,requestPayload,responsePayload){
-    console.log('formResponseProcessor')
     
   var functionToCall = false;
   // If account creation was successful, try to immediately log the user in
@@ -307,7 +295,6 @@ app.setSessionToken = function(token){
 
 // Get the session token from localstorage and set it in the app.config object
 app.getSessionToken = function(){
-  console.log('getSessionToken')
   
   var tokenString = localStorage.getItem('token');
   if(typeof(tokenString) == 'string'){
@@ -388,7 +375,6 @@ app.bindLogoutButton = function(){
 
 // Load data on the page
 app.loadDataOnPage = function(){
-  console.log('loadDataOnPage');
   // Get the current page from the body class
   var bodyClasses = document.querySelector("body").classList;
   var primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
@@ -403,6 +389,11 @@ app.loadDataOnPage = function(){
     app.loadMenuItems();
   }
 
+  // Logic for cart page
+  if(primaryClass == 'cartItems'){
+    app.loadCartItems();
+  }
+
   // Logic for check details page
   if(primaryClass == 'checksEdit'){
     app.loadChecksEditPage();
@@ -411,11 +402,7 @@ app.loadDataOnPage = function(){
 
 // Load the account edit page specifically
 app.loadAccountEditPage = function(){
-  console.log('loadAccountEditPage');
 
-  console.log('app.config.sessionToken')
-  console.log(app.config.sessionToken)
-  
   // Get the email from the current token, or log the user out if none is there
   var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
   
@@ -433,9 +420,6 @@ app.loadAccountEditPage = function(){
       // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
       return app.logUserOut();
     }
-
-    console.log('responsePayload')
-    console.log(responsePayload)
     
     
     // Put the data into the forms as values where needed
@@ -507,6 +491,59 @@ app.loadMenuItems = function(){
   });
 };
 
+// Load the menu items
+app.loadCartItems = function(){
+
+  // Get the email from the current token, or log the user out if none is there
+  var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
+  if(!email){
+    app.logUserOut();
+    return;
+  }
+  // Fetch the user data
+  var queryStringObject = {
+    'email' : email
+  };
+
+  app.client.request(undefined,'api/cart','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+        
+    // ERROR-HANLDE missing menu items
+    var cartData = responsePayload && responsePayload['cartData'] ? responsePayload['cartData'] : null;
+
+    //handle no-items in the cart
+    if(!cartData || cartData.length < 1){
+      document.getElementById("noChecksMessage").style.display = 'table-row';
+
+      // Show the createCheck CTA
+      document.getElementById("createCheckCTA").style.display = 'block';
+      return;
+    }
+
+    //handle cart-items
+    app.client.request(undefined,'api/menuItems','GET',queryStringObject,undefined,function(menuStatusCode,menuItemsResponse){
+      let menu = menuItemsResponse['MenuItems']
+      
+      var table = document.getElementById("checksListTable");
+      //make the cart item into a table-row
+      cartData.forEach(function(cartItem){
+          let thisCartItemName = menu.find(m => m.id === parseInt(cartItem['itemID'])).name
+            var tr = table.insertRow(-1);
+            tr.classList.add('checkRow');
+            var td0 = tr.insertCell(0);
+            var td1 = tr.insertCell(1);
+            td0.innerHTML = thisCartItemName;
+            td1.innerHTML = cartItem.price;
+      });
+
+      // // Put the hidden email field into both forms
+      // var hiddenEmailInput = document.querySelectorAll("input.hiddenEmailInput");
+      // for(var i = 0; i < hiddenEmailInput.length; i++){
+      //     hiddenEmailInput[i].value = email;
+      // }
+    })
+  });
+};
+
 //gets cart-items from html && prepares in expected payload layout
 app.prepCart = () => {
   const checkboxes = document.getElementsByClassName("multiselect")
@@ -531,13 +568,11 @@ app.prepCart = () => {
 
 //gather cart-handler
 app.handleCart = () => {
-  console.log('handleCart')
   
   let cartPayload = app.prepCart()
 
   // headers, path, method, queryStrObj, payload, cb
    app.client.request(undefined,'api/cart','POST',undefined,cartPayload,function(newStatusCode,newResponsePayload){
-    console.log('AFTER first POST to api/cart');
     app.formResponseProcessor('checksCreate', cartPayload, newResponsePayload)
    })
 }
@@ -598,8 +633,6 @@ app.tokenRenewalLoop = function(){
 
 
 app.init = () => {
-
-  console.log('app.init!!');
 
   // Bind all form submissions
   app.bindForms();
