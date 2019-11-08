@@ -282,7 +282,7 @@ routeHandlers.cartView = (data, callback) => {
 	let stringTemplateData = {
 		'head.title': 'Cart',
 		'head.description': 'Pizza Shop Cart Items',
-		'body.class': 'menuItems'
+		'body.class': 'cartItems'
 	} 
 
 	//error-handling
