@@ -113,22 +113,7 @@ routeHandlers.doIndex = (data, callback) => {
 		'body.class': 'index'
 	}
 
-	helpers.getTemplate('index', stringTemplateData, (err, templateStr) => {
-		//error-handling
-		if(!(!err && templateStr)){
-			callback(500, undefined, 'html')
-		}
-
-		helpers.addHeaderFooter(templateStr, stringTemplateData, (err, resultStr) => {
-
-			//error-handling
-			if(err || !resultStr){
-				return callback(500, undefined, 'html')
-			}
-
-			return callback(200, resultStr, 'html')
-		})
-	})
+	helpers.getFrontend('index', stringTemplateData, callback);
 
 }
 
@@ -305,7 +290,7 @@ routeHandlers.cartView = (data, callback) => {
 		callback(405,undefined,'html')
 	}
 
-	helpers.getFrontend('cart', stringTemplateData), callback;
+	helpers.getFrontend('cart', stringTemplateData, callback)
 }
 
 module.exports = routeHandlers;
