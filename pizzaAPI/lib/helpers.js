@@ -246,6 +246,27 @@ helpers.getStaticAsset = (fileName, cb) => {
 	})
 }
 
+helpers.getFrontend = (view, templateObj, callback) => {
+	//fetch template
+	helpers.getTemplate(view, templateObj, (err, resStr) => {
+		
+		//error-handling
+		if(!(!err && resStr)){
+			callback(500, undefined, 'html')
+		}
+
+		helpers.addHeaderFooter(resStr, templateObj, (err, resultStr) => {
+
+			//error-handling
+			if(err || !resultStr){
+				return callback(500, undefined, 'html')
+			}
+
+			return callback(200, resultStr, 'html')
+		})
+
+	})
+}
 
 module.exports = helpers;
 
