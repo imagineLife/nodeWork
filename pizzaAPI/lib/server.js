@@ -58,6 +58,7 @@ serverObj.myRouter = {
 	'account/create': routeHandlers.accountCreate,
 	'account/edit': routeHandlers.accountEdit,
 	'menu': routeHandlers.menu,
+	'cart': routeHandlers.cartView,
 	// 'checkout': routeHandlers.checkout,
 	"session/create" : routeHandlers.sessionCreate,
   "session/deleted" : routeHandlers.sessionDeleted,
