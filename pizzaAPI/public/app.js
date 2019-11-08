@@ -465,7 +465,7 @@ app.loadMenuItems = function(){
       document.getElementById("noChecksMessage").style.display = 'table-row';
 
       // Show the createCheck CTA
-      document.getElementById("createCheckCTA").style.display = 'block';
+      document.getElementById("goToMenu").style.display = 'block';
       return;
     }
 
@@ -515,7 +515,7 @@ app.loadCartItems = function(){
       document.getElementById("noChecksMessage").style.display = 'table-row';
 
       // Show the createCheck CTA
-      document.getElementById("createCheckCTA").style.display = 'block';
+      document.getElementById("goToMenu").style.display = 'block';
       return;
     }
 
@@ -534,6 +534,12 @@ app.loadCartItems = function(){
             td0.innerHTML = thisCartItemName;
             td1.innerHTML = cartItem.price;
       });
+
+        if(cartData && cartData.length > 0){
+          // Show the Checkout button
+          document.getElementById("checkout-button").style.display = 'block';
+          return;
+        }
 
       // // Put the hidden email field into both forms
       // var hiddenEmailInput = document.querySelectorAll("input.hiddenEmailInput");
