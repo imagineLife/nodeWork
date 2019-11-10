@@ -59,7 +59,7 @@ serverObj.myRouter = {
 	'account/edit': routeHandlers.accountEdit,
 	'menu': routeHandlers.menu,
 	'cart': routeHandlers.cartView,
-	// 'checkout': routeHandlers.checkout,
+	'checkout': routeHandlers.checkout,
 	"session/create" : routeHandlers.sessionCreate,
   "session/deleted" : routeHandlers.sessionDeleted,
  'favicon.ico': routeHandlers.favicon,
