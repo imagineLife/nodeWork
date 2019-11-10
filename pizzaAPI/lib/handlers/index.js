@@ -14,10 +14,20 @@ const doTokens = require('./api/tokens')
 const doMenuItems = require('./api/menuItems')
 const doCart = require('./api/cart')
 const doCharges = require('./api/charge')
-// const doIndex = require('./frontend/index')
-// const doCharges = require('../../chargeHelp')
+const { 
+	indexHandler, 
+	accountCreateHandler, 
+	accountEditHandler,
+	sessionCreateHandler,
+	sessionDeletedHandler,
+	checkoutHandler,
+	cartViewHandler,
+	menuHandler 
+} = require('./frontend/index');
 
-//handlers
+/*
+	API Handlers
+*/
 let routeHandlers = {}
 routeHandlers.doUsers = doUsers;
 routeHandlers.doTokens = doTokens;
@@ -25,8 +35,19 @@ routeHandlers.doMenuItems = doMenuItems;
 routeHandlers.doCart = doCart;
 routeHandlers.doCharges = doCharges;
 
+/*
+	Frontend Handlers
+*/
+routeHandlers.doIndex = indexHandler;
+routeHandlers.accountCreate = accountCreateHandler;
+routeHandlers.accountEdit = accountEditHandler;
+routeHandlers.sessionCreate = sessionCreateHandler;
+routeHandlers.sessionDeleted = sessionDeletedHandler;
+routeHandlers.menu = menuHandler;
+routeHandlers.cartView = cartViewHandler;
+routeHandlers.checkout = checkoutHandler;
+
 //USERS handler
-//FIGURES OUT wthe req method, & passes it to sub-handlers
 routeHandlers.users = (data, callback) => {
 	const acceptableMethods = ['post','get','put','delete'];
 
@@ -94,26 +115,6 @@ routeHandlers.charge = (data, callback) => {
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doCharges[data.method](data, callback);
 	}
-
-}
-
-/*
-	Frontend Handlers
-*/
-routeHandlers.doIndex = (data, callback) => {
-	//request-method validation
-	if(data.method !== 'get'){
-		return callback(405, undefined, 'html')
-	}
-	
-	let stringTemplateData = {
-		'head.title': "Sall-ease Apizza",
-		'head.description': 'Best Pizza On Earth',
-		'body.title': "Sall-Ease",
-		'body.class': 'index'
-	}
-
-	helpers.getFrontend('index', stringTemplateData, callback);
 
 }
 
@@ -188,127 +189,6 @@ routeHandlers.public = (data, cb) => {
 		cb(200, assetData, contentType);
 	})
 
-}
-
-// Create-Account
-routeHandlers.accountCreate = (data, callback) => {
-	
-	//some template data for html string interpolation
-	let stringTemplateData = {
-		'head.title': 'Create An Account',
-		'head.description': 'Sign Up is easy, & only takes a few seconds.',
-		'body.class': 'accountCreate'
-	} 
-
-	//error-handling
-	if(data.method !== 'get'){
-		callback(405,undefined,'html')
-	}
-
-	//fetch template
-	helpers.getFrontend('accountCreate', stringTemplateData, callback)
-}
-
-// editAccount
-routeHandlers.accountEdit = function(data,callback){
-  // Reject any request that isn't a GET
-  if(data.method !== 'get'){
-  	return callback(405,undefined,'html');
-  }
-  // Prepare data for interpolation
-  var templateData = {
-    'head.title' : 'Account Settings',
-    'body.class' : 'accountEdit'
-  };
-  // Read in a template as a string
-  helpers.getFrontend('accountEdit', templateData, callback)
-};
-
-// Create New Session
-routeHandlers.sessionCreate = function(data,callback){
-  // Reject any request that isn't a GET
-  if(data.method !== 'get'){
-  	return callback(405,undefined,'html');
-  }
-  // Prepare data for interpolation
-  var templateData = {
-    'head.title' : 'Login to your account.',
-    'head.description' : 'Please enter your email address and password to access your account.',
-    'body.class' : 'sessionCreate'
-  };
-  // Read in a template as a string
-  helpers.getFrontend('sessionCreate', templateData, callback)
-};
-
-// Session has been deleted
-routeHandlers.sessionDeleted = function(data,callback){
-  // Reject any request that isn't a GET
-  if(data.method !== 'get'){
-  	return callback(405,undefined,'html');
-  }
-  // Prepare data for interpolation
-  var templateData = {
-    'head.title' : 'Logged Out',
-    'head.description' : 'You have been logged out of your account.',
-    'body.class' : 'sessionDeleted'
-  };
-  // Read in a template as a string
-  helpers.getFrontend('sessionDeleted', templateData, callback)
-};
-
-// See Menu items
-routeHandlers.menu = (data, callback) => {
-	
-	//some template data for html string interpolation
-	let stringTemplateData = {
-		'head.title': 'Menu',
-		'head.description': 'Pizza Shop Menu Items',
-		'body.class': 'menuItems'
-	} 
-
-	//error-handling
-	if(data.method !== 'get'){
-		callback(405,undefined,'html')
-	}
-
-	//fetch template
-	helpers.getFrontend('menu', stringTemplateData, callback)
-}
-
-// See Users Cart
-routeHandlers.cartView = (data, callback) => {
-	
-	//some template data for html string interpolation
-	let stringTemplateData = {
-		'head.title': 'Cart',
-		'head.description': 'Pizza Shop Cart Items',
-		'body.class': 'cartItems'
-	} 
-
-	//error-handling
-	if(data.method !== 'get'){
-		callback(405,undefined,'html')
-	}
-
-	helpers.getFrontend('cart', stringTemplateData, callback)
-}
-
-// Checkout page
-routeHandlers.checkout = (data, callback) => {
-	
-	//some template data for html string interpolation
-	let stringTemplateData = {
-		'head.title': 'Checkout',
-		'head.description': 'Pizza Shop Checkout',
-		'body.class': 'checkout-items'
-	} 
-
-	//error-handling
-	if(data.method !== 'get'){
-		callback(405,undefined,'html')
-	}
-
-	helpers.getFrontend('checkout', stringTemplateData, callback)
 }
 
 module.exports = routeHandlers;
