@@ -15,6 +15,8 @@ app.config = {
 */
 app.client = {}
 
+app.showButton = (buttonID) => document.getElementById(buttonID).style.display = 'block';
+
 /*
 	maker of API call
 	NOTE: this can be tested in-browser
@@ -22,6 +24,7 @@ app.client = {}
 	app.client.request(undefined, '/ping','GET',undefined,undefined,function(statusCode,payload){console.log('DONE!',statusCode,payload)})
 */
 app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
+  
 	//defaults
 	headers = typeof(headers) == 'object' && headers !== null ? headers : {};
 	path = typeof(path) == 'string' ? path : '/';
@@ -94,19 +97,27 @@ app.client.request = (headers, path, method, queryStrObj, payload, cb) => {
 	- sends form input payload to api
 */
 app.bindForms = function(){
-  if(document.querySelector("form")){
+  
+  let hasForm = document.querySelector("form")
+  if(hasForm){
 
-    var allForms = document.querySelectorAll("form");
+    var allForms = document.querySelectorAll("form");    
     for(var i = 0; i < allForms.length; i++){
-        allForms[i].addEventListener("submit", function(e){
-
+      let thisForm = allForms[i]
+      
+      thisForm.addEventListener("submit", function(e){
         // Stop it from submitting
         e.preventDefault();
 
         var formId = this.id;
+        
         if(formId == 'checksCreate'){
           app.handleCart();
+        }else if(formId == 'submit-order'){
+          app.submitOrder();
         }else{
+
+
           var path = this.action;
           var method = this.method.toUpperCase();
 
@@ -392,6 +403,13 @@ app.loadDataOnPage = function(){
   // Logic for cart page
   if(primaryClass == 'cartItems'){
     app.loadCartItems();
+    app.showButton('checkout-button')
+  }
+
+  // Logic for checkout page
+  if(primaryClass == 'checkout-items'){
+    app.loadCartItems();
+    app.showButton('complete-checkout')
   }
 
   // Logic for check details page
@@ -491,9 +509,8 @@ app.loadMenuItems = function(){
   });
 };
 
-// Load the menu items
+// Load the cart items
 app.loadCartItems = function(){
-
   // Get the email from the current token, or log the user out if none is there
   var email = typeof(app.config.sessionToken.email) == 'string' ? app.config.sessionToken.email : false;
   if(!email){
@@ -506,7 +523,6 @@ app.loadCartItems = function(){
   };
 
   app.client.request(undefined,'api/cart','GET',queryStringObject,undefined,function(statusCode,responsePayload){
-        
     // ERROR-HANLDE missing menu items
     var cartData = responsePayload && responsePayload['cartData'] ? responsePayload['cartData'] : null;
 
@@ -519,33 +535,23 @@ app.loadCartItems = function(){
       return;
     }
 
+    let menu;
+    const table = document.getElementById("checksListTable");
+    
     //handle cart-items
     app.client.request(undefined,'api/menuItems','GET',queryStringObject,undefined,function(menuStatusCode,menuItemsResponse){
-      let menu = menuItemsResponse['MenuItems']
       
-      var table = document.getElementById("checksListTable");
+      menu = menuItemsResponse['MenuItems']
       //make the cart item into a table-row
       cartData.forEach(function(cartItem){
-          let thisCartItemName = menu.find(m => m.id === parseInt(cartItem['itemID'])).name
-            var tr = table.insertRow(-1);
-            tr.classList.add('checkRow');
-            var td0 = tr.insertCell(0);
-            var td1 = tr.insertCell(1);
-            td0.innerHTML = thisCartItemName;
-            td1.innerHTML = cartItem.price;
+        let thisCartItemName = menu.find(m => m.id === parseInt(cartItem['itemID'])).name
+        var tr = table.insertRow(-1);
+        tr.classList.add('checkRow');
+        var td0 = tr.insertCell(0);
+        var td1 = tr.insertCell(1);
+        td0.innerHTML = thisCartItemName;
+        td1.innerHTML = cartItem.price;
       });
-
-        if(cartData && cartData.length > 0){
-          // Show the Checkout button
-          document.getElementById("checkout-button").style.display = 'block';
-          return;
-        }
-
-      // // Put the hidden email field into both forms
-      // var hiddenEmailInput = document.querySelectorAll("input.hiddenEmailInput");
-      // for(var i = 0; i < hiddenEmailInput.length; i++){
-      //     hiddenEmailInput[i].value = email;
-      // }
     })
   });
 };
@@ -626,6 +632,16 @@ app.loadChecksEditPage = function(){
   });
 };
 
+app.submitOrder = () => {
+  let tk = app.config.sessionToken
+
+  //quest = (headers, path, method, queryStrObj, payload, cb)
+  app.client.request(undefined,'api/charge','POST',undefined,{email: tk.email},function(statusCode,responsePayload){
+    return;
+  })
+  
+};
+
 // Loop to renew token often
 app.tokenRenewalLoop = function(){
   setInterval(function(){
@@ -636,7 +652,6 @@ app.tokenRenewalLoop = function(){
     });
   },1000 * 60);
 };
-
 
 app.init = () => {
 
