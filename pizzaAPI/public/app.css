@@ -287,7 +287,7 @@ td a, td a:hover, td a:active{
   display: none;
 }
 
-#goToMenu, #checkout-button{
+#goToMenu, #checkout-button, #complete-checkout{
   margin-top: 40px;
   display: none;
 }
