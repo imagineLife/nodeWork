@@ -293,4 +293,22 @@ routeHandlers.cartView = (data, callback) => {
 	helpers.getFrontend('cart', stringTemplateData, callback)
 }
 
+// Checkout page
+routeHandlers.checkout = (data, callback) => {
+	
+	//some template data for html string interpolation
+	let stringTemplateData = {
+		'head.title': 'Checkout',
+		'head.description': 'Pizza Shop Checkout',
+		'body.class': 'checkout-items'
+	} 
+
+	//error-handling
+	if(data.method !== 'get'){
+		callback(405,undefined,'html')
+	}
+
+	helpers.getFrontend('checkout', stringTemplateData, callback)
+}
+
 module.exports = routeHandlers;
