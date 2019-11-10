@@ -1,0 +1,23 @@
+<h1>Your Cart</h1>
+<h2>Here are the items in your cart</h2>
+<hr />
+
+<table id="checksListTable">
+  <tr>
+    <th>Item</th>
+    <th>Price</th>
+  </tr>
+  <tr id="noChecksMessage">
+    <td colspan="5">You have no items in your cart!</td>
+  </tr>
+</table>
+
+<form action="/api/charge" method="POST" id="submit-order">
+	<label for="cc-number">Credit Card Number:
+		<input type="text" disabled id="cc-number" class="disabled" value="4242 4242 4242 4242" />
+	</label>
+
+	<div class="inputWrapper ctaWrapper">
+    <button type="submit" class="cta green" id="complete-checkout">Complete Order</button>
+  </div>
+</form>
