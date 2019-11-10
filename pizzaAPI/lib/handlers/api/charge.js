@@ -23,7 +23,7 @@ OPT field
 charge.post = function(data,callback){
 	debug('\x1b[32m\x1b[37m%s\x1b[0m','Post Data:')
 	debug(data);
-
+	
 	//Prepare stripe communication details
 	let stripeAPIPrepData = {
 		path: `/v1/customers`,
@@ -45,7 +45,7 @@ charge.post = function(data,callback){
 
 	//verify that token is valid for passed email
 	doTokens.verifyTokenMatch(passedToken, data.payload.email, (tokenIsValid) => {
-
+		
 		if(!tokenIsValid){
 			callback(400, { Error: "non-matching token for this user" });
 			return;
@@ -163,7 +163,7 @@ charge.makeStripeReq = (reqObj, reqStr) => {
 
 charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	
-    stripeCustDataObj.id = res.id;
+  stripeCustDataObj.id = res.id;
 	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
 
 	//IF NO SOURCE
@@ -222,7 +222,7 @@ charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
         charge.makeStripeReq(stripeAPIPrepData, dataInString).then(res => {
         	
         	let mailObj = {
-        		from: `ImagineLife Pizza Shop <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>`,
+        		from: `Sal-Ease Pizza Shop <jake@sandboxc9915d1dd51b4d29a578edad903f20ea.mailgun.org>`,
         		to: 'mretfaster@gmail.com',
         		subject: 'Receipt for pizza order',
         		text: `Thanks for your order of $${(stripeCustDataObj.cartTotal/100).toFixed(2)}`
