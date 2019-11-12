@@ -633,12 +633,32 @@ app.loadChecksEditPage = function(){
 };
 
 app.submitOrder = () => {
+  //disable button
+  let btn = document.querySelector('#complete-checkout')
+  btn.className='disabled'
+  btn.innerHTML = "Placing Order"
+
   let tk = app.config.sessionToken
 
-  //quest = (headers, path, method, queryStrObj, payload, cb)
   app.client.request(undefined,'api/charge','POST',undefined,{email: tk.email},function(statusCode,responsePayload){
-    return;
+    let newP = document.createElement('p')
+    let content = document.querySelector('.content')
+    newP.className='success-text'
+
+    if(statusCode == 200){
+      newP.innerHTML = 'Thank you for your order!'
+      content.insertBefore(newP, content.childNodes[0] || null)
+      return;
+    }else{
+      newP.innerHTML = 'Something went wrong, try again'
+      content.insertBefore(newP, content.childNodes[0] || null)
+      btn.className='cta green'
+      btn.innerHTML = "Complete Order"
+      return;
+    }
+    
   })
+  return;
   
 };
 
