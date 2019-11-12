@@ -219,10 +219,6 @@ input,select,option {
   margin: 20px;
 }
 
-input.disabled{
-  background-color: #efefef;
-}
-
 .inputWrapper{
   padding: 0 0 20px 0;
 }
@@ -290,4 +286,28 @@ td a, td a:hover, td a:active{
 #goToMenu, #checkout-button, #complete-checkout{
   margin-top: 40px;
   display: none;
+}
+
+input.disabled{
+  background-color: #efefef;
+}
+
+button.disabled{
+  color: #fff;
+  border-radius: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  display: inline-block;
+  padding: 15px;
+  width: 150px;
+  cursor: default;
+  background-color: gray; 
+}
+
+.success-text{
+  font: normal bold 34px sans-serif;
+  text-align: center;
+  margin: 21px 0;
+  text-decoration: underline steelblue wavy;
 }
