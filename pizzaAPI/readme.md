@@ -37,6 +37,11 @@ This node api serves 'frontend' && 'backend' content.
 ```/cart``` - View your cart
 ```/checkout``` - Checkout, pay with a fake credit card number
 ```/cart``` - View your cart
+```/session/create``` - A login page
+```/session/delete``` - A logout page
+```/favicon.ico``` - A Favicon
+```/public``` - a root for public assets (_images_)
+```/notFound``` - A placeholder for routes that are, well, _not found_
 
 ## Backend
 ### USERS  
