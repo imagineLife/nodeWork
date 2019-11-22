@@ -6,8 +6,18 @@
 *No Packages.*  
 *Just Node.*  
 This is an API for a mock pizza-delivery company, an exercise in executing a node server with no npm dependencies.  
-  
-**3rd Party API Integrations**  
+
+## Table Of Contents
+[Third Party Integrations](#third-party-api-integrations) 
+[User Stories](#user-stories)
+[API](#api) 
+- [Frontend](#frontend)
+- [Backend](#backend)
+	- [Users](#users)
+	- [Menu Items](#menu-items)
+	- [Charge](#charge)
+
+## Third Party API Integrations
 This integrates with the sandbox of [Stripe](https://stripe.com/)for accepting user payment.  
 This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sending order receipts via email.  
   
