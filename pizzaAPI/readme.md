@@ -1,14 +1,16 @@
 
+
 # A Pizza-Delivery API
 
 *No NPM.*  
 *No Packages.*  
 *Just Node.*  
-This is an API for a mock pizza-delivery company.  
+This is an API for a mock pizza-delivery company, an exercise in executing a node server with no npm dependencies.  
   
 **3rd Party API Integrations**  
 This integrates with the sandbox of [Stripe](https://stripe.com/)for accepting user payment.  
 This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sending order receipts via email.  
+  
   
 ## User Stories  
 **Users Can:**  
@@ -19,13 +21,25 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 - Get PizzaShop Menu items (when logged in)  
 - Fill a 'shopping cart' with menu items (when logged in)  
 - Create an Order (when logged in)  
-	- input payment method  
+	- input payment method  (_dummy by default for dev purpose_)
 	- API connects with Stripe API for payment processing  
-	- User recieves an emailed recipet with Mailgun integration  
+	- User receives an emailed receipt with Mailgun integration  
   
   
 # API
-## USERS  
+This node api serves 'frontend' && 'backend' content.
+
+## Frontend
+```/``` - 'Home' page
+```/account/create``` - Create an account
+```/account/edit``` - edit an account
+```/menu``` - See && Select menu items
+```/cart``` - View your cart
+```/checkout``` - Checkout, pay with a fake credit card number
+```/cart``` - View your cart
+
+## Backend
+### USERS  
 
 	/users  
 
@@ -63,7 +77,7 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 *required in header:*  
    - token  
 
-## MENU ITEMS  
+### MENU ITEMS  
 ***READ (get)***  
 
 	/menuItems?email=userEmail@here.com  
@@ -72,7 +86,7 @@ requires:
 - authToken in the request body  
 - user email in request query string  
 
-## CHARGE  
+### CHARGE  
 ***CREATE***  
 
 	/charge  
