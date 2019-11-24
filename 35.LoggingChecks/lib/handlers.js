@@ -31,7 +31,6 @@ routeHandlers.users = (data, callback) => {
 		return callback(405)
 	}
 		routeHandlers.doUsers[data.method](data,callback);
-	}
 }
 
 //deals with users CRUD methods
