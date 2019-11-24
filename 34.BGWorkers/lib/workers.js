@@ -32,10 +32,14 @@ workersObj.gatherAllChecks = () => {
 			pass the data to the check-Validator
 			check-validator continues or logs errors
 		*/
+
 		files.forEach(file => {
+				
 			dataLib.read('checks', file, (err, originalCheckData) => {
 				if(err || !originalCheckData){
 					console.log('error reading one of the checks data...')
+					console.log('err')
+					console.log(err)
 					return;
 				}
 				workersObj.validateCheckData(originalCheckData)
@@ -115,12 +119,6 @@ workersObj.validateCheckData = (origChData) => {
 		to the next step
 */
 workersObj.performCheck = (originalCheckData) => {
-	// console.log('--Performing Check--');
-	// console.log('originalCheckData')
-	// console.log(originalCheckData)
-	// console.log('// - - - - - //')
-	
-
 	//prep initial check outcome
 	let checkOutcome = {
 		'error': false,
@@ -133,10 +131,11 @@ workersObj.performCheck = (originalCheckData) => {
 
 	//parse host & path out from origCheckData
 	//THIS is needed for sending to the twilio API
-	let parsedUrl = url.parse(`${originalCheckData.protocol}:${originalCheckData.url}`,true)
-
+	let parsedUrl = url.parse(`${originalCheckData.protocol}://${originalCheckData.url}`,true)
+	
 	//using PATH not PATH NAME because we want the query string from the path
-	let {hostName, path } = parsedUrl;
+	let hostName = parsedUrl.hostname;
+	let path = parsedUrl.path;
 
 	//construyct the reqObj to send to the url
 	let reqObj = {
@@ -146,10 +145,10 @@ workersObj.performCheck = (originalCheckData) => {
 		'path': path,
 		'timeout': originalCheckData.timeoutSeconds * 1000
 	}
-
+	
 	//get module to use (http OR https)
 	let modToUse = originalCheckData.protocol == 'http' ? http : https;
-
+	
 	let finishedReq = modToUse.request(reqObj, function(res){
 
 		//get status of sent obj
@@ -211,9 +210,6 @@ workersObj.performCheck = (originalCheckData) => {
 //SPECIAL logic for accommodating a check that has not been tested yet
 //	DONT want to alert on the first check
 workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
-	console.log('processCheckOutcome checkOutcome')
-	console.log(checkOutcome)
-	console.log('* * * * * ')
 
 	/*
 		decide if check is considered up or down
@@ -223,7 +219,7 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 		checkOutcome.responseCode && 
 		originalCheckData.successCodes.indexOf(checkOutcome.responseCode) > -1 ?
 		'up' : 'down';
-
+	
 	//alert if IS last-checked AND check state has changed from previous check-state
 	let alertWarranted = originalCheckData.lastChecked 
 		&& originalCheckData.state !== upOrDown 
@@ -239,7 +235,6 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 		if(err){
 			console.log('ERROR Trying to save updates to one of the checks...')
 			console.log(newCheckData)
-			console.log('- - - - -')
 			return;
 		}
 
