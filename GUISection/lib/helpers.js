@@ -20,6 +20,9 @@ let helpers  = {};
 //using crypto library that comes with node
 // https://nodejs.org/api/crypto.html#crypto_crypto
 
+helpers.isString = (str) => typeof str === 'string' && str.length > 0; 
+helpers.isLength = (itm, l) => itm.length === l;
+
 helpers.hash = function(str){
 	if(typeof(str) == 'string' && str.length > 0){
 		
