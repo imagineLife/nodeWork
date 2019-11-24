@@ -377,6 +377,11 @@ app.loadDataOnPage = function(){
   if(primaryClass == 'checksList'){
     app.loadChecksListPage();
   }
+
+  // Logic for check details page
+  if(primaryClass == 'checksEdit'){
+    app.loadChecksEditPage();
+  }
 };
 
 // Load the account edit page specifically
@@ -476,6 +481,49 @@ app.loadChecksListPage = function(){
     if(allChecks.length < 5){
       // Show the createCheck CTA
       document.getElementById("createCheckCTA").style.display = 'block';
+    }
+  });
+};
+
+// Load the checks edit page specifically
+app.loadChecksEditPage = function(){
+  // Get the check id from the query string, if none is found then redirect back to dashboard
+  var id = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 ? window.location.href.split('=')[1] : false;
+  if(!id){
+    window.location = '/checks/all';
+    return;
+  }
+  
+  // Fetch the check data
+  var queryStringObject = {
+    'id' : id
+  };
+  app.client.request(undefined,'api/checks','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+    if(statusCode !== 200){
+      // If the request comes back as something other than 200, redirect back to dashboard
+      window.location = '/checks/all';
+      return;
+    }
+
+    // Put the hidden id field into both forms
+    var hiddenIdInputs = document.querySelectorAll("input.hiddenIdInput");
+    for(var i = 0; i < hiddenIdInputs.length; i++){
+        hiddenIdInputs[i].value = responsePayload.id;
+    }
+
+    let { id, state, protocol, url, method, timeoutSeconds, successCodes } = responsePayload
+    // Put the data into the top form as values where needed
+    document.querySelector("#checksEdit1 .displayIdInput").value = id;
+    document.querySelector("#checksEdit1 .displayStateInput").value = state;
+    document.querySelector("#checksEdit1 .protocolInput").value = protocol;
+    document.querySelector("#checksEdit1 .urlInput").value = url;
+    document.querySelector("#checksEdit1 .methodInput").value = method;
+    document.querySelector("#checksEdit1 .timeoutInput").value = timeoutSeconds;
+    var successCodeCheckboxes = document.querySelectorAll("#checksEdit1 input.successCodesInput");
+    for(var i = 0; i < successCodeCheckboxes.length; i++){
+      if(successCodes.indexOf(parseInt(successCodeCheckboxes[i].value)) > -1){
+        successCodeCheckboxes[i].checked = true;
+      }
     }
   });
 };
