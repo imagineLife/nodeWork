@@ -109,7 +109,7 @@ logsLib.compress = (logID, newFileID, callback) => {
 	fs.readFile(`${logsLib.baseDir}${srcFile}`,'utf8',(err, inputStr) => {
 
 		if(err || !inputStr){
-			return callback(error)
+			return callback(err)
 		}
 
 		//compress the data using gzip
