@@ -135,10 +135,11 @@ workersObj.performCheck = (originalCheckData) => {
 
 	//parse host & path out from origCheckData
 	//THIS is needed for sending to the twilio API
-	let parsedUrl = url.parse(`${originalCheckData.protocol}:${originalCheckData.url}`,true)
+	let parsedUrl = url.parse(`${originalCheckData.protocol}://${originalCheckData.url}`,true)
 
 	//using PATH not PATH NAME because we want the query string from the path
-	let {hostName, path } = parsedUrl;
+	let hostName = parsedUrl.hostname;
+	let path = parsedUrl.path;
 
 	//construyct the reqObj to send to the url
 	let reqObj = {
