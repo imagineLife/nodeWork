@@ -25,13 +25,12 @@ routeHandlers.users = (data, callback) => {
 	/*
 		if the method from the Front-End matches an acceptable method,
 		run it. use a NEW SET OF METHODS 'doUser'.
-		ELSE return 40
+		ELSE return 405
 	*/
-	if(acceptableMethods.indexOf(data.method) > -1){
-		routeHandlers.doUsers[data.method](data,callback);
-	}else{
+	if(!(acceptableMethods.indexOf(data.method) > -1)){
 		return callback(405)
 	}
+		routeHandlers.doUsers[data.method](data,callback);
 }
 
 //deals with users CRUD methods
@@ -164,13 +163,11 @@ routeHandlers.doUsers.put = function(data,callback){
 			//Store the newly updated userData obj
 			dataLib.update('users', phoneNumber, userData, (err) => {
 
-				if(!err){
-					return callback(200)
-				}else{
+				if(err){
 					console.log(err)
 					return callback(500, {'Error': 'Couldnt update this user with this info'})
 				}
-
+					return callback(200)
 			})
 		})
 	})
@@ -207,17 +204,13 @@ routeHandlers.doUsers.get = function(data,callback){
 
 		//lookup the user from the filesystem
 		dataLib.read('users',phoneNumber, (err, storedUserData) => {
-			if(!err && storedUserData){
-
-				//REMOVE hashed pw from the user object before showing the user
-				delete storedUserData.hashedPW;
-				return callback(200, storedUserData);
-
-			}else{
-
+			if(err || !storedUserData){
 				//NOT FOUND USER
 				return callback(404)
 			}
+			//REMOVE hashed pw from the user object before showing the user
+			delete storedUserData.hashedPW;
+			return callback(200, storedUserData);
 		})
 	})
 	
@@ -282,11 +275,10 @@ routeHandlers.doUsers.delete = function(data,callback){
 						}
 						checksDeleted++;
 						if(checksDeleted == noOfChecks){
-							if(!deleteErrs){
-								callback(200)
-							}else{
-								callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
+							if(deleteErrs){
+								return callback(500, {'Err': 'Did not delete ALL checks: some checks may still be present associated with user.'})
 							}
+							return callback(200)
 						}
 					})
 				})
@@ -793,12 +785,10 @@ routeHandlers.doChecks.delete = function(data,callback){
 					
 					//re-save the users data without the check
 					dataLib.update('users', checkData.userPhone, userData, (err) => {
-						if(!err){
-							callback(200)	
-						}else{
-							callback(500, {'Error': 'Couldnt update the user data'})
+						if(err){
+							return callback(500, {'Error': 'Couldnt update the user data'})
 						}
-						
+						return callback(200);
 					})
 				})
 			})
