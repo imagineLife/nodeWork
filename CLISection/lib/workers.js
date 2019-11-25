@@ -37,7 +37,7 @@ workersObj.gatherAllChecks = () => {
 		files.forEach(file => {
 			dataLib.read('checks', file, (err, originalCheckData) => {
 				if(err || !originalCheckData){
-					console.log('error reading one of the checks data...')
+					// console.log('error reading one of the checks data...')
 					return;
 				}
 				workersObj.validateCheckData(originalCheckData)
@@ -214,9 +214,9 @@ workersObj.performCheck = (originalCheckData) => {
 //SPECIAL logic for accommodating a check that has not been tested yet
 //	DONT want to alert on the first check
 workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
-	console.log('processCheckOutcome checkOutcome')
-	console.log(checkOutcome)
-	console.log('* * * * * ')
+	// console.log('processCheckOutcome checkOutcome')
+	// console.log(checkOutcome)
+	// console.log('* * * * * ')
 
 	/*
 		decide if check is considered up or down
@@ -251,7 +251,7 @@ workersObj.processCheckOutcome = (originalCheckData, checkOutcome) => {
 
 		//SEnd the new check data along 
 		if(!alertWarranted){
-			console.log('Check outcome has NOT changed, not alert needed')
+			// console.log('Check outcome has NOT changed, not alert needed')
 			return;
 		}
 
@@ -280,10 +280,10 @@ workersObj.logToFile = function(originalCheckData, checkOutcome, upOrDown, alert
 	//append the logString to the file
 	logsLib.append(logFileName,logString, (err)=> {
 		if(err){
-			return console.log('Logging-to-file FAILED')
+			return //console.log('Logging-to-file FAILED')
 		}
 
-		return console.log('Logging-to-file SUCCEEDED!!')
+		return //console.log('Logging-to-file SUCCEEDED!!')
 	})
 }
 
@@ -321,7 +321,7 @@ workersObj.rotateLogs = function(){
 						return console.log('ERROR truncating a log file')
 					}
 
-					console.log('SUCCESS truncating a log file!')
+					return;//console.log('SUCCESS truncating a log file!')
 				})
 
 			})
