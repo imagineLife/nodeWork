@@ -2,6 +2,7 @@
 
 const server = require('./lib/server')
 const webWorkers = require('./lib/workers')
+const cli = require('./lib/cli')
 
 let appObj = {};
 
@@ -14,6 +15,12 @@ appObj.init = () => {
 
 	//start webWorkers
 	webWorkers.init();
+
+	//WORKAROUND-ISH: 
+	//start the CLI AFTER the other items
+	setTimeout(() => {
+		cli.init();
+	}, 100)
 
 }
 
