@@ -109,33 +109,33 @@ logsLib.compress = (logID, newFileID, callback) => {
 	fs.readFile(`${logsLib.baseDir}${srcFile}`,'utf8',(err, inputStr) => {
 
 		if(err || !inputStr){
-			return callback(error)
+			return callback(err)
 		}
 
 		//compress the data using gzip
-		zlib.gzip(inputStr, (err,resBuffer) => {
+		zlib.gzip(inputStr, (errTwo,resBuffer) => {
 			
-			if(err || !resBuffer){
-				return callback(err)
+			if(errTwo || !resBuffer){
+				return callback(errTwo)
 			}
 
 			//SEND compressed data to dest file
-			fs.open(`${logsLib.baseDir}${destFile}`,'wx',(err, fileDesc) => {
+			fs.open(`${logsLib.baseDir}${destFile}`,'wx',(errThree, fileDesc) => {
 				
 				//WRITE to the destFile with base64 encoding
-				if(err || !fileDesc){
-					return callback(err)
+				if(errThree || !fileDesc){
+					return callback(errThree)
 				}
 
-				fs.writeFile(fileDesc, resBuffer.toString('base64'), err => {
-					if(err){
-						return callback(err)
+				fs.writeFile(fileDesc, resBuffer.toString('base64'), errFour => {
+					if(errFour){
+						return callback(errFour)
 					}
 
 					//close the destFile
-					fs.close(fileDesc, (err) => {
-						if(err){
-							return callback(err)
+					fs.close(fileDesc, (errFive) => {
+						if(errFive){
+							return callback(errFive)
 						}
 						return callback(false)
 					})
