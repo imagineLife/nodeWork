@@ -204,7 +204,23 @@ cli.responders.listUsers = function(){
 
 // More user info
 cli.responders.moreUserInfo = function(str){
-  console.log("You asked for more user info",str);
+  
+  //get ID from string
+  let strArr = str.split('--')
+  let userID = typeof(strArr[1]) == 'string' && strArr[1].length > 0 ? strArr[1] : false;
+
+  if(userID){
+  	dataLib.read('users', userID, (err,userData) => {
+  		if(!err && userData){
+  			//remove password
+  			delete userData.hashedPassword;
+
+  			//print json with text highlighted
+  			cli.verticalSpace()
+  			console.dir(userData, {'colors': true});
+  		}
+  	})
+  }
 };
 
 // List Checks
