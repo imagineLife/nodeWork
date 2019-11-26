@@ -35,7 +35,7 @@ const debug = util.debuglog('cli');
 const events = require('events');
 class _events extends events{};
 const e = new _events();
-
+const dataLib = require('./data')
 
 const makeHeader = (str) => {
 	cli.horizontalLine();
@@ -181,7 +181,25 @@ cli.responders.stats = function(){
 
 // List Users
 cli.responders.listUsers = function(){
-  console.log("You asked to list users");
+  
+	dataLib.listFiles('users', (err, userIds) => {
+		if(!err && userIds && userIds.length > 0){
+
+			cli.verticalSpace()
+
+			userIds.forEach(userId => {
+				dataLib.read('users',userId, (err,userData) => {
+					if(!err && userData){
+						let line = `Name: ${userData.firstName} ${userData.lastName}  Phone: ${userData.phone} Checks: `
+						let checkCount = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
+						line += checkCount;
+						console.log(line)
+						cli.verticalSpace()
+					}
+				})
+			})
+		}
+	})
 };
 
 // More user info
