@@ -36,6 +36,36 @@ const events = require('events');
 class _events extends events{};
 const e = new _events();
 
+
+const makeHeader = (str) => {
+	cli.horizontalLine();
+  cli.centered(str);
+  cli.horizontalLine();
+  cli.verticalSpace(2);
+}
+
+const logTheData = obj => {
+	for(var key in obj){
+     if(obj.hasOwnProperty(key)){
+        var value = obj[key];
+        var line = '      \x1b[33m '+key+'      \x1b[0m';
+        var padding = 60 - line.length;
+        for (i = 0; i < padding; i++) {
+            line+=' ';
+        }
+        line+=value;
+        console.log(line);
+        cli.verticalSpace();
+     }
+  }
+}
+
+const makeFooter = (spaceHeight) => {
+	// Create a footer for the stats
+  cli.verticalSpace(spaceHeight);
+  cli.horizontalLine();
+}
+
 // Instantiate the cli module object
 let cli = {};
 
@@ -101,29 +131,12 @@ cli.responders.help = function(){
   };
 
   // Show a header for the help page that is as wide as the screen
-  cli.horizontalLine();
-  cli.centered('CLI MANUAL');
-  cli.horizontalLine();
-  cli.verticalSpace(2);
+  makeHeader('CLI MANUAL')
 
   // Show each command, followed by its explanation, in white and yellow respectively
-  for(var key in commands){
-     if(commands.hasOwnProperty(key)){
-        var value = commands[key];
-        var line = '      \x1b[33m '+key+'      \x1b[0m';
-        var padding = 60 - line.length;
-        for (i = 0; i < padding; i++) {
-            line+=' ';
-        }
-        line+=value;
-        console.log(line);
-        cli.verticalSpace();
-     }
-  }
-  cli.verticalSpace(1);
+  logTheData(commands)
 
-  // End with another horizontal line
-  cli.horizontalLine();
+  makeFooter(1);
 };
 
 // Exit
@@ -151,7 +164,18 @@ cli.responders.stats = function(){
 		'CPU Count': os.cpus().length,
 		'Free Memory': os.freemem(),
 		'Current Malloced Memory' : v8.getHeapStatistics().malloced_memory,
+		'Peak Malloced Memory' : v8.getHeapStatistics().peak_malloced_memory,
+    'Allocated Heap Used (%)' : Math.round((v8.getHeapStatistics().used_heap_size / v8.getHeapStatistics().total_heap_size) * 100),
+    'Available Heap Allocated (%)' : Math.round((v8.getHeapStatistics().total_heap_size / v8.getHeapStatistics().heap_size_limit) * 100),
+    'Uptime' : os.uptime()+' Seconds'
 	}
+
+	makeHeader('CLI MANUAL')
+
+	// Log out each stat
+	logTheData(dataToSee)
+
+	makeFooter();
 
 };
 
