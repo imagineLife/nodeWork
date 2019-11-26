@@ -13,6 +13,23 @@
 */
 
 const readline = require('readline');
+
+/*
+	OS
+	https://nodejs.org/api/os.html#os_os_freemem
+	The os module provides operating system-related
+	 utility methods and properties.
+*/
+const os = require('os')
+
+/*
+	v8
+	https://nodejs.org/api/v8.html
+	The v8 module exposes APIs that are specific
+	to the version of V8 built into the Node.js binary. 
+*/
+const v8 = require('v8');
+
 const util = require('util');
 const debug = util.debuglog('cli');
 const events = require('events');
@@ -116,7 +133,26 @@ cli.responders.exit = function(){
 
 // Stats
 cli.responders.stats = function(){
-  console.log("You asked for stats");
+  
+	//stats obj
+	let dataToSee = {
+		/*
+			loadavg
+			Returns an array containing the 1, 5,
+			 and 15 minute load averages. The load
+			 average is a measure of system activity 
+			 calculated by the operating system and 
+			 expressed as a fractional number. The 
+			 load average is a Unix-specific concept. 
+			 On Windows, the return value is
+			  always [0, 0, 0].
+		*/
+		'Load Average': os.loadavg().join(' '),
+		'CPU Count': os.cpus().length,
+		'Free Memory': os.freemem(),
+		'Current Malloced Memory' : v8.getHeapStatistics().malloced_memory,
+	}
+
 };
 
 // List Users
