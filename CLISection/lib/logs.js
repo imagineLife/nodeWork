@@ -69,7 +69,7 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 
 	fs.readdir(logsLib.baseDir, (err, res) => {
 		if(err || !res || !(res.length > 0)){
-			return callback(err,data)
+			return callback(err)
 		}
 			
 		//collector of file names
