@@ -26,7 +26,7 @@ let cli = {}
 // process the input
 cli.processInput = str => {
 
-	let isString = helpers.isString(str)
+	let str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : false
 	if(isString){
 		let inputs = [
 			'man',
@@ -41,6 +41,19 @@ cli.processInput = str => {
 			'more log info'
 		]
 	}
+
+	//emit matching-inputs-events
+	let matchFound = false;
+	let counter = 0;
+	inputs.some(input => {
+		if(str.toLowerCase().indexOf(input) > -1){
+			matchFound = true;
+
+			//call emitter
+			e.emit(input, str);
+			return true;
+		}
+	})
 }
 
 cli.init = function(){
