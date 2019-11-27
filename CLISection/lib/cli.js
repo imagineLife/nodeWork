@@ -253,7 +253,25 @@ cli.responders.listChecks = function(str){
 
 // More check info
 cli.responders.moreCheckInfo = function(str){
-  console.log("You asked for more check info",str);
+  //get check ID from input
+  const checkIDS = str.split('--')
+  let checkID = checkIDS[1]
+  checkID = typeof(checkID) == 'string'
+  	&& checkID.trim().length > 0 
+  	? checkID.trim()
+  	: false;
+
+  if(checkID){
+  	// look up user
+  	dataLib.read('checks', checkID, (err, checkData) => {
+  		if(!err && checkData){
+
+  			cli.verticalSpace()
+  			console.dir(checkData, {'colors': true});
+  			cli.verticalSpace()  			
+  		}
+  	})
+  }
 };
 
 // List Logs
