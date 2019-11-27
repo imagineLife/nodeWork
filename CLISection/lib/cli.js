@@ -36,6 +36,7 @@ const events = require('events');
 class _events extends events{};
 const e = new _events();
 const dataLib = require('./data')
+const logsLib = require('./logs')
 
 const makeHeader = (str) => {
 	cli.horizontalLine();
@@ -276,7 +277,18 @@ cli.responders.moreCheckInfo = function(str){
 
 // List Logs
 cli.responders.listLogs = function(){
-  console.log("You asked to list logs");
+  logsLib.listLogs(true, (err,logFileNames) => {
+  	if(!err && logFileNames && logFileNames.length > 0){
+
+  		cli.verticalSpace();
+  		logFileNames.forEach(logName => {
+  			if(logName.indexOf('-') > -1){
+  				console.log(logName);
+  				cli.verticalSpace()
+  			}
+  		})
+  	}
+  })
 };
 
 // More logs info
