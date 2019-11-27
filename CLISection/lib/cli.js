@@ -224,8 +224,31 @@ cli.responders.moreUserInfo = function(str){
 };
 
 // List Checks
-cli.responders.listChecks = function(){
-  console.log("You asked to list checks");
+cli.responders.listChecks = function(str){
+  dataLib.listFiles('checks', (err, checkIds) => {
+  	if(!err && checkIds && checkIds.length > 0){
+  		checkIds.forEach(thisCheck => {
+  			dataLib.read('checks', thisCheck, (errTwo, checkData) => {
+  				if(!errTwo && checkData){
+  					const includeCheck = false;
+  					const lowerString = str.toLowerCase()
+  					const checkState = typeof(checkData.state) == 'string' ? checkData.state : 'down';
+  					const stateOrUnknown = typeof(checkData.state) == 'string' ? checkData.state : 'unknown';
+  					//if user SPECIFIED the state...
+  					if(
+  						(lowerString.indexOf(`--${checkState}`) > -1) 
+  						||
+  						(lowerString.indexOf('--down') == -1 && lowerString.indexOf('--up') == -1) 
+  					){
+  						const line = `ID: ${checkData.id} ${checkData.method.toUpperCase()} ${checkData.protocol}://${checkData.url} State: ${stateOrUnknown}`;
+              console.log(line);
+              cli.verticalSpace();
+  					}
+  				}
+  			})
+  		})
+  	}
+  })
 };
 
 // More check info
