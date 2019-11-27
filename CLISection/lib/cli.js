@@ -37,6 +37,7 @@ class _events extends events{};
 const e = new _events();
 const dataLib = require('./data')
 const logsLib = require('./logs')
+const helpers = require('./helpers')
 
 const makeHeader = (str) => {
 	cli.horizontalLine();
@@ -293,7 +294,29 @@ cli.responders.listLogs = function(){
 
 // More logs info
 cli.responders.moreLogInfo = function(str){
-  console.log("You asked for more log info",str);
+  
+	//get log name
+  const inputVals = str.split('--')
+  let logName = inputVals[1]
+  logName = (typeof(logName) == 'string' && logName.trim().length > 0 ? logName : false)
+
+  if(logName){
+  	cli.verticalSpace()
+
+  	//de-compress log
+  	logsLib.decompress(logName, (err,logString) => {
+  		if(!err && logString){
+
+  			const strArr = logString.split('\n')
+  			strArr.forEach(str => {
+  				let log = helpers.parseJsonToObject(str)
+  				console.dir(log, {'colors': true});
+  				cli.verticalSpace()
+  			})
+
+  		}
+  	})
+  }
 };
 
 // Input processor
