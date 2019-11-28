@@ -34,7 +34,7 @@ const events = require('events');
 class _events extends events{};
 const e = new _events();
 const dataLib = require('./data')
-const logsLib = require('./logs')
+// const logsLib = require('./logs')
 const helpers = require('./helpers')
 
 const makeHeader = (str) => {
@@ -48,6 +48,22 @@ const makeFooter = (spaceHeight) => {
 	// Create a footer for the stats
   cli.verticalSpace(spaceHeight);
   cli.horizontalLine();
+}
+
+const logTheData = obj => {
+  for(var key in obj){
+     if(obj.hasOwnProperty(key)){
+        var value = obj[key];
+        var line = '      \x1b[33m '+key+'      \x1b[0m';
+        var padding = 60 - line.length;
+        for (i = 0; i < padding; i++) {
+            line+=' ';
+        }
+        line+=value;
+        console.log(line);
+        cli.verticalSpace();
+     }
+  }
 }
 
 // Instantiate the cli module object
@@ -65,6 +81,9 @@ e.on('help',function(str){
 e.on('exit',function(str){
   cli.responders.exit();
 });
+
+// Responders object
+cli.responders = {};
 
 // Help / Man
 cli.responders.help = function(){
@@ -115,6 +134,20 @@ cli.verticalSpace = function(lines){
   for (i = 0; i < lines; i++) {
       console.log('');
   }
+};
+
+// Create a horizontal line across the screen
+cli.horizontalLine = function(){
+
+  // Get the available screen size
+  var width = process.stdout.columns;
+
+  // Put in enough dashes to go across the screen
+  var line = '';
+  for (i = 0; i < width; i++) {
+      line+='-';
+  }
+  console.log(line);
 };
 
 // Input processor
@@ -198,3 +231,5 @@ cli.init = function(){
   });
 
 };
+
+module.exports = cli;
