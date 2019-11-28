@@ -50,6 +50,46 @@ const makeFooter = (spaceHeight) => {
   cli.horizontalLine();
 }
 
+// Instantiate the cli module object
+let cli = {};
+
+// Input handlers
+e.on('man',function(str){
+  cli.responders.help();
+});
+
+e.on('help',function(str){
+  cli.responders.help();
+});
+
+e.on('exit',function(str){
+  cli.responders.exit();
+});
+
+// Help / Man
+cli.responders.help = function(){
+  // Codify the commands and their explanations
+  var commands = {
+    'exit' : 'Kill the CLI (and the rest of the application)',
+    'man' : 'Show this help page',
+    'help' : 'Alias of the "man" command',
+    'stats' : 'Get statistics on the underlying operating system and resource utilization',
+    'menu items' : 'Show the menu items',
+    'recent orders' : 'Show a list of all the orders that have been placed within the last 24 hours',
+    'more order info --{orderID}' : 'Show details of a specified order',
+    'recent users' : 'Show a list of all the users that have made an account within the last 24 hours',
+    'more user info --{email}' : 'Show details of a specified user, by email'
+  };
+
+  // Show a header for the help page that is as wide as the screen
+  makeHeader('CLI MANUAL')
+
+  // Show each command, followed by its explanation, in white and yellow respectively
+  logTheData(commands)
+
+  makeFooter(1);
+};
+
 // Create centered text on the screen
 cli.centered = function(str){
   str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : '';
@@ -74,6 +114,38 @@ cli.verticalSpace = function(lines){
   lines = typeof(lines) == 'number' && lines > 0 ? lines : 1;
   for (i = 0; i < lines; i++) {
       console.log('');
+  }
+};
+
+// Input processor
+cli.processInput = function(str){
+  str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : false;
+  // Only process the input if the user actually wrote something, otherwise ignore it
+  if(str){
+    // Codify the unique strings that identify the different unique questions allowed be the asked
+    let uniqueInputs = [
+      'man',
+      'help',
+      'exit'
+    ];
+
+    // Go through the possible inputs, emit event when a match is found
+    let matchFound = false;
+    let counter = 0;
+    uniqueInputs.some(function(input){
+      if(str.toLowerCase().indexOf(input) > -1){
+        matchFound = true;
+        // Emit event matching the unique input, and include the full string given
+        e.emit(input,str);
+        return true;
+      }
+    });
+
+    // If no match is found, tell the user to try again
+    if(!matchFound){
+      console.log("Sorry, try again");
+    }
+
   }
 };
 
