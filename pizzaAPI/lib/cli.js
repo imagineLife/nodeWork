@@ -36,3 +36,43 @@ const e = new _events();
 const dataLib = require('./data')
 const logsLib = require('./logs')
 const helpers = require('./helpers')
+
+const makeHeader = (str) => {
+	cli.horizontalLine();
+  cli.centered(str);
+  cli.horizontalLine();
+  cli.verticalSpace(2);
+}
+
+const makeFooter = (spaceHeight) => {
+	// Create a footer for the stats
+  cli.verticalSpace(spaceHeight);
+  cli.horizontalLine();
+}
+
+// Create centered text on the screen
+cli.centered = function(str){
+  str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : '';
+
+  // Get the available screen size
+  var width = process.stdout.columns;
+
+  // Calculate the left padding there should be
+  var leftPadding = Math.floor((width - str.length) / 2);
+
+  // Put in left padded spaces before the string itself
+  var line = '';
+  for (i = 0; i < leftPadding; i++) {
+      line+=' ';
+  }
+  line+= str;
+  console.log(line);
+};
+
+// Create a vertical space
+cli.verticalSpace = function(lines){
+  lines = typeof(lines) == 'number' && lines > 0 ? lines : 1;
+  for (i = 0; i < lines; i++) {
+      console.log('');
+  }
+};
