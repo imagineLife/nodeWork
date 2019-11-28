@@ -159,7 +159,8 @@ cli.processInput = function(str){
     let uniqueInputs = [
       'man',
       'help',
-      'exit'
+      'exit',
+      'stats'
     ];
 
     // Go through the possible inputs, emit event when a match is found
