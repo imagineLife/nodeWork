@@ -1,6 +1,6 @@
 //PRIMARY file for the api
 const server = require('./lib/server')
-
+const cli = require('./lib/cli')
 const envVars = require('./env.js')
 
 //START APP with cli_env=prod or cli_env=dev node index.js
@@ -20,6 +20,12 @@ serverObj.init = () => {
 	for(var thisEnv in envVars[envType]){
 		process.env[thisEnv] = envVars[envType][thisEnv]
 	}
+
+		//WORKAROUND-ISH: 
+	//start the CLI AFTER the other items
+	setTimeout(() => {
+		cli.init();
+	}, 100)
 	
 }
 
