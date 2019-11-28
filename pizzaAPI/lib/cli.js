@@ -76,3 +76,53 @@ cli.verticalSpace = function(lines){
       console.log('');
   }
 };
+
+// Init script
+cli.init = function(){
+
+	//start the cli interface
+	/*
+		Instances of the readline.Interface class are constructed
+		 using the readline.createInterface() method. Every instance
+		 is associated with a single input Readable stream and
+		 a single output Writable stream. The output stream is used 
+		 to print prompts for user input that arrives on, 
+		 and is read from, the input stream.
+	*/
+  // Send to console, in dark blue
+  console.log('\x1b[34m%s\x1b[0m','The CLI is running');
+
+  // Start the interface
+  let cliInterface = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: ''
+  });
+
+  // Create an initial prompt
+  cliInterface.prompt();
+
+  // Handle each line of input separately
+  cliInterface.on('line', function(str){
+    // Send to the input processor
+    cli.processInput(str);
+
+    // Re-initialize the prompt afterwards
+    /*
+		The rl.prompt() method writes the readline.Interface 
+		instances configured prompt to a new line in output in order to 
+		provide a user with a new location at which to provide input.
+			When called, rl.prompt() will resume the input stream if 
+		it has been paused.
+			If the readline.Interface was created with output set 
+			to null or undefined the prompt is not written.
+	*/
+    cliInterface.prompt();
+  });
+
+  // If the user stops the CLI, kill the associated process
+  cliInterface.on('close', function(){
+    process.exit(0);
+  });
+
+};
