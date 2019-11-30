@@ -86,6 +86,11 @@ e.on('stats',function(str){
   cli.responders.stats();
 });
 
+e.on('recent users',function(str){
+  cli.responders.recentUsers();
+});
+
+
 // Responders object
 cli.responders = {};
 
@@ -153,8 +158,35 @@ cli.responders.exit = function(){
   process.exit(0);
 };
 
+// List Users
+cli.responders.recentUsers = function(){
+  
+  dataLib.listFiles('users', (err, userIds) => {
+    if(!err && userIds && userIds.length > 0){
+
+      cli.verticalSpace()
+
+      userIds.forEach(userId => {
+        dataLib.read('users',userId, (err,userData) => {
+          if(!err && userData){
+            let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
+            console.log('madeWithinADay')
+            console.log(madeWithinADay)
+            
+            let line = `Name: ${userData.firstName} ${userData.lastName}  Phone: ${userData.phone} Checks: `
+            let checkCount = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
+            line += checkCount;
+            console.log(line)
+            cli.verticalSpace()
+          }
+        })
+      })
+    }
+  })
+};
+
 // placeholder
-Cli.listUsers = () => {}
+cli.listUsers = () => {}
 
 // Create centered text on the screen
 cli.centered = function(str){
@@ -207,7 +239,8 @@ cli.processInput = function(str){
       'man',
       'help',
       'exit',
-      'stats'
+      'stats',
+      'recent users'
     ];
 
     // Go through the possible inputs, emit event when a match is found
