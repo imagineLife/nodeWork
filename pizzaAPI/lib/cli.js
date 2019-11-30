@@ -82,6 +82,10 @@ e.on('exit',function(str){
   cli.responders.exit();
 });
 
+e.on('stats',function(str){
+  cli.responders.stats();
+});
+
 // Responders object
 cli.responders = {};
 
@@ -107,6 +111,46 @@ cli.responders.help = function(){
   logTheData(commands)
 
   makeFooter(1);
+};
+
+// Stats
+cli.responders.stats = function(){
+  
+  //stats obj
+  let dataToSee = {
+    /*
+      loadavg
+      Returns an array containing the 1, 5,
+       and 15 minute load averages. The load
+       average is a measure of system activity 
+       calculated by the operating system and 
+       expressed as a fractional number. The 
+       load average is a Unix-specific concept. 
+       On Windows, the return value is
+        always [0, 0, 0].
+    */
+    'Load Average': os.loadavg().join(' '),
+    'CPU Count': os.cpus().length,
+    'Free Memory': os.freemem(),
+    'Current Malloced Memory' : v8.getHeapStatistics().malloced_memory,
+    'Peak Malloced Memory' : v8.getHeapStatistics().peak_malloced_memory,
+    'Allocated Heap Used (%)' : Math.round((v8.getHeapStatistics().used_heap_size / v8.getHeapStatistics().total_heap_size) * 100),
+    'Available Heap Allocated (%)' : Math.round((v8.getHeapStatistics().total_heap_size / v8.getHeapStatistics().heap_size_limit) * 100),
+    'Uptime' : os.uptime()+' Seconds'
+  }
+
+  makeHeader('CLI MANUAL')
+
+  // Log out each stat
+  logTheData(dataToSee)
+
+  makeFooter();
+
+};
+
+// Exit
+cli.responders.exit = function(){
+  process.exit(0);
 };
 
 // Create centered text on the screen
