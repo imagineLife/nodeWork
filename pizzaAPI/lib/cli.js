@@ -153,6 +153,9 @@ cli.responders.exit = function(){
   process.exit(0);
 };
 
+// placeholder
+Cli.listUsers = () => {}
+
 // Create centered text on the screen
 cli.centered = function(str){
   str = typeof(str) == 'string' && str.trim().length > 0 ? str.trim() : '';
