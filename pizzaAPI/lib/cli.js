@@ -166,21 +166,33 @@ cli.responders.recentUsers = function(){
 
       cli.verticalSpace()
 
+      let numRecentUsers = 0
+      
+      //loop through users
       userIds.forEach(userId => {
         dataLib.read('users',userId, (err,userData) => {
           if(!err && userData){
+
+            //if made within a day, print to console
             let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
-            console.log('madeWithinADay')
-            console.log(madeWithinADay)
-            
-            let line = `Name: ${userData.firstName} ${userData.lastName}  Phone: ${userData.phone} Checks: `
-            let checkCount = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
-            line += checkCount;
-            console.log(line)
-            cli.verticalSpace()
+
+            if(madeWithinADay){
+              numRecentUsers ++;
+              let line = `Name: ${userData.firstName} ${userData.lastName}  Phone: ${userData.phone} Checks: `
+              let checkCount = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
+              line += checkCount;
+              console.log(line)
+              cli.verticalSpace()
+            }
           }
         })
       })
+
+      if(numRecentUsers == 0){
+        let line = `No users created recently!`
+        console.log(line)
+        cli.verticalSpace()
+      }
     }
   })
 };
