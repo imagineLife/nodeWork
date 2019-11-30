@@ -78,7 +78,8 @@ doUsers.post = function(data,callback){
 			email: eml,
 			streetAddress: dataAddr,
 			hashedPW: hashedPW,
-			tosAgreement: true
+			tosAgreement: true,
+			dateCreated: new Date()
 		}
 
 		//STORE this user to disk
