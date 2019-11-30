@@ -169,30 +169,36 @@ cli.responders.recentUsers = function(){
       let numRecentUsers = 0
       
       //loop through users
-      userIds.forEach(userId => {
-        dataLib.read('users',userId, (err,userData) => {
-          if(!err && userData){
+      let userPromise = new Promise((res, rej) => {
+        userIds.forEach((userId, idx ,arr) => {
+          dataLib.read('users',userId, (err,userData) => {
+            if(!err && userData){
 
-            //if made within a day, print to console
-            let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
+              //if made within a day, print to console
+              let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
 
-            if(madeWithinADay){
-              numRecentUsers ++;
-              let line = `Name: ${userData.firstName} ${userData.lastName}  Phone: ${userData.phone} Checks: `
-              let checkCount = typeof(userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
-              line += checkCount;
-              console.log(line)
-              cli.verticalSpace()
+              if(madeWithinADay){
+                numRecentUsers ++;
+                let line = `Name: ${userData.firstName} ${userData.lastName}  Email: ${userData.email}`
+                console.log(line)
+                cli.verticalSpace()
+              }
             }
-          }
+
+            if(idx == arr.length - 1) {
+              res()
+            }
+          })
         })
       })
 
-      if(numRecentUsers == 0){
-        let line = `No users created recently!`
-        console.log(line)
-        cli.verticalSpace()
-      }
+      userPromise.then(() => {
+        if(numRecentUsers == 0){
+          let line = `No users created recently!`
+          console.log(line)
+          cli.verticalSpace()
+        }
+      })
     }
   })
 };
