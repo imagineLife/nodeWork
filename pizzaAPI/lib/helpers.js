@@ -268,6 +268,17 @@ helpers.getFrontend = (view, templateObj, callback) => {
 	})
 }
 
+helpers.checkForRecentAddition = (createdDateStr) => {
+	let cur = new Date()
+	const diffTime = new Date(cur) - new Date(createdDateStr);
+	const diffStr	 = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+	if(diffStr < 2) {
+		return true
+	}else{
+		return false
+	}
+}
+
 module.exports = helpers;
 
 
