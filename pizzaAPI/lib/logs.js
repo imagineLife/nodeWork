@@ -36,7 +36,12 @@ logsLib.baseDir = path.join(__dirname,'/../.logs/');
 //APPEND a string to a file
 //CREATE the file IF the file doesnt exist yet
 logsLib.append = (optLogsFile, fileName, stringToAppend, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
+	console.log('dir')
+	console.log(dir)
+	console.log('fileName')
+	console.log(fileName)
+	
 	//open the file for appending
 	//a switch is present for creating IF not present
 	// https://nodejs.org/api/fs.html#fs_file_system_flags
@@ -65,7 +70,7 @@ logsLib.append = (optLogsFile, fileName, stringToAppend, callback) => {
 
 //list all the logs and OPTIONALLY include compressed logs
 logsLib.listLogs = (optLogFile, includeCompressedLogs, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
 
 	fs.readdir(dir, (err, res) => {
 		if(err || !res || !(res.length > 0)){
@@ -101,7 +106,7 @@ logsLib.listLogs = (optLogFile, includeCompressedLogs, callback) => {
 //Compresses the contents of a single .log file
 //into a .gz.b64 file within the same directory
 logsLib.compress = (optLogsFile, logID, newFileID, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
 
 	const srcFile = `${logID}.log`;
 	const destFile = `${newFileID}.gz.b64`;
@@ -148,7 +153,7 @@ logsLib.compress = (optLogsFile, logID, newFileID, callback) => {
 
 //decompresses a .gz.b64 file into a str
 logsLib.decompress =(optLogsFile, fileID, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
 
 	const fileNm = `${fileID}.gz.b64`;
 
@@ -175,7 +180,7 @@ logsLib.decompress =(optLogsFile, fileID, callback) => {
 
 //Truncates a log file
 logsLib.truncate = (optLogsFile, logID, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
 
 	fs.truncate(`${dir}${logID}.log`,0,(err) => {
 		if(err){
