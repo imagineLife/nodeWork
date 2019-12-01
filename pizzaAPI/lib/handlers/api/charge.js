@@ -78,15 +78,25 @@ charge.post = function(data,callback){
 			stripeCustomerDataObj.email = data.payload.email
 
 			userCartData = cartData
-			
-			/* 
+
+		  const emailStr = queryString.stringify({email: data.payload.email});
+		  
+
+		  /*
+				begin building order-log object
+		  */
+		  let orderLogObject = {
+		  	email: data.payload.email,
+		  	cart: cartData,
+		  	total: thisCartTotal * 100,
+		  }
+
+		  /* 
 				interact with STRIPE API
 				- customer lookup
 				- customer creation
 				- customer charging
 			*/
-
-		    const emailStr = queryString.stringify({email: data.payload.email});
 
 			//check for stripe customer		
 			try{
@@ -165,6 +175,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	
   stripeCustDataObj.id = res.id;
 	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
+
 
 	//IF NO SOURCE
 	//	 make a source
