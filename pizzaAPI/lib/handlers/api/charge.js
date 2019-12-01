@@ -91,7 +91,8 @@ charge.post = function(data,callback){
 				},
 				date: thisDate
 			}
-			let logFileName = `${data.payload.email.split('@')[0]}-${new Date(thisDate)}`
+
+			let logFileName = `${data.payload.email.split('@')[0]}-${Date.now()}`
 
 			charge.logString = JSON.stringify(logObject);
 			charge.logFileName = logFileName;
