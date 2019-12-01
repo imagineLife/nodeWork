@@ -162,7 +162,6 @@ logsLib.decompress =(optLogsFile, fileID, callback) => {
 		//Decompress the file data
 		const inputBuffer = Buffer.from(resStr,'base64');
 
-		//
 		zlib.unzip(inputBuffer, (err, outputBuffer) => {
 
 			if(err || !outputBuffer){
@@ -177,7 +176,7 @@ logsLib.decompress =(optLogsFile, fileID, callback) => {
 //Truncates a log file
 logsLib.truncate = (optLogsFile, logID, callback) => {
 	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
-	
+
 	fs.truncate(`${dir}${logID}.log`,0,(err) => {
 		if(err){
 			return callback(err)

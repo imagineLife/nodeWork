@@ -78,25 +78,31 @@ charge.post = function(data,callback){
 			stripeCustomerDataObj.email = data.payload.email
 
 			userCartData = cartData
+			
+			//prep logging content 
+			// log api payload && log-file-name
+			let thisDate = new Date()
+			let logObject = {
+				email: data.payload.email,
+				cartData: {
+					...cartData,
+					total: thisCartTotal * 100
+				},
+				date: thisDate
+			}
+			let logFileName = `${data.payload.email.split('@')[0]}-${thisDate}`
 
-		  const emailStr = queryString.stringify({email: data.payload.email});
-		  
-
-		  /*
-				begin building order-log object
-		  */
-		  let orderLogObject = {
-		  	email: data.payload.email,
-		  	cart: cartData,
-		  	total: thisCartTotal * 100,
-		  }
-
-		  /* 
+			charge.logObject = logObject;
+			charge.logFileName = logFileName;
+			
+			/* 
 				interact with STRIPE API
 				- customer lookup
 				- customer creation
 				- customer charging
 			*/
+
+		    const emailStr = queryString.stringify({email: data.payload.email});
 
 			//check for stripe customer		
 			try{
@@ -131,8 +137,8 @@ charge.post = function(data,callback){
 				} 
 
 			}catch(e){   	
-	            callback(400, { Error: "No Customer present" });
-	            return;
+        callback(400, { Error: "No Customer present" });
+        return;
 			}
 
 		})
@@ -175,7 +181,6 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	
   stripeCustDataObj.id = res.id;
 	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
-
 
 	//IF NO SOURCE
 	//	 make a source
@@ -240,6 +245,7 @@ charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
         	}
 
         	doMail.send(mailObj).then(mailRes => {
+        		
         		charge.callback(200, { Success: "email sent! :) " });
         	}).catch(mailErr => {
         		console.log(mailErr)
