@@ -90,6 +90,10 @@ e.on('recent users',function(str){
   cli.responders.recentUsers();
 });
 
+e.on('more user info',function(str){
+  cli.responders.moreUserInfo(str);
+});
+
 
 // Responders object
 cli.responders = {};
@@ -165,42 +169,45 @@ cli.responders.recentUsers = function(){
     if(!err && userIds && userIds.length > 0){
 
       cli.verticalSpace()
-
-      let numRecentUsers = 0
       
       //loop through users
-      let userPromise = new Promise((res, rej) => {
-        userIds.forEach((userId, idx ,arr) => {
-          dataLib.read('users',userId, (err,userData) => {
-            if(!err && userData){
+      userIds.forEach((userId, idx ,arr) => {
+        dataLib.read('users',userId, (err,userData) => {
+          if(!err && userData){
 
-              //if made within a day, print to console
-              let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
-
-              if(madeWithinADay){
-                numRecentUsers ++;
-                let line = `Name: ${userData.firstName} ${userData.lastName}  Email: ${userData.email}`
-                console.log(line)
-                cli.verticalSpace()
-              }
+            //if made within a day, print to console
+            let madeWithinADay = helpers.checkForRecentAddition(userData.dateCreated)
+            if(madeWithinADay){
+              let line = `Name: ${userData.firstName} ${userData.lastName}  Email: ${userData.email}`
+              console.log(line)
+              cli.verticalSpace()
             }
-
-            if(idx == arr.length - 1) {
-              res()
-            }
-          })
+          }
         })
-      })
-
-      userPromise.then(() => {
-        if(numRecentUsers == 0){
-          let line = `No users created recently!`
-          console.log(line)
-          cli.verticalSpace()
-        }
       })
     }
   })
+};
+
+// More user info
+cli.responders.moreUserInfo = function(str){
+  
+  //get ID from string
+  let strArr = str.split('--')
+  let emailAddress = typeof(strArr[1]) == 'string' && strArr[1].length > 0 ? strArr[1] : false;
+
+  if(emailAddress){
+    dataLib.read('users', emailAddress, (err,userData) => {
+      if(!err && userData){
+        //remove password
+        delete userData.hashedPassword;
+
+        //print json with text highlighted
+        cli.verticalSpace()
+        console.dir(userData, {'colors': true});
+      }
+    })
+  }
 };
 
 // placeholder
@@ -258,7 +265,8 @@ cli.processInput = function(str){
       'help',
       'exit',
       'stats',
-      'recent users'
+      'recent users',
+      'more user info'
     ];
 
     // Go through the possible inputs, emit event when a match is found
