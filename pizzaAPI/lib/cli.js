@@ -90,6 +90,10 @@ e.on('recent users',function(str){
   cli.responders.recentUsers();
 });
 
+e.on('recent orders',function(str){
+  cli.responders.recentOrders();
+});
+
 e.on('more user info',function(str){
   cli.responders.moreUserInfo(str);
 });
@@ -165,7 +169,7 @@ cli.responders.exit = function(){
 // List Users
 cli.responders.recentUsers = function(){
   
-  dataLib.listFiles('users', (err, userIds) => {
+  dataLib.listFiles(false, 'users', (err, userIds) => {
     if(!err && userIds && userIds.length > 0){
 
       cli.verticalSpace()
@@ -181,6 +185,35 @@ cli.responders.recentUsers = function(){
               let line = `Name: ${userData.firstName} ${userData.lastName}  Email: ${userData.email}`
               console.log(line)
               cli.verticalSpace()
+            }
+          }
+        })
+      })
+    }
+  })
+};
+
+// List Recent orders
+cli.responders.recentOrders = function(){
+  dataLib.listFiles('.logs', 'charges', (err, chargeIDS) => {
+    if(!err && chargeIDS && chargeIDS.length > 0){
+
+      cli.verticalSpace()
+      
+      //loop through charges
+      chargeIDS.forEach((chargeID, idx ,arr) => {
+        dataLib.readLog('charges',chargeID, (err,chargeData) => {
+          if(!err && chargeData){
+            let dataToLog = {
+              id: chargeID,
+              email: chargeData.email,
+              total: `$${chargeData.cartData.total / 100}`
+            }
+            // if made within a day, print to console
+            let madeWithinADay = helpers.checkForRecentAddition(chargeData.date)
+            if(madeWithinADay){
+              logTheData(dataToLog)
+              cli.horizontalLine()
             }
           }
         })
@@ -266,7 +299,8 @@ cli.processInput = function(str){
       'exit',
       'stats',
       'recent users',
-      'more user info'
+      'more user info',
+      'recent orders'
     ];
 
     // Go through the possible inputs, emit event when a match is found
