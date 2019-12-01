@@ -4,6 +4,7 @@ const dataLib = require('../../data')
 const helpers = require('../../helpers')
 const doUsers = require('./users')
 const doMail = require('./mail')
+const logsLib = require('../../logs')
 const queryString = require('querystring');
 const https = require('https');
 const u = require('util')
@@ -81,7 +82,7 @@ charge.post = function(data,callback){
 			
 			//prep logging content 
 			// log api payload && log-file-name
-			let thisDate = new Date()
+			let thisDate = Date.now()
 			let logObject = {
 				email: data.payload.email,
 				cartData: {
@@ -90,11 +91,11 @@ charge.post = function(data,callback){
 				},
 				date: thisDate
 			}
-			let logFileName = `${data.payload.email.split('@')[0]}-${thisDate}`
+			let logFileName = `${data.payload.email.split('@')[0]}-${new Date(thisDate)}`
 
-			charge.logObject = logObject;
+			charge.logString = JSON.stringify(logObject);
 			charge.logFileName = logFileName;
-			
+
 			/* 
 				interact with STRIPE API
 				- customer lookup
@@ -245,8 +246,17 @@ charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
         	}
 
         	doMail.send(mailObj).then(mailRes => {
+
+        		//append the logFile to the file
+						logsLib.append('charges', charge.logFileName, charge.logString, (err)=> {
+							if(err){
+								console.log('Logging-to-file FAILED')
+								return charge.callback(200, { Success: "email sent! :) " });
+							}
+							console.log('Logging-to-file SUCCEEDED!!')
+							return charge.callback(200, { Success: "email sent! :) " });
+						})
         		
-        		charge.callback(200, { Success: "email sent! :) " });
         	}).catch(mailErr => {
         		console.log(mailErr)
         		charge.callback(400, {'MailErr': mailErr})
