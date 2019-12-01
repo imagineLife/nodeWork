@@ -78,7 +78,7 @@ lib.create = (dir,fileName,data,callback) => {
 
 
 //read data from a file
-lib.read = (dir, fileName,callback) => {
+lib.read = (dir,fileName,callback) => {
 	//read the contents
 	//uses utf8 encoding
 	//
@@ -87,6 +87,26 @@ lib.read = (dir, fileName,callback) => {
 			return callback(err, data);
 		}
 		
+		let parsedData = helpers.parseJsonToObject(data)
+
+		debug(`\x1b[36m%s\x1b[0m`,`READ:`);
+		debug(`\x1b[36m%s\x1b[0m`,`${lib.baseDir}${dir}/${fileName}`);
+
+		return callback(false,parsedData)
+	})
+}
+
+//read data from a file
+lib.readLog = (dir,fileName,callback) => {
+	//read the contents
+	//uses utf8 encoding
+	//
+
+	fs.readFile(`${path.join(__dirname,`/../.logs/`)}${dir}/${fileName}`,'utf8',(err, data) => {
+		if(err || !data){
+			return callback(err, data);
+		}
+
 		let parsedData = helpers.parseJsonToObject(data)
 
 		debug(`\x1b[36m%s\x1b[0m`,`READ:`);
@@ -166,10 +186,10 @@ lib.deleteSync = (dir, fileName, callback) => {
 
 
 //LIST all items in a directior
-lib.listFiles = (dir,callback) => {
-
+lib.listFiles = (optDir,dir,callback) => {
+	let dirName = optDir ? path.join(__dirname,`/../${optDir}/`) : lib.baseDir
 	//read directory
-	fs.readdir(`${lib.baseDir}${dir}/`, (err, data) => {
+	fs.readdir(`${dirName}${dir}/`, (err, data) => {
 		if(err || !data || !(data.length > 0)){
 			return callback(err, data)
 		}
