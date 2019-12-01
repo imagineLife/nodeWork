@@ -35,12 +35,12 @@ logsLib.baseDir = path.join(__dirname,'/../.logs/');
 
 //APPEND a string to a file
 //CREATE the file IF the file doesnt exist yet
-logsLib.append = (fileName, stringToAppend, callback) => {
-
+logsLib.append = (optLogsFile, fileName, stringToAppend, callback) => {
+	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
 	//open the file for appending
 	//a switch is present for creating IF not present
 	// https://nodejs.org/api/fs.html#fs_file_system_flags
-	fs.open(`${logsLib.baseDir}${fileName}.log`,'a', (err, fileDescriptor) => {
+	fs.open(`${dir}${fileName}.log`,'a', (err, fileDescriptor) => {
 
 		if(err || !fileDescriptor){
 			return callback('Couldnt open file for appending')
@@ -64,10 +64,10 @@ logsLib.append = (fileName, stringToAppend, callback) => {
 }
 
 //list all the logs and OPTIONALLY include compressed logs
-logsLib.listLogs = (includeCompressedLogs, callback) => {
-	
+logsLib.listLogs = (optLogFile, includeCompressedLogs, callback) => {
+	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
 
-	fs.readdir(logsLib.baseDir, (err, res) => {
+	fs.readdir(dir, (err, res) => {
 		if(err || !res || !(res.length > 0)){
 			return callback(err)
 		}
@@ -100,13 +100,14 @@ logsLib.listLogs = (includeCompressedLogs, callback) => {
 
 //Compresses the contents of a single .log file
 //into a .gz.b64 file within the same directory
-logsLib.compress = (logID, newFileID, callback) => {
+logsLib.compress = (optLogsFile, logID, newFileID, callback) => {
+	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
 
 	const srcFile = `${logID}.log`;
 	const destFile = `${newFileID}.gz.b64`;
 
 	//read the src file
-	fs.readFile(`${logsLib.baseDir}${srcFile}`,'utf8',(err, inputStr) => {
+	fs.readFile(`${dir}${srcFile}`,'utf8',(err, inputStr) => {
 
 		if(err || !inputStr){
 			return callback(err)
@@ -146,11 +147,13 @@ logsLib.compress = (logID, newFileID, callback) => {
 }
 
 //decompresses a .gz.b64 file into a str
-logsLib.decompress =(fileID, callback) => {
+logsLib.decompress =(optLogsFile, fileID, callback) => {
+	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+
 	const fileNm = `${fileID}.gz.b64`;
 
 	//read the file
-	fs.readFile(`${logsLib.baseDir}${fileNm}`,'utf8',(err, resStr) => {
+	fs.readFile(`${dir}${fileNm}`,'utf8',(err, resStr) => {
 
 		if(err || !resStr){
 			return callback(err)
@@ -172,8 +175,10 @@ logsLib.decompress =(fileID, callback) => {
 }
 
 //Truncates a log file
-logsLib.truncate = (logID, callback) => {
-	fs.truncate(`${logsLib.baseDir}${logID}.log`,0,(err) => {
+logsLib.truncate = (optLogsFile, logID, callback) => {
+	let dir = optLogsFile ? `${logsLib.baseDir}/${optLogsFile}` : `${logsLib.baseDir}`
+	
+	fs.truncate(`${dir}${logID}.log`,0,(err) => {
 		if(err){
 			return callback(err)
 		}
