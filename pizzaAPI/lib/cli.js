@@ -30,6 +30,8 @@ const os = require('os')
 */
 const v8 = require('v8');
 const util = require('util');
+const fs = require('fs');
+const path = require('path')
 const events = require('events');
 class _events extends events{};
 const e = new _events();
@@ -98,6 +100,9 @@ e.on('more user info',function(str){
   cli.responders.moreUserInfo(str);
 });
 
+e.on('menu items', function(str){
+  cli.responders.menuItems();
+})
 
 // Responders object
 cli.responders = {};
@@ -243,8 +248,17 @@ cli.responders.moreUserInfo = function(str){
   }
 };
 
-// placeholder
-cli.listUsers = () => {}
+cli.responders.menuItems = () => {
+  let menuItemsPath = path.join(__dirname,`/../.data/menuItems/menuItems.json`)
+  fs.readFile(menuItemsPath,'utf8',(err, menuItems) => {
+    if(!err && menuItems){
+      let itms = JSON.parse(menuItems)
+      itms.forEach(itm => {
+        console.dir(itm, {'colors': true});
+      })
+    }
+  })
+}
 
 // Create centered text on the screen
 cli.centered = function(str){
@@ -300,7 +314,8 @@ cli.processInput = function(str){
       'stats',
       'recent users',
       'more user info',
-      'recent orders'
+      'recent orders',
+      'menu items'
     ];
 
     // Go through the possible inputs, emit event when a match is found
