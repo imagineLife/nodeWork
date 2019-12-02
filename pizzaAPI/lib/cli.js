@@ -100,6 +100,11 @@ e.on('more user info',function(str){
   cli.responders.moreUserInfo(str);
 });
 
+e.on('more order info',function(str){
+  cli.responders.moreOrderInfo(str);
+});
+
+
 e.on('menu items', function(str){
   cli.responders.menuItems();
 })
@@ -248,6 +253,36 @@ cli.responders.moreUserInfo = function(str){
   }
 };
 
+// More order info
+cli.responders.moreOrderInfo = function(str){
+  
+  //get ID from string
+  let strArr = str.split('--')
+  let orderID = typeof(strArr[1]) == 'string' && strArr[1].length > 0 ? strArr[1] : false;
+  
+  if(orderID){
+    let orderIDPath = path.join(__dirname,`/../.logs/charges/${orderID}.log`)
+    fs.readFile(orderIDPath,'utf8',(err, orderData) => {
+    if(!err && orderData){
+      let itms = JSON.parse(orderData)
+      let objKeys = Object.keys(itms)
+      objKeys.forEach(objKey => {
+        let thisVal = itms[objKey]
+        let thisObj = {}
+        thisObj[objKey] = thisVal
+        if(objKey == 'cartData'){
+          thisObj['cartData'] = {
+            items: JSON.stringify(itms.cartData.cartData),
+            total: `$${itms.cartData.total / 100}.00`
+          }
+        }
+        console.dir(thisObj, {'colors': true});
+      })
+    }
+  })
+  }
+};
+
 cli.responders.menuItems = () => {
   let menuItemsPath = path.join(__dirname,`/../.data/menuItems/menuItems.json`)
   fs.readFile(menuItemsPath,'utf8',(err, menuItems) => {
@@ -315,6 +350,7 @@ cli.processInput = function(str){
       'recent users',
       'more user info',
       'recent orders',
+      'more order info',
       'menu items'
     ];
 
