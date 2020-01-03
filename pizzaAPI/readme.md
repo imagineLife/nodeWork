@@ -2,17 +2,12 @@
 
 *No NPM.*  
 *No Packages.*  
-*Just Node.*  
 *Using Node's API to get things done.*  
 
-This is an API for a mock pizza-delivery company, an exercise in building a node server with no npm dependencies & several features:
-- serving content through HTTP && HTTPS ([http](https://nodejs.org/api/http.html) && [https](https://nodejs.org/api/https.html))
-- CRUD operations ([fs](https://nodejs.org/api/fs.html))
-- an integrated CLI ([readline](https://nodejs.org/api/readline.html), [OS](https://nodejs.org/api/os.html), [v8](https://nodejs.org/api/v8.html), [events](https://nodejs.org/api/events.html))
-- Logging to a log directory, with integrated file compression && decompression ([zlib](https://nodejs.org/api/zlib.html))
-- Token Management ( content hashing & creation, deletion, extending exp. date, comparison/validation ([crypto](https://nodejs.org/api/crypto.html))
+This is an API for a mock pizza-delivery company. 
 
 ## Table Of Contents
+[Node API Features && Integrations](#node-features) 
 [Third Party Integrations](#third-party-api-integrations) 
 [User Stories](#user-stories)
 [API](#api) 
@@ -21,6 +16,15 @@ This is an API for a mock pizza-delivery company, an exercise in building a node
 	- [Users](#users)
 	- [Menu Items](#menu-items)
 	- [Charge](#charge)
+
+## NODE FEATURES
+This project contains no npm packages && relies on node && JS to do what all npm packages would be doing...
+- HTTP && HTTPS servers ([http](https://nodejs.org/api/http.html) && [https](https://nodejs.org/api/https.html), like [express](https://expressjs.com/) would do)
+- CRUD operations to json data-files for carts, user data, menu items & user tokens ([fs](https://nodejs.org/api/fs.html))
+- an integrated light-weight CLI ([readline](https://nodejs.org/api/readline.html), [OS](https://nodejs.org/api/os.html), [v8](https://nodejs.org/api/v8.html), [events](https://nodejs.org/api/events.html))
+- Logging to a log directory, with integrated file compression, decompression, log file '_rotation_' ([zlib](https://nodejs.org/api/zlib.html))
+- Token Management ( content hashing & creation, deletion, extending exp. date, comparison/validation ([crypto](https://nodejs.org/api/crypto.html))
+- Request && Response handing to/from 3rd party apis ([https.request](https://nodejs.org/api/https.html#https_https_request_options_callback))
 
 ## Third Party API Integrations
 This integrates with the sandbox of [Stripe](https://stripe.com/)for accepting user payment.  
