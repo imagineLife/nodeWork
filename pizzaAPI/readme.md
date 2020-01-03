@@ -1,11 +1,16 @@
-
-
 # A Pizza-Delivery API
 
 *No NPM.*  
 *No Packages.*  
 *Just Node.*  
-This is an API for a mock pizza-delivery company, an exercise in executing a node server with no npm dependencies.  
+*Using Node's API to get things done.*  
+
+This is an API for a mock pizza-delivery company, an exercise in building a node server with no npm dependencies & several features:
+- serving content through HTTP && HTTPS ([http](https://nodejs.org/api/http.html) && [https](https://nodejs.org/api/https.html))
+- CRUD operations ([fs](https://nodejs.org/api/fs.html))
+- an integrated CLI ([readline](https://nodejs.org/api/readline.html), [OS](https://nodejs.org/api/os.html), [v8](https://nodejs.org/api/v8.html), [events](https://nodejs.org/api/events.html))
+- Logging to a log directory, with integrated file compression && decompression ([zlib](https://nodejs.org/api/zlib.html))
+- Token Management ( content hashing & creation, deletion, extending exp. date, comparison/validation ([crypto](https://nodejs.org/api/crypto.html))
 
 ## Table Of Contents
 [Third Party Integrations](#third-party-api-integrations) 
