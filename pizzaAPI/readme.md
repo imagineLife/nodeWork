@@ -6,16 +6,16 @@
 
 This is an API for a mock pizza-delivery company. 
 
-## Table Of Contents
-[Node API Features && Integrations](#node-features) 
-[Third Party Integrations](#third-party-api-integrations) 
-[User Stories](#user-stories)
-[API](#api) 
-- [Frontend](#frontend)
-- [Backend](#backend)
-	- [Users](#users)
-	- [Menu Items](#menu-items)
-	- [Charge](#charge)
+## Table Of Contents  
+- [Node API Features && Integrations](#node-features)  
+- [Third Party Integrations](#third-party-api-integrations)  
+- [User Stories](#user-stories)  
+- [API](#api)  
+  - [Frontend](#frontend)  
+  - [Backend](#backend)  
+	- [Users](#users)  
+	- [Menu Items](#menu-items)  
+	- [Charge](#charge)  
 
 ## NODE FEATURES
 This project contains no npm packages && relies on node && JS to do what all npm packages would be doing...
