@@ -62,7 +62,8 @@ serverObj.myRouter = {
 	'api/tokens' : routeHandlers.tokens,
 	'api/checks': routeHandlers.checks,
 	'favicon.ico' : routeHandlers.favicon,
-	'public': routeHandlers.public
+	'public': routeHandlers.public,
+	'examples/error' : routeHandlers.exampleError
 }
 
 //Sharing logic to create http & https servers
@@ -134,12 +135,12 @@ serverObj.sharedServer = (req, res) => {
 		// Route the request to the handler specified in the router
 		try{
 		 chosenHandler(data,function(statusCode,payload,contentType){
-		   server.processHandlerResponse(res,method,trimmedPath,statusCode,payload,contentType);
+		   serverObj.processHandlerResponse(res,reqMethod,trimmedPathTxt,statusCode,payload,contentType);
 
 		 });
 		}catch(e){
 		 debug(e);
-		 server.processHandlerResponse(res,method,trimmedPath,500,{'Error' : 'An unknown error has occured'},'json');
+		 serverObj.processHandlerResponse(res,reqMethod,trimmedPathTxt,500,{'Error' : 'An unknown error has occured'},'json');
 		}
 
 	})
@@ -147,7 +148,7 @@ serverObj.sharedServer = (req, res) => {
 }
 
 //Process the response from the handler
-server.processHandlerResponse = () => {
+serverObj.processHandlerResponse = (res,method,trimmedPath,statusCode,payload,contentType) => {
 	//defaults if none given
 	statusCode = typeof(statusCode) === 'number' ? statusCode : 200;
 	contentType = typeof(contentType) == 'string' ? contentType : 'json';
