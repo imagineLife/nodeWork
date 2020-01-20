@@ -1,0 +1,1 @@
+{"checkData":{"id":"y0mmosn5xxxbnvr7hib","userPhone":"1112222222","protocol":"http","url":"say-what.netlify.com","method":"get","successCodes":[200,201],"timeoutSeconds":5,"state":"down","lastChecked":1574951091711},"checkOutcome":{"error":false,"responseCode":301},"upOrDown":"down","alertWarranted":false,"lastChecked":1574951091711}
