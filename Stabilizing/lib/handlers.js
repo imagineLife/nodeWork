@@ -593,7 +593,7 @@ routeHandlers.notFound = function(data, callback){
 
 // Error example
 // DEMANDS the processHandlerResponse to be wrapped in try/catch
-handlers.exampleError = function(data,callback){
+routeHandlers.exampleError = function(data,callback){
   var err = new Error('This is an example error.');
   throw(err);
 };
