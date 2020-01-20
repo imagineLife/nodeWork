@@ -3,3 +3,8 @@ PROBLEM
 NODE is finicky
 errors kill the thread
 
+- How to create, use & catch errors
+- Use the 'debugger' to step in & out of issues
+- use the 'strict' flag
+- create && add a test-runner (built-in assertion library)
+- add unit tests, API int. tests
