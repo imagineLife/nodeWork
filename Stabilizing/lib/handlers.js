@@ -591,6 +591,12 @@ routeHandlers.notFound = function(data, callback){
 	callback(404)
 }
 
+// Error example
+// DEMANDS the processHandlerResponse to be wrapped in try/catch
+handlers.exampleError = function(data,callback){
+  var err = new Error('This is an example error.');
+  throw(err);
+};
 
 
 //TOKENS handler
