@@ -8,3 +8,34 @@ errors kill the thread
 - use the 'strict' flag
 - create && add a test-runner (built-in assertion library)
 - add unit tests, API int. tests
+
+
+
+NODE ERRORS
+- node.js errors work like any other error, class w/ types (system, like opening a file that doesn't exist, or user-specified errors)
+
+- MAKE A NEW ROUTE
+- examples/error, to helpers.exampleError
+// Error example (this is why we're wrapping the handler caller in a try catch)
+handlers.exampleError = function(data,callback){
+  var err = new Error('This is an example error.');
+  throw(err);
+};
+
+
+- THIS will throw an error in the cmd line
+- ...the server needs to HANDLE this error && keep the server UP! HOW?!, update the server.js file
+- MOVE the chosenHandler callback into a unique function, processHandlerResponse
+- update chosenHander calling to read...
+	- chosenHandler(data, function(statusCode, payload, contentType){
+		server.processHandlerResponse(res,method,trimmedPath,statusCode,payload,contentType)
+	- wrap the new fn in a try/catch
+	... catch(e)
+		debug(e)
+			server.processHandleResponse(res,method,trimmedPath,500, {'Error': 'An Unknown Error occured'})
+	- start the app in debug mode to see more content in the terminal:
+	... NODE_DEBUG=server node index.js
+	... shows the error in the console
+	ALSO the non-200-codes show in red text!
+
+	})
