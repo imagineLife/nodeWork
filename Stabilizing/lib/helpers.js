@@ -278,4 +278,8 @@ helpers.getStaticAsset = (fileName, cb) => {
 
 }
 
+helpers.getANumber = () => {
+	return 1;
+}
+
 module.exports = helpers;
