@@ -19,5 +19,19 @@ unit['helpers.getANumber should return a number'] = function(done){
   done();
 };
 
+// Assert that the getANumber function is returning 1
+unit['helpers.getANumber should return 1'] = function(done){
+  var val = helpers.getANumber();
+  assert.equal(val, 1);
+  done();
+};
+
+// Assert that the getANumber function is returning 2
+unit['helpers.getNumberOne should NOT return 2'] = function(done){
+  var val = helpers.getANumber();
+  assert.notEqual(val, 2);
+  done();
+};
+
 // Export the tests to the runner
 module.exports = unit;
