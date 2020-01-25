@@ -33,5 +33,16 @@ unit['helpers.getNumberOne should NOT return 2'] = function(done){
   done();
 };
 
+// Logs.list should callback an array and a false error
+unit['logs.listLogs should callback a false error and an array of log names'] = function(done){
+  logs.listLogs(true,function(err,logFileNames){
+      assert.equal(err, false);
+      assert.ok(logFileNames instanceof Array);
+      assert.ok(logFileNames.length > 1);
+      done();
+  });
+};
+
+
 // Export the tests to the runner
 module.exports = unit;
