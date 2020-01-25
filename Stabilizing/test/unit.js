@@ -43,6 +43,16 @@ unit['logs.listLogs should callback a false error and an array of log names'] = 
   });
 };
 
+// Logs.truncate should not throw if the logId doesnt exist
+unit['logs.truncate should not throw if the logId does not exist, should callback an error instead'] = function(done){
+  assert.doesNotThrow(function(){
+    logs.truncate('I do not exist',function(err){
+      assert.ok(err);
+      done();
+    })
+  },TypeError);
+};
+
 
 // Export the tests to the runner
 module.exports = unit;
