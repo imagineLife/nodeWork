@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 "use strict"
 
-const args = require("minimist")(process.argv.slice(2))
+const args = require("minimist")(process.argv.slice(2), {
+	boolean: ["help"], //will return true
+	string: ["file"]	//will return ''
+})
 console.log('args')
 console.log(args)
 
@@ -41,5 +44,9 @@ USING MINIMIST after cmd-line prompt
   '--hello=world',
   'something=else'
 ]
+
+
+Add a CONFIG to minimist
+can force node to process params as specific types
 */
 
