@@ -8,7 +8,7 @@ let appObj = {};
 
 //init function
 //calls server & workers file
-appObj.init = () => {
+appObj.init = function(callback){
 
 	//start server
 	server.init();
@@ -18,8 +18,9 @@ appObj.init = () => {
 
 	//WORKAROUND-ISH: 
 	//start the CLI AFTER the other items
-	setTimeout(() => {
+	setTimeout(function(){
 		cli.init();
+		callback();
 	}, 100)
 
 }
