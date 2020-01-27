@@ -25,8 +25,10 @@ to write content to a stream...
 - ... doesn't include trailing-new-line
 console.log() does MORE than add a trailing \n
 
-
+LEAST POSSIBLE efficiency is to print a string to a stream
 */
 
+
+//TRY THESE BOTH
 // console.log('hello world!')
 process.stdout.write('hello world!')
