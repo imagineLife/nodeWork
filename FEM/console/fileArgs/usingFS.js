@@ -47,11 +47,18 @@ function printHelp(){
 
 // ********
 function processFile(filepath){
-	const fileContent = fs.readFileSync(filepath)
+
+	//when console.logging, will return a buffer
+	// const fileContent = fs.readFileSync(filepath)
+
+	//pass an encoding && now console.log will return
+	const fileContent = fs.readFileSync(filepath, 'utf8')
 	console.log('fileContent')
 	console.log(fileContent)
-	console.log('process.stdout.write(fileContent)')
-	process.stdout.write(fileContent)
+
+	//will automatically parse into a string
+	// console.log('process.stdout.write(fileContent)')
+	// process.stdout.write(fileContent)
 	
 }
 /*
