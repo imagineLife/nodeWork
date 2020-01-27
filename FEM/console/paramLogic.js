@@ -14,6 +14,10 @@ const args = require("minimist")(process.argv.slice(2), {
 
 if(args.help){
 	printHelp()
+}else if (args.file){
+	console.log(args.file);
+}else{
+	error('Incorrect usage.', true)
 }
 
 
@@ -35,3 +39,33 @@ function printHelp(){
 	console.log('--help      print this help');
 	console.log('');
 }
+
+
+/*
+	now
+	running with no args:
+console Jake$ ./paramLogic.js
+Incorrect usage.
+
+script usage
+paramLogic.js --help
+
+--help      print this help
+
+
+
+running with --help
+console Jake$ ./paramLogic.js --help
+script usage
+paramLogic.js --help
+
+--help      print this help
+
+
+console Jake$ ./paramLogic.js --file="stringHere"
+stringHere
+
+
+
+
+*/
