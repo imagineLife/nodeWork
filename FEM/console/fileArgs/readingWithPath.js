@@ -19,7 +19,11 @@ const args = require("minimist")(process.argv.slice(2), {
 if(args.help){
 	printHelp()
 }else if (args.file){
+
+	//using path
 	let filepath = path.resolve(args.file)
+
+	console.log(__dirname);
 	console.log(args.file);
 	console.log('filepath')
 	console.log(filepath)
@@ -61,5 +65,9 @@ filepath
 filepath
 /Users/Jake/Desktop/projects/nodeWork/FEM/console/hello
 
+
+3. logging __dirname gives that path to the file that HOLDS the cur file
+Jake$ ./readingWithPath.js --file=hello
+/Users/Jake/Desktop/projects/nodeWork/FEM/console/fileArgs
 
 */
