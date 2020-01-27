@@ -50,11 +50,19 @@ function processFile(filepath){
 	const fileContent = fs.readFileSync(filepath)
 	console.log('fileContent')
 	console.log(fileContent)
+	console.log('process.stdout.write(fileContent)')
+	process.stdout.write(fileContent)
+	
 }
 /*
 
-processFile will return a buffer!
+console.logging(fileContent) will return a buffer!
 Jake$ ./usingFS.js --file=hello.txt
 fileContent
 <Buffer 48 65 6c 6c 6f 20 57 6f 72 6c 64>
+
+process.stdout.write(fileContent)
+returns the parsed file content
+Jake$ ./usingFS.js --file=hello.txt
+Hello WorldJakes-3:fileArgs Jake$ 
 */
