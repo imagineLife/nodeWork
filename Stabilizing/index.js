@@ -25,8 +25,14 @@ appObj.init = function(callback){
 
 }
 
-//Executes init fn
-appObj.init();
+/*
+	Executes init fn
+	ONLY if required directly
+	includes empty callback
+*/
+if(require.main == module){
+	appObj.init(function(){});
+}
 
 //exports app for testing later on
 module.exports = appObj;
