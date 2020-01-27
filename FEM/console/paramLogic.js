@@ -19,6 +19,15 @@ if(args.help){
 
 
 // **********
+function error(errMsg, includeHelp = false){
+	console.log(errMsg);
+	if(includeHelp){
+		console.log('');
+		printHelp()
+	}
+}
+
+// **********
 function printHelp(){
 	console.log('script usage');
 	console.log('paramLogic.js --help');
