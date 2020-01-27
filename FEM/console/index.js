@@ -15,8 +15,18 @@ NODE exposes these interfaces...
 	- connections to hosting system
 	- JS, though doesn't have IO in the spec
 	.. perhaps why js is so easy to move to other environments
-	
+
+
+THE OUTPUT STREAM
+- process.stdout is the STREAM to standard-output
+to write content to a stream...
+.write
+
+- ... doesn't include trailing-new-line
+console.log() does MORE than add a trailing \n
+
 
 */
 
-console.log('hello world!')
+// console.log('hello world!')
+process.stdout.write('hello world!')
