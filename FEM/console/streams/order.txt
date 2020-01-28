@@ -1,0 +1,6 @@
+fileHandling
+	reading as a stream, outputting to a stream
+transforming
+	intercepting a stream && editing the mid-stream piped logic
+streamToFile
+	
