@@ -52,6 +52,7 @@ function processFile(filepath){
 	// const fileContent = fs.readFileSync(filepath)
 
 	//pass an encoding && now console.log will return
+	//SLIGHTLY less performant than passing the buffer to process.stdout.write
 	const fileContent = fs.readFileSync(filepath, 'utf8')
 	console.log('fileContent')
 	console.log(fileContent)
