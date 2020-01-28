@@ -112,7 +112,15 @@ function processFile(incomingStream){
 	let upperStream = new TramsformStream({
 		transform(chunk,enc,cb){
 			this.push(chunk.toString().toUpperCase())
-			cb();
+			/*
+				add a space to visually see the chunks being processed!
+				running the cmd will show the outputs getting processed
+				in chunks!
+			*/
+			setTimeout(cb, 800)
+
+			//without the timeout
+			// cb();
 		}	
 	})
 
