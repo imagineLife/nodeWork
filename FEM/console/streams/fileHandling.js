@@ -4,6 +4,9 @@
 
 /*
 
+	USE WITH...
+	./fileHandling.js --file=./../files/lorem.txt
+
 	Notes on streams
 	let str1; //readable
 	let str1;	//writable
@@ -64,7 +67,7 @@ if(args.help){
 	processFile(process.stdin)
 
 }else if(args.file){
-	let filePath = path.join(BASE_PATH),args.file
+	let filePath = path.join(BASE_PATH,args.file)
 	
 	//create a readable stream from file
 	let stream = fs.createReadStream(filePath)
@@ -106,7 +109,18 @@ function printHelp(){
 
 
 // ********
-function processFile(contents){
-	contents = contents.toString().toUpperCase()
-			process.stdout.write(contents)	
+//takes a readable stream
+//returns an output stream
+function processFile(incomingStream){
+	
+	/*
+		v1, dump stdout to outStream directly
+	*/
+	let outStream = incomingStream
+
+	//output
+	const targetStream = process.stdout;
+
+	//piping the targetStream TO the outStream?!
+	outStream.pipe(targetStream)
 }
