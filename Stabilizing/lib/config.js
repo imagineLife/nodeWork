@@ -58,6 +58,26 @@ envs.prod = {
 	}	
 }
 
+//testing environment
+envs.testing = {
+	httpPort: 4000,
+	httpsPort: 4001,
+	friendlyEnvName: 'testing',
+	hashingSecret: 'thisIsASecret',
+	'maxChecks': 5,
+	twilioVars: {
+		'accountSid': 'ACb32d411ad7fe886aac54c665d25e5c5d',
+		'authToken': '9455e3eb3109edc12e3d8c92768f7a67',
+		'fromPhoneNumber': '+15005550006'
+	},
+	globalTemplate: {
+		appName: 'uptimeChecker',
+		companyName: 'fakeUptimeChecker LLC Co',
+		yearCreated: '2019',
+		baseURL: 'http://localhost:3000'
+	}	
+}
+
 //Determines which env to export 
 //	by processing which was passed as a cmd line arg
 let requestedEnv = typeof(process.env.NODE_ENV ) == 'string' ? process.env.NODE_ENV.toLowerCase() : '';
