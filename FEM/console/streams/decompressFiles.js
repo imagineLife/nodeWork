@@ -7,19 +7,20 @@
 	https://nodejs.org/api/zlib.html#zlib_zlib
 
 	USE WITH...
-	./compressFiles.js --file=./../files/hello.txt --out --compress
+	cat ./../files/out.txt.gz  ./decompressFiles.js --decompress --in --out
+	this 
 */
 
 const path = require('path')
 const fs = require('fs')
 const getStdin = require('get-stdin')
 const util = require('util')
-const TransformStream = require('stream').Transform
+const TramsformStream = require('stream').Transform
 
 const zlib = require('zlib')
 
 const availableCmdArgs = require("minimist")(process.argv.slice(2), {
-	boolean: ["help", "in", "out", "compress", "decompress" ], 
+	boolean: ["help", "in", "out", "compress" ,"decompress"], 
 	string: ["file"]
 })
 
@@ -95,8 +96,8 @@ function printHelp(){
 	console.log('--file={FILENAME}    process this file');
 	console.log('--in, -              process stdin');
 	console.log('--out                print to the stdout');
-	console.log('--compress           gzips the input to the output');
-	console.log('--decompress         un-gzip the input');
+	console.log('--compress           gzips the output');
+	console.log('--decompress         decompreses (un-gzip) the input');
 	console.log('');
 }
 
@@ -109,13 +110,18 @@ function processFile(incomingStream){
 
 	let outStream = incomingStream
 
+
+	if(availableCmdArgs.decompress){
+		let unzippedStream = zlib.createGunzip()
+		outStream = outStream.pipe(unzippedStream)
+	}
 	/*
 		using transform
 		https://nodejs.org/api/stream.html#stream_stream
 		https://nodejs.org/api/stream.html#stream_class_stream_transform
 	*/
 
-	let upperStream = new TransformStream({
+	let upperStream = new TramsformStream({
 		transform(chunk,enc,cb){
 			this.push(chunk.toString().toUpperCase())
 			cb();
