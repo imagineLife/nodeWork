@@ -8,7 +8,8 @@
 
 	USE WITH...
 	cat ./../files/out.txt.gz  ./decompressFiles.js --decompress --in --out
-	this 
+	this outputs the decompressed file to the console
+	
 */
 
 const path = require('path')
