@@ -23,6 +23,21 @@ helpers.getReq = function(passedPath,cb){
 			'Content-Type': 'application/json'
 		} 
 	}
+
+	//SEND the request
+	const req = http.request(reqDeets, function(res){
+		cb(res)
+	})
+	req.end()
+}
+
+//APP DOESNT THROW
+api['app.init should start without throwing'] = function(done){
+	assert.doesNotThrow(function(){
+		app.init(function(optErr){
+			done()
+		})
+	}, TypeError)
 }
 
 module.exports = api
