@@ -47,11 +47,12 @@ api['/ping should respond to GET with 200'] = function(done){
 	})
 }
 
-// api['/users should respond to GET with 400'] = function(done){
-// 	helpers.getReq('/api/users', function(res){
-// 		assert.equal(res.statusCode,400)
-// 	})
-// }
+api['/users should respond to GET with 400'] = function(done){
+	helpers.getReq('/api/users', function(res){
+		assert.equal(res.statusCode,400)
+		done()
+	})
+}
 
 // api['/randomPath should respond to GET with 404'] = function(done){
 // 	helpers.getReq('/randomPath', function(res){
