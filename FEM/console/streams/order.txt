@@ -3,4 +3,11 @@ fileHandling
 transforming
 	intercepting a stream && editing the mid-stream piped logic
 streamToFile
-	
+	from input file/stream to output file
+compressFiles
+	from input stream
+	to output compressed file
+decompress file
+	decompresses an input TO an output
+findStreamEnd
+	uses js to 'WAIT' till the stream ends
