@@ -7,7 +7,7 @@
 	https://nodejs.org/api/zlib.html#zlib_zlib
 
 	USE WITH...
-	cat ./../files/out.txt.gz  ./findStreamEnd.js --decompress --in --out
+	./findStreamEnd.js --file=./../files/lorem.txt --out
 	this 
 */
 
@@ -29,7 +29,7 @@ const availableCmdArgs = require("minimist")(process.argv.slice(2), {
 */
 function streamComplete(streamToCheck){
 	return new Promise(function c(res){
-		streamToCheck,on('end', res)
+		streamToCheck.on('end', res)
 	})
 }
 
@@ -170,4 +170,6 @@ async function processFile(incomingStream){
 
 	//piping the targetStream TO the outStream
 	outStream.pipe(targetStream)
+
+	await streamComplete(outStream)
 }
