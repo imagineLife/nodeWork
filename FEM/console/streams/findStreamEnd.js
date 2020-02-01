@@ -24,6 +24,15 @@ const availableCmdArgs = require("minimist")(process.argv.slice(2), {
 	string: ["file"]
 })
 
+/*
+	taking advantage of the 'end' event in the stream
+*/
+function streamComplete(streamToCheck){
+	return new Promise(function c(res){
+		streamToCheck,on('end', res)
+	})
+}
+
 // setup a 'baseBath'
 const BASE_PATH = path.resolve(
 	process.env.BASE_PATH || './../files');
@@ -59,10 +68,14 @@ if(availableCmdArgs.help){
 	//create a readable stream from file
 	let stream = fs.createReadStream(filePath)
 	processFile(stream)
+	.then(function(){
+		console.log('AFTER .then');		
+	})
+	.catch(error)
 
 	console.log('COMPLETED else case, after processFile() ran');
 	/*
-		ASYNC ISSUE, perhaps
+		STREAMS ARE ASYNC, run 'outside' the main thread
 		The above logs will return BEFORE node parses the txt file.
 		try running...
 		 ./findStreamEnd.js --file=./../files/hello.txt --out
@@ -103,7 +116,6 @@ function printHelp(){
 //takes a readable stream
 //returns an output stream
 async function processFile(incomingStream){
-	
 
 	let outStream = incomingStream
 
@@ -156,6 +168,6 @@ async function processFile(incomingStream){
 		targetStream = fs.createWriteStream(OUTFILE)
 	}
 
-	//piping the targetStream TO the outStream?!
+	//piping the targetStream TO the outStream
 	outStream.pipe(targetStream)
 }
