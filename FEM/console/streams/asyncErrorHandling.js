@@ -7,7 +7,7 @@
 	https://nodejs.org/api/zlib.html#zlib_zlib
 
 	USE WITH...
-	./findStreamEnd.js --file=./../files/lorem.txt --out
+	./asyncErrorHandling.js --file=./../files/hello.txt --out
 	this 
 */
 
@@ -27,6 +27,9 @@ const availableCmdArgs = require("minimist")(process.argv.slice(2), {
 	boolean: ["help", "in", "out", "compress" ,"decompress"], 
 	string: ["file"]
 })
+
+//WRAPPINg process file in CAF
+processFile = CAF(processFile)
 
 /*
 	taking advantage of the 'end' event in the stream
@@ -64,14 +67,19 @@ if(availableCmdArgs.help){
 	availableCmdArgs._.includes('-')
 ){
 
-	processFile(process.stdin)
+	let longTime = CAF.timeout(3, 'MANNUAL took too long...')
+	processFile(longTime, process.stdin)
+	.catch(error)
 
 }else if(availableCmdArgs.file){
 	let filePath = path.join(BASE_PATH,availableCmdArgs.file)
 	
 	//create a readable stream from file
 	let stream = fs.createReadStream(filePath)
-	processFile(stream)
+
+	let longTime = CAF.timeout(3, 'MANNUAL took too long...')
+
+	processFile(longTime,stream)
 	.then(function(){
 		console.log('AFTER .then');		
 	})
@@ -116,10 +124,15 @@ function printHelp(){
 }
 
 
-// ********
-//takes a readable stream
-//returns an output stream
-async function processFile(incomingStream){
+/*
+	********
+	takes 
+	 - a signal for a cancellation token 
+	 - a readable stream
+	returns an output stream
+	GENERATOR
+*/ 
+function *processFile(signal, incomingStream){
 
 	let outStream = incomingStream
 
@@ -175,5 +188,5 @@ async function processFile(incomingStream){
 	//piping the targetStream TO the outStream
 	outStream.pipe(targetStream)
 
-	await streamComplete(outStream)
+	yield streamComplete(outStream)
 }
