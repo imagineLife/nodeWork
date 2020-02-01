@@ -21,14 +21,14 @@ appObj.init = function(callback){
 	setTimeout(function(){
 		cli.init();
 		callback();
-	}, 100)
+	}, 50)
 
 }
 
 /*
 	Executes init fn
-	ONLY if required directly
-	includes empty callback
+	ONLY if this file is required directly from cmd line
+	-- includes empty callback
 */
 if(require.main == module){
 	appObj.init(function(){});
