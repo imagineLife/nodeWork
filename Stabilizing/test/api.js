@@ -13,8 +13,8 @@ let helpers = {}
 helpers.getReq = function(passedPath,cb){
 
 	//config the req details
-	const reqDeeets = {
-		'protocol':'',
+	const reqDeets = {
+		'protocol':'http:',
 		'hostname': 'localhost',
 		'port': config.httpPort,
 		'method': 'GET',
@@ -39,5 +39,24 @@ api['app.init should start without throwing'] = function(done){
 		})
 	}, TypeError)
 }
+
+api['/ping should respond to GET with 200'] = function(done){
+	helpers.getReq('/ping', function(res){
+		assert.equal(res.statusCode,200)
+		done()
+	})
+}
+
+// api['/users should respond to GET with 400'] = function(done){
+// 	helpers.getReq('/api/users', function(res){
+// 		assert.equal(res.statusCode,400)
+// 	})
+// }
+
+// api['/randomPath should respond to GET with 404'] = function(done){
+// 	helpers.getReq('/randomPath', function(res){
+// 		assert.equal(res.statusCode,404)
+// 	})
+// }
 
 module.exports = api
