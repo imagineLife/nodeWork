@@ -28,6 +28,8 @@ const availableCmdArgs = require("minimist")(process.argv.slice(2), {
 	string: ["file"]
 })
 
+const TIMEOUT_LENGTH = 12
+
 //WRAPPINg process file in CAF
 processFile = CAF(processFile)
 
@@ -67,7 +69,7 @@ if(availableCmdArgs.help){
 	availableCmdArgs._.includes('-')
 ){
 
-	let longTime = CAF.timeout(3, 'MANNUAL took too long...')
+	let longTime = CAF.timeout(TIMEOUT_LENGTH, 'MANNUAL took too long...')
 	processFile(longTime, process.stdin)
 	.catch(error)
 
@@ -77,22 +79,21 @@ if(availableCmdArgs.help){
 	//create a readable stream from file
 	let stream = fs.createReadStream(filePath)
 
-	let longTime = CAF.timeout(3, 'MANNUAL took too long...')
+	let longTime = CAF.timeout(TIMEOUT_LENGTH, 'MANNUAL took too long...')
 
 	processFile(longTime,stream)
-	.then(function(){
-		console.log('AFTER .then');		
-	})
+	// .then(function(){
+	// 	console.log('AFTER .then');		
+	// })
 	.catch(error)
 
-	console.log('COMPLETED else case, after processFile() ran');
 	/*
 		STREAMS ARE ASYNC, run 'outside' the main thread
 		The above logs will return BEFORE node parses the txt file.
 		try running...
 		 ./findStreamEnd.js --file=./../files/hello.txt --out
 		the COMPLETED text prints before the --out text returns
-
+		console.log('COMPLETED else case, after processFile() ran');
 	*/
 }else{
 	error('Incorrect usage.', true)
@@ -157,6 +158,7 @@ function *processFile(signal, incomingStream){
 	//connect the input to the incoming && upper middleware...
 	outStream = outStream.pipe(upperStream)
 
+
 	//OPTIONAL COMPRESS
 	if(availableCmdArgs.compress){
 
@@ -187,6 +189,20 @@ function *processFile(signal, incomingStream){
 
 	//piping the targetStream TO the outStream
 	outStream.pipe(targetStream)
+
+	/*
+		make the Signal TELL US to STOP the stream processing
+		.pr is a promise, rejected when cancellation is fired
+	*/
+	signal.pr.catch(function f(){
+
+		//UNpipe the targetStream from the outputStream
+		outStream.unpipe(targetStream)
+
+		//tell the rest of the stream it is done
+		// kills the stream
+		outStream.destroy()
+	})
 
 	yield streamComplete(outStream)
 }
