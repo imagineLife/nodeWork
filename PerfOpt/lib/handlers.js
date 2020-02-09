@@ -878,6 +878,10 @@ routeHandlers.doChecks.post = (data, callback) => {
 				return callback(400, {'Error': `User has max number of checks: ${config.maxChecks}`})
 			}
 
+
+			//PERFORMANCE OPTIMIZATIONS
+			const parsedURL = nodeURL.parse(`${sentProtocol}://${sentUrl}`, true)
+
 			//CREATE new check
 			//rndm ID
 			const rndmID = helpers.createRandomString(20);
