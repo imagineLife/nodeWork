@@ -883,39 +883,49 @@ routeHandlers.doChecks.post = (data, callback) => {
 			const parsedURL = nodeURL.parse(`${sentProtocol}://${sentUrl}`, true)
 			const hostName = typeof(parsedURL.hostname) == 'string' && parsedURL.hostname.lenght > 0 ? parsedURL.hostname : false;
 
-			//CREATE new check
-			//rndm ID
-			const rndmID = helpers.createRandomString(20);
-
-			const checkObj = {
-				id: rndmID,
-				userPhone: tokenPhone,
-				protocol: sentProtocol,
-				url: sentUrl,
-				method: sentMethod,
-				successCodes: sentSuccessCodes,
-				timeoutSeconds: sentTimeout
-			};
-
-			//save checks to disk
-			dataLib.create('checks', rndmID, checkObj, (err) => {
-				if(err){
-					return callback(500, {'Error': 'couldnt create check'})
+			dns.resolve(hostName, function((err, records){
+				
+				//error handling
+				if(err || !records){
+					return callback(400, {'ERROR': "the hostname of the URL entered did not resolve to any DNS entries"})
 				}
 
-				//add the checkID to the USER obj
-				userData.checks = userChecks
-				userData.checks.push(rndmID)
+				//CREATE new check
+				//rndm ID
+				const rndmID = helpers.createRandomString(20);
 
-				//SAVE the new checks to userData
-				dataLib.update('users', tokenPhone, userData, (err) => {
+				const checkObj = {
+					id: rndmID,
+					userPhone: tokenPhone,
+					protocol: sentProtocol,
+					url: sentUrl,
+					method: sentMethod,
+					successCodes: sentSuccessCodes,
+					timeoutSeconds: sentTimeout
+				};
+
+				//save checks to disk
+				dataLib.create('checks', rndmID, checkObj, (err) => {
+					//error handling
 					if(err){
-						return callback(500, {'Error': 'couldnt update the user with this check'})
+						return callback(500, {'Error': 'couldnt create check'})
 					}
-					//return data to requester
-					callback(200, checkObj)
+
+					//add the checkID to the USER obj
+					userData.checks = userChecks
+					userData.checks.push(rndmID)
+
+					//SAVE the new checks to userData
+					dataLib.update('users', tokenPhone, userData, (err) => {
+						//error handling
+						if(err){
+							return callback(500, {'Error': 'couldnt update the user with this check'})
+						}
+						//return data to requester
+						callback(200, checkObj)
+					})
 				})
-			})
+			}))
 		})
 	})
 }
