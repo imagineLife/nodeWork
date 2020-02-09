@@ -881,8 +881,8 @@ routeHandlers.doChecks.post = (data, callback) => {
 
 			//PERFORMANCE OPTIMIZATIONS
 			const parsedURL = nodeURL.parse(`${sentProtocol}://${sentUrl}`, true)
-			const hostName = typeof(parsedURL.hostname) == 'string' && parsedURL.hostname.lenght > 0 ? parsedURL.hostname : false;
-
+			const hostName = typeof(parsedURL.hostname) == 'string' && parsedURL.hostname.length > 0 ? parsedURL.hostname : false;
+									
 			dns.resolve(hostName, function(err, records){
 				
 				//error handling
