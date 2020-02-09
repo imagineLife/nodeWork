@@ -649,7 +649,11 @@ routeHandlers.doTokens = {};
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
 	
-	//sinve node v10
+	/*
+		PERFORMANCE MONITORING
+		since node v10
+		NOTE: results are NOT printed in chronological order
+	*/
 	const obs = new performanceObserver((list, idx) => {
 		list.getEntries().forEach(measurement => {
 			
@@ -657,7 +661,7 @@ routeHandlers.doTokens.post = (data, callback) => {
 			if(measurement.name === 'Validating user inputs'){
 				debug(`\x1b[33m%s\x1b[0m`, `---PERFORMANCE LOGS---`)
 			}
-			
+
 			debug(`\x1b[33m%s\x1b[0m`, `${measurement.name}:`)
 			debug(`\x1b[33m%s\x1b[0m`, `--->${measurement.duration}`)
 		})
