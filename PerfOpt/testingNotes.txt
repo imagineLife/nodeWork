@@ -1,0 +1,5 @@
+Making A Test-Runner
+- make a file @ root called test
+	NODE knows how to run the test, by trusting this file by name
+- @ test/index.js, build a test-runner.... (see code)
+- 
