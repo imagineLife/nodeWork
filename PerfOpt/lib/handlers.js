@@ -8,14 +8,26 @@ const dataLib = require('./data')
 const helpers = require('./helpers')
 const config = require('./config')
 
+
 /*
 	for performance optimization
 */
 // https://nodejs.org/api/url.html
 const nodeURL = require('url')
-
 //https://nodejs.org/api/dns.html#dns_dns
 const dns = require('dns')
+
+
+/*
+	Using Performance Hooks
+*/
+const util = require('util')
+const debug = util.debuglog('performance')
+
+// https://nodejs.org/api/perf_hooks.html#perf_hooks_performance_timing_api
+const perfHooks = require('perf_hooks')
+const perf = perfHooks.performance;
+const performanceObserver = perfHooks.PerformanceObserver;
 
 
 //request data checker fn
@@ -636,30 +648,61 @@ routeHandlers.doTokens = {};
 //a user creating a  token to use later
 //NO optional data
 routeHandlers.doTokens.post = (data, callback) => {
+	
+	//sinve node v10
+	const obs = new performanceObserver((list, idx) => {
+		list.getEntries().forEach(measurement => {
+			
+			//STARTING log title
+			if(measurement.name === 'Validating user inputs'){
+				debug(`\x1b[33m%s\x1b[0m`, `---PERFORMANCE LOGS---`)
+			}
+			
+			debug(`\x1b[33m%s\x1b[0m`, `${measurement.name}:`)
+			debug(`\x1b[33m%s\x1b[0m`, `--->${measurement.duration}`)
+		})
+	})
+
+	obs.observe({
+		entryTypes: ['measure'], 
+		buffered: true
+	})
+
+	perf.mark('START post token')
+
 	let dataPhone = data.payload.phoneNumber
 	//parse phone & pw
 	const pn = typeof(dataPhone) == 'string' && dataPhone.trim().length == 10 ? dataPhone.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 
+	perf.mark('finish input validation')
+
 	if(!pn || !pw){
 		return callback(400,{'Error': 'Missing phone or pw'})
 	}
 
+	perf.mark('begin user lookup')
 	//lookup user who matches the phoneNumber
 	dataLib.read('users', pn, (err, userData) => {
+
+		perf.mark('finish user lookup')
 
 		if(err || !userData){
 			return callback(400, {'Error': 'Couldnt find that user by phoneNumber'})
 		}
 
+		perf.mark('begin pw hashing')
 		//hash pw to compare to STORED hashed pw
 		const hashedPW = helpers.hash(pw);
+		perf.mark('finish pw hashing')
 
 		//check if hashed pw is same as SAVED hashed pw
 		if(hashedPW !== userData.hashedPW){
 			return callback(400, {'Error': 'PW did not match the stored pw'})
 		}
 
+
+		perf.mark('begin token-data creation')
 		//create new TOKEN for this user
 		const tokenId = helpers.createRandomString(20);
 
@@ -673,9 +716,28 @@ routeHandlers.doTokens.post = (data, callback) => {
 			expires: expDate
 		}
 
+		perf.mark('finish token-data creation')
+
+		perf.mark('begin token storage')
 		//store the tokenObj
 		//NAME the file the tokenID
 		dataLib.create('tokens', tokenId, tokenObj, (err) => {
+			perf.mark('finish token storage')
+
+			// Gather all performance measurements
+      perf.measure('Beginning to end', 'START post token', 'finish token storage');
+      perf.measure('Validating user inputs', 'START post token', 'finish input validation');
+      perf.measure('User lookup', 'begin user lookup', 'finish user lookup');
+      perf.measure('Password hashing', 'begin pw hashing', 'finish pw hashing');
+      perf.measure('Token data creation','begin token-data creation', 'finish token-data creation');
+      perf.measure('Token storing','begin token storage', 'finish token storage');
+
+      // // Log out all performance measurements
+      // const perfMesaurements = perf.getEntriesByType('measure');
+      // perfMesaurements.forEach(function(measurement){
+      //   debug('\x1b[33m%s\x1b[0m',measurement.name+' '+measurement.duration);
+      // });
+
 			if(err){
 				return callback(500, {'Error' : 'Couldnt create new token'})
 			}
