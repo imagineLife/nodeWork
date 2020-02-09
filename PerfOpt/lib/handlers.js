@@ -8,6 +8,16 @@ const dataLib = require('./data')
 const helpers = require('./helpers')
 const config = require('./config')
 
+/*
+	for performance optimization
+*/
+// https://nodejs.org/api/url.html
+const nodeURL = require('url')
+
+//https://nodejs.org/api/dns.html#dns_dns
+const dns = require('dns')
+
+
 //request data checker fn
 function checkForLengthAndType(data){
 	let res = typeof(data) == 'string' && data.trim().length > 0 ? data.trim() : false;
