@@ -11,8 +11,18 @@ const httpServer = http.createServer((req, res) => {
 	sharedServer(req,res)
 })
 
-//Start the servers, listen on port 3000
-httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+if(cluster.isMaster){
+	// Fork the process
+  for(var i = 0; i < os.cpus().length; i++){
+
+    // https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options
+    cluster.fork();
+  }
+}
+else{
+	//Start the servers, listen on port 3000
+	httpServer.listen(envConfig.httpPort, () => console.log(`Server is listening on port ${envConfig.httpPort} in environment ${envConfig.friendlyEnvName} mode!!`))
+}
 
 //build route-handlers
 let routeHandlers = {}
