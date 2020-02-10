@@ -2,6 +2,12 @@
 var server = require('./lib/server');
 var workers = require('./lib/workers');
 var cli = require('./lib/cli');
+
+/*
+  CLUSTER
+  https://nodejs.org/api/cluster.html#cluster_cluster
+
+*/
 var cluster = require('cluster');
 var os = require('os');
 
@@ -25,11 +31,18 @@ app.init = function(callback){
 
     // Fork the process
     for(var i = 0; i < os.cpus().length; i++){
+
+      // https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options
       cluster.fork();
     }
 
   } else {
-    // If we're not on the master thread, start the HTTP server
+    /*
+      If we're not on the master thread, 
+        start the HTTP server
+      Running node will now share 
+        the same port between the workers
+    */ 
     server.init();
   }
 };
