@@ -3,7 +3,8 @@ const http = require('http');
 const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
-const fs = require('fs');
+var cluster = require('cluster');
+var os = require('os');
 
 //instantiating http server
 const httpServer = http.createServer((req, res) => {
