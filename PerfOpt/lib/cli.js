@@ -30,6 +30,13 @@ const os = require('os')
 */
 const v8 = require('v8');
 
+/*
+  Includes Child Process Spawn
+  https://nodejs.org/api/child_process.html
+  https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options
+*/
+const { spawn } = require('child_process')
+
 const util = require('util');
 const debug = util.debuglog('cli');
 const events = require('events');
@@ -278,17 +285,28 @@ cli.responders.moreCheckInfo = function(str){
 
 // List Logs
 cli.responders.listLogs = function(){
-  logsLib.listLogs(true, (err,logFileNames) => {
-  	if(!err && logFileNames && logFileNames.length > 0){
+	cli.verticalSpace();
 
-  		cli.verticalSpace();
-  		logFileNames.forEach(logName => {
-  			if(logName.indexOf('-') > -1){
-  				console.log(logName);
-  				cli.verticalSpace()
-  			}
-  		})
-  	}
+  //using child-process to get logs list
+  const fileList = spawn('ls', ['./.logs/'])
+
+  fileList.stdout.on('data', function(dataObj){
+    const dataStr = dataObj.toString()
+    const logFileNames = dataStr.split('\n')
+
+    logFileNames.forEach(logName => {
+      let isStr = typeof(logName) === 'string';
+      let nameHasLength = logName.trim().length > 0;
+      let hasDash = logName.indexOf('-') > -1
+      if(
+        isStr &&
+        nameHasLength &&
+        hasDash
+      ){
+        console.log(logName.trim().split('.')[0]);
+        cli.verticalSpace()
+      }
+    })
   })
 };
 
