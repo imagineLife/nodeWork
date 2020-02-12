@@ -48,19 +48,19 @@ This integrates with the sandbox of [Mailgun](https://www.mailgun.com) for sendi
 # API
 This node api serves 'frontend' && 'backend' content.
 
-## Frontend
-```/``` - 'Home' page
-```/account/create``` - Create an account
-```/account/edit``` - edit an account
-```/menu``` - See && Select menu items
-```/cart``` - View your cart
-```/checkout``` - Checkout, pay with a fake credit card number
-```/cart``` - View your cart
-```/session/create``` - A login page
-```/session/delete``` - A logout page
-```/favicon.ico``` - A Favicon
-```/public``` - a root for public assets (_images_)
-```/notFound``` - A placeholder for routes that are, well, _not found_
+## Frontend  
+```/``` - 'Home' page  
+```/account/create``` - Create an account  
+```/account/edit``` - edit an account  
+```/menu``` - See && Select menu items  
+```/cart``` - View your cart  
+```/checkout``` - Checkout, pay with a fake credit card number  
+```/cart``` - View your cart  
+```/session/create``` - A login page  
+```/session/delete``` - A logout page  
+```/favicon.ico``` - A Favicon  
+```/public``` - a root for public assets (_images_)  
+```/notFound``` - A placeholder for routes that are, well, _not found_  
 
 ## Backend
 ### USERS  
