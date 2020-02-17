@@ -11,16 +11,12 @@ var path = require("path");
 var http = require("http");
 var sqlite3 = require("sqlite3");
 
-/*
-	https://github.com/anseki/node-static-alias
-	serve static files
-*/ 
-var staticAlias = require("node-static-alias");
 const DB_PATH = path.join(__dirname,"my.db");
 const WEB_PATH = path.join(__dirname,"web");
 const HTTP_PORT = 8039;
 
 const setupSQL = require('./sqlConfig')
+const makeFileServer = require('./fileSErver')
 
 var delay = util.promisify(setTimeout);
 
@@ -29,33 +25,7 @@ var delay = util.promisify(setTimeout);
 var myDB = new sqlite3.Database(DB_PATH);
 var SQL3 = setupSQL(myDB)
 
-var fileServer = new staticAlias.Server(WEB_PATH,{
-	cache: 100,
-	serverInfo: "Node Workshop: ex5",
-	alias: [
-		{
-			//if index or index-anything...
-			match: /^\/(?:index\/?)?(?:[?#].*$)?$/, 
-			serve: "index.html",
-			force: true,
-		},
-		{
-			match: /^\/js\/.+$/,
-			serve: "<% absPath %>",
-			force: true,
-		},
-		{
-			match: /^\/(?:[\w\d]+)(?:[\/?#].*$)?$/,
-			serve: function onMatch(params) {
-				return `${params.basename}.html`;
-			},
-		},
-		{
-			match: /[^]/,
-			serve: "404.html",
-		},
-	],
-});
+var fileServer = makeFileServer(WEB_PATH)
 
 var httpserv = http.createServer(handleRequest);
 
