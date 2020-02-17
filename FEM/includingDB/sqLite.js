@@ -95,7 +95,7 @@ var SQL3;
 //ASYNC 'MAIN' fn
 async function main() {
 	if (!args.other) {
-		error("Missing '--other=..'");
+		error("Missing param -> '--other=..'");
 		return;
 	}
 
@@ -155,6 +155,8 @@ async function main() {
 		let somethingInserted = await insertSomething(otherID,something);
 		
 		if (somethingInserted) {
+
+			//get && show db records
 			let records = await getAllRecords();
 			console.table( records );
 			return;
