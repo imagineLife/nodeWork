@@ -16,7 +16,10 @@ const WEB_PATH = path.join(__dirname,"web");
 const HTTP_PORT = 8039;
 
 const setupSQL = require('./sqlConfig')
-const makeFileServer = require('./fileSErver')
+const makeFileServer = require('./fileServer')
+
+//ROUTES
+const helloHandler = require('./routeHandlers/hello')
 
 var delay = util.promisify(setTimeout);
 
@@ -29,15 +32,8 @@ var fileServer = makeFileServer(WEB_PATH)
 
 var httpserv = http.createServer(handleRequest);
 
-main();
-
-
-// ************************************
-
-function main() {
-	httpserv.listen(HTTP_PORT);
-	console.log(`Listening on http://localhost:${HTTP_PORT}...`);
-}
+httpserv.listen(HTTP_PORT);
+console.log(`Listening on http://localhost:${HTTP_PORT}...`);
 
 async function handleRequest(req,res) {
 	if (/\/get-records\b/.test(req.url)) {
@@ -50,10 +46,7 @@ async function handleRequest(req,res) {
 		});
 		return res.end(JSON.stringify(records));
 	}
-	if (/\/hello\b/.test(req.url)) {
-		res.writeHead(200, {'Content-Type': "text/html"})
-		return res.end('Simple Text')
-	}
+	if (/\/hello\b/.test(req.url)) helloHandler(req,res)
 	else {
 		//send to the fileServer
 		fileServer.serve(req,res);
