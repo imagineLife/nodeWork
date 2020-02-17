@@ -20,24 +20,14 @@ const DB_PATH = path.join(__dirname,"my.db");
 const WEB_PATH = path.join(__dirname,"web");
 const HTTP_PORT = 8039;
 
+const setupSQL = require('./sqlConfig')
+
 var delay = util.promisify(setTimeout);
 
 // define some SQLite3 database helpers
 //   (comment out if sqlite3 not working for you)
 var myDB = new sqlite3.Database(DB_PATH);
-var SQL3 = {
-	run(...args) {
-		return new Promise(function c(resolve,reject){
-			myDB.run(...args,function onResult(err){
-				if (err) reject(err);
-				else resolve(this);
-			});
-		});
-	},
-	get: util.promisify(myDB.get.bind(myDB)),
-	all: util.promisify(myDB.all.bind(myDB)),
-	exec: util.promisify(myDB.exec.bind(myDB)),
-};
+var SQL3 = setupSQL(myDB)
 
 var fileServer = new staticAlias.Server(WEB_PATH,{
 	cache: 100,
