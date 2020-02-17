@@ -18,6 +18,9 @@
 		can pass a val as cli arg
 		puts vals in a db record
 		can dump db content
+
+
+		RUN USING
 */
 var util = require("util");
 var path = require("path");
@@ -26,8 +29,8 @@ var sqlite3 = require("sqlite3");
 
 // ************************************
 
-async function insertSomething(something,otherID) {
-	var result = await SQL3.run(
+async function insertSomething(otherID,something) {
+	const somethingRes = await SQL3.run(
 		`
 		INSERT INTO
 			Something
@@ -40,8 +43,8 @@ async function insertSomething(something,otherID) {
 	);
 
 	if (
-		result != null &&
-		result.changes > 0
+		somethingRes != null &&
+		somethingRes.changes > 0
 	) {
 		return true;
 	}
@@ -137,17 +140,21 @@ async function main() {
 
 	//cli arg: --other
 	var other = args.other;
-
+	
 	//random number
 	var something = Math.trunc(Math.random() * 1E9);
 
 
 	var otherID = await getOtherID(other);
-
+	
+	/*
+		Once OTHER is inserted,
+		insert SOMETHING into other table
+	*/
 	if (otherID != null) {
-		let inserted = await insertSomething(something,otherID);
-
-		if (inserted) {
+		let somethingInserted = await insertSomething(otherID,something);
+		
+		if (somethingInserted) {
 			let records = await getAllRecords();
 			console.table( records );
 			return;
