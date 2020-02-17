@@ -27,45 +27,12 @@ var path = require("path");
 var fs = require("fs");
 var sqlite3 = require("sqlite3");
 
+const { 
+	getAllRecords,
+	insertSomething,
+	getOtherID
+} = require('./sqlStatements')
 // ************************************
-
-async function insertSomething(otherID,something) {
-	const somethingRes = await SQL3.run(
-		`
-		INSERT INTO
-			Something
-			(otherID, data)
-		VALUES
-			(?, ?)
-		`,
-		otherID,
-		something
-	);
-
-	if (
-		somethingRes != null &&
-		somethingRes.changes > 0
-	) {
-		return true;
-	}
-}
-
-async function getAllRecords() {
-	var result = await SQL3.all(
-		`
-		SELECT
-			Something.data AS "something",
-			Other.data AS "other"
-		FROM
-			Something
-			JOIN Other ON (Something.otherID = Other.id)
-		ORDER BY
-			Other.id DESC, Something.data
-		`
-	);
-
-	return result;
-}
 
 function error(err) {
 	if (err) {
@@ -145,19 +112,19 @@ async function main() {
 	var something = Math.trunc(Math.random() * 1E9);
 
 
-	var otherID = await getOtherID(other);
+	var otherID = await getOtherID(SQL3, other);
 	
 	/*
 		Once OTHER is inserted,
 		insert SOMETHING into other table
 	*/
 	if (otherID != null) {
-		let somethingInserted = await insertSomething(otherID,something);
+		let somethingInserted = await insertSomething(SQL3, otherID,something);
 		
 		if (somethingInserted) {
 
 			//get && show db records
-			let records = await getAllRecords();
+			let records = await getAllRecords(SQL3);
 			console.table( records );
 			return;
 		}
@@ -166,43 +133,3 @@ async function main() {
 	error("Oops!");
 }
 
-async function getOtherID(other) {
-
-	//get other from db
-	var result = await SQL3.get(
-		`
-		SELECT
-			id
-		FROM
-			Other
-		WHERE
-			data = ?
-		`,
-		other
-	);
-
-	if (result != null) {
-		return result.id;
-	}
-
-	//if not in db, INSERT into db
-	else {
-		result = await SQL3.run(
-			`
-			INSERT INTO
-				Other
-			(data)
-			VALUES
-				(?)
-			`,
-			other
-		);
-
-		if (
-			result != null &&
-			result.changes > 0
-		) {
-			return result.lastID;
-		}
-	}
-}
