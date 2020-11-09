@@ -11,6 +11,14 @@ node --eval "2 * 4"
 
 (no output)
 
+```bash
+node -e "console.log(14+7)"
+```
+
+```bash
+21
+```
+
 ## Print to evaluate and print
 
 ```bash
