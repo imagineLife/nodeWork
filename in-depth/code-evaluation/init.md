@@ -26,3 +26,14 @@ node --print "4 * 5"
 ```
 
 `20`
+
+```bash
+node -p "console.log(3 * 7)"
+```
+
+```bash
+2
+undefined
+```
+
+- prints undefined because the console.log does not return anything other than _undefined_
