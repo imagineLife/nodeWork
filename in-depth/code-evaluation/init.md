@@ -42,6 +42,7 @@ undefined
 
 - node "modules" come with the library/binary (_fs, http, etc_)
 - these modules can be required direclty from cmd input
+- **useful because node is cross-platform!!**
 
 ### using the print flag with modules
 
