@@ -3,6 +3,11 @@
 [Node's Debugging Guide, for reference](https://nodejs.org/en/docs/guides/debugging-getting-started/)  
 [Google's Dev Docs, too!](https://developers.google.com/web/tools/chrome-devtools)
 
+- **A debugger keyword**
+  - where ["simple step and inspection are possible"](https://nodejs.org/api/debugger.html#debugger_debugger)
+  - insert statement `debugger` into code: this enables a breakpoint at that spot
+  - triggered by `node inspect theFile.js`
+  -
 - **Inspection mode** is the key!
   - Inspection mode exposes a remote protocol
   - Inspection mode allows accessing the Chrome-Dev-Tools debugger
