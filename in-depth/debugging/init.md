@@ -7,7 +7,7 @@
   - where ["simple step and inspection are possible"](https://nodejs.org/api/debugger.html#debugger_debugger)
   - insert statement `debugger` into code: this enables a breakpoint at that spot
   - triggered by `node inspect theFile.js`
-  -
+  - not recommended for prod
 - **Inspection mode** is the key!
   - Inspection mode exposes a remote protocol
   - Inspection mode allows accessing the Chrome-Dev-Tools debugger
