@@ -17,3 +17,10 @@
 - boolean
 - symbol
 
+## Objects
+- ...everything else is an object
+- all objs have prototypes
+  - a prototype is an implicit ref to another obj
+  - WHEN an obj DOES NOT INCLUDE A PROPERTY, the objects PROTOTYPE is checked next
+  - JS is a prototypal language
+
