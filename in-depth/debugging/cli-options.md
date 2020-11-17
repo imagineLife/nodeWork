@@ -1,11 +1,11 @@
 # Debugging with cli
-
-- `--inspect`
-  - triggers the v8 inspector
-  - takes an optional port: `--inspect=9876`
-- `--inspect-brk`
-  - inspect mode
-  - breaks on first line of the code
+- these break from 'outside' the code files
+  - `--inspect`
+    - triggers the v8 inspector
+    - takes an optional port: `--inspect=9876`
+  - `--inspect-brk`
+    - inspect mode
+    - breaks on first line of the code
 
 ### CLI Output After Flags
 
