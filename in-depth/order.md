@@ -1,0 +1,3 @@
+- terminal input
+- debugging
+- js-deets
