@@ -24,4 +24,6 @@
 ### adding debugger to the code
 - add a line in the code, `debugger`, where the code should pause
 - add a flag to the cli when funning the code `node inspect the-file.js`
-
+- example
+  - running a file `node inspect file.js` will run the whole file with cli output 
+  - running a file `node inspect file.js` and including `debugger` somewhere in the code will run the file _up to the breakpoint_

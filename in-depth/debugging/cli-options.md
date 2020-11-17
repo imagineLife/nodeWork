@@ -19,3 +19,4 @@ For help, see: https://nodejs.org/en/docs/inspector
 ### Accessing the Node Debugger
 
 - In chrome, set the url to `chrome://inspect`
+- see other md file for chrome deets
