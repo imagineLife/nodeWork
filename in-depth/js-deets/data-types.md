@@ -24,3 +24,24 @@
   - WHEN an obj DOES NOT INCLUDE A PROPERTY, the objects PROTOTYPE is checked next
   - JS is a prototypal language
 
+## Functions
+- "...first class citizen"
+- can return another fn
+- can be passed _as an arg to another fn_
+- can be assigned to an obj key
+  - NOTE: `this` in this instance, refers to the object
+  
+  
+## Objs, Fns, and THIS
+```js
+const o = { 
+  id: 999, 
+  fn: function () { console.log(this.id) } 
+};
+const anotherO = { 
+  id: 2, 
+  fn: obj.fn 
+}
+anotherO.fn() // prints 2, notice the THIS
+o.fn() // prints 999, notice the THIS
+```
