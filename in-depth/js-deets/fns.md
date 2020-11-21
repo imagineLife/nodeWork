@@ -18,3 +18,16 @@ doSomething(function () {
   console.log(`This is a fn as a param`);
 });
 ```
+
+## Fn as obj key value
+
+```js
+const o = {
+  a: 1,
+  fn: function () {
+    console.log(this.a);
+  },
+};
+
+o.fn(); //will print to stdout `1`
+```
