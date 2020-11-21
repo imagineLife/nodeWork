@@ -32,18 +32,23 @@ const o = {
 o.fn(); //will print to stdout `1`
 ```
 
-- **this** relates to the 'parent' object
+- **this** refers to the parent object that the function was called from, **not referred to the parent where the fn was assigned to**
 
 ```js
+function logID() {
+  console.log(this.id);
+}
+
 const oOne = {
   id: 999,
-  fn: function () {
-    console.log(this.id);
-  },
+  // assigning the fn to oOne
+  fn: logID,
 };
+
 const oTwo = {
   id: 2,
-  fn: obj.fn,
+  // assigning a reference to the fn
+  fn: oOne.fn,
 };
 
 oTwo.fn(); // prints 2
