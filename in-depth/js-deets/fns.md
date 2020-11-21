@@ -54,3 +54,11 @@ const oTwo = {
 oTwo.fn(); // prints 2
 oOne.fn(); // prints 999
 ```
+
+## Lambdas, fat-arrows
+
+```js
+const fatArrow = () => {
+  console.log("this is a fat arrow fn");
+};
+```
