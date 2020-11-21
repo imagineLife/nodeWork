@@ -10,3 +10,11 @@ function wrapper() {
   return function nested() {};
 }
 ```
+
+## Passing fns to another fn as an arg
+
+```js
+doSomething(function () {
+  console.log(`This is a fn as a param`);
+});
+```
