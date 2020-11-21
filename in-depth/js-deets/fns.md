@@ -31,3 +31,21 @@ const o = {
 
 o.fn(); //will print to stdout `1`
 ```
+
+- **this** relates to the 'parent' object
+
+```js
+const oOne = {
+  id: 999,
+  fn: function () {
+    console.log(this.id);
+  },
+};
+const oTwo = {
+  id: 2,
+  fn: obj.fn,
+};
+
+oTwo.fn(); // prints 2
+oOne.fn(); // prints 999
+```
