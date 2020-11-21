@@ -10,6 +10,10 @@ const human = {
 /*
   leveraging the Object.create(sourceObject, propertyDescriptorObject) 
   method
+
+  Object.create
+  - sourceObject is the PROTOTYPE of the resulting object
+  - a functional approach to protoypically chaining objects together
 */
 
 const teacherObjDescriptor = {
