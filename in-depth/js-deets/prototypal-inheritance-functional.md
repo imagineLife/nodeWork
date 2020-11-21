@@ -23,7 +23,5 @@ teacher.sayName(); //logs "hi, my name is sally"
 - can take 2 args
   - 1st: the prototype object
     - above, the `human` is the prototype for teacher
-  - 2nd: optional props object, the `Property Descriptor` object. This obj...
-    - describes the characteristics of properties on an object (_another object being created, in this example_)
-    - keys that will become keys on the resulting object
-    - properties of each key
+  - 2nd: optional props object, the `Property Descriptor` object. This obj... - describes the characteristics of properties on an object (_another object being created, in this example_) - keys that will become keys on the resulting object - properties of each key
+    **see fn-proto-inheritance.js for another example**
