@@ -62,3 +62,5 @@ const fatArrow = () => {
   console.log("this is a fat arrow fn");
 };
 ```
+
+- fat-arrows do NOT have the prototype property that "normal" fns have
