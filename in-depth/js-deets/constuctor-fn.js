@@ -12,10 +12,15 @@ function Child(name) {
 
 // helper
 function inherit(proto) {
+  console.log('inherit fn, proto')
+  console.log(proto)
   function ChainLink() {}
   ChainLink.prototype = proto;
   return new ChainLink();
 }
+
+console.log('Human.prototype')
+console.log(Human.prototype)
 
 Child.prototype = inherit(Human.prototype);
 
@@ -26,3 +31,5 @@ Child.prototype.sayICanCount = function () {
 const bill = new Child("Billy");
 bill.sayName(); //prints HUMAN: Billy the CHILD
 bill.sayICanCount(); //prints HELLO! I'm Billy the CHILD and I can count!
+console.log('bill')
+console.log(bill)
