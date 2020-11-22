@@ -17,7 +17,11 @@ function Child(name) {
   Human.call(this, `${name} the CHILD`);
 }
 
-// helper
+/*
+  Utility fn, inherit
+  an empty constructor fn
+  create a new obj with a prototype pointing to the passed param
+*/
 function inherit(proto) {
   function ChainLink() {}
   ChainLink.prototype = proto;
@@ -46,3 +50,10 @@ bill.sayICanCount(); //prints HELLO! I'm Billy the CHILD and I can count!
 
 - the prototype of `bill` is `Child.prototype`
 - the prototype of `Child.prototype` is `Human.prototype`
+- the prototype of `Human.prototype` is `Object.prototype`
+
+## Tracking Bill
+
+- bill is an object
+- bill is the `this` within the `Child` constructor fn
+- the `Child` constructor fn passes the `this` to the `Human.call`
