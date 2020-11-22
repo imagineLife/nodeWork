@@ -3,11 +3,11 @@ function Human(name) {
 }
 
 Human.prototype.sayName = function () {
-  console.log(`Hi, I'm  HUMAN: ${this.name}`);
+  console.log(`HUMAN: ${this.name}`);
 };
 
 function Child(name) {
-  Human.call(this, `${name}: im a CHILD`);
+  Human.call(this, `${name} the CHILD`);
 }
 
 // helper
@@ -24,5 +24,5 @@ Child.prototype.sayICanCount = function () {
 };
 
 const bill = new Child("Billy");
-bill.sayName();
-bill.sayICanCount();
+bill.sayName(); //prints HUMAN: Billy the CHILD
+bill.sayICanCount(); //prints HELLO! I'm Billy the CHILD and I can count!
