@@ -39,3 +39,10 @@ bill.sayICanCount(); //prints HELLO! I'm Billy the CHILD and I can count!
 
 - `Human` and `Child` are both capitalized: PascaleCase
   - used to delineate functions that are intended to be consumed using the `new` keyword
+- `sayName` fn 'method' was added to Human via the `prototype` object
+  - every fn has a `prototype` object
+
+## Prototype Chain Here
+
+- the prototype of `bill` is `Child.prototype`
+- the prototype of `Child.prototype` is `Human.prototype`
