@@ -21,5 +21,12 @@
     - tokenization
     - parsing - turns stream of tokens into abstract syntax tree
     - code generation - take abs. synt. tree && producting executable form of a program
-  - 
+    - the code is PROCESSED before EXECUTION
+  - SHADOWING
+    - 2 vars, same name, different execution contexts
+  - Lexical Scoping
+    - when an item is not found by the runner/compiler, look in the 'parent' scope
+
 */ 
+
+
