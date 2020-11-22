@@ -10,11 +10,11 @@ function Human(name) {
 }
 
 Human.prototype.sayName = function () {
-  console.log(`Hi, I'm ${this.name}`);
+  console.log(`HUMAN: ${this.name}`);
 };
 
 function Child(name) {
-  Human.call(this, `${name} is a child`);
+  Human.call(this, `${name} the CHILD`);
 }
 
 // helper
@@ -31,6 +31,11 @@ Child.prototype.sayICanCount = function () {
 };
 
 const bill = new Child("Billy");
-bill.sayName();
-bill.sayICanCount();
+bill.sayName(); //prints HUMAN: Billy the CHILD
+bill.sayICanCount(); //prints HELLO! I'm Billy the CHILD and I can count!
 ```
+
+## Notes
+
+- `Human` and `Child` are both capitalized: PascaleCase
+  - used to delineate functions that are intended to be consumed using the `new` keyword
