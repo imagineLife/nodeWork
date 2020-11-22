@@ -16,4 +16,21 @@ Human.prototype.sayName = function () {
 function Child(name) {
   Human.call(this, `${name} is a child`);
 }
+
+// helper
+function inherit(proto) {
+  function ChainLink() {}
+  ChainLink.prototype = proto;
+  return new ChainLink();
+}
+
+Child.prototype = inherit(Human.prototype);
+
+Child.prototype.sayICanCount = function () {
+  console.log(`HELLO! I'm ${this.name} and I can count!`);
+};
+
+const bill = new Child("Billy");
+bill.sayName();
+bill.sayICanCount();
 ```
