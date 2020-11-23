@@ -25,7 +25,7 @@
   - SHADOWING
     - 2 vars, same name, different execution contexts
   - Lexical Scoping
-    - when an item is not found by the runner/compiler, look in the 'parent' scope
+    - when an item/variable/function/obj is not found by the runner, look in the 'parent' scope
 
 */ 
 
