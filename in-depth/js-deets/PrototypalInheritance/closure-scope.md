@@ -51,6 +51,7 @@ function make(a) {
 }
 
 // USING the Fn
+// these return the 'inner' fn of 'make' from above
 const createHuman = make("human");
 const createEngine = make("engine");
 ```
