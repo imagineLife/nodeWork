@@ -50,10 +50,29 @@ function make(a) {
   };
 }
 
-// USING the Fn
-// these return the 'inner' fn of 'make' from above
+/*
+  USING the make fn
+  - these return the 'inner' fn of 'make' from above
+  - following are 2 'instances' of the 'make' closure scope
+  - 
+*/
 const createHuman = make("human");
 const createEngine = make("engine");
+
+/*
+  Using the createX fns
+  - notice the incrementing ids in the result
+*/
+
+const anne = createHuman("anne");
+const bill = createHuman("bill");
+const tom = createEngine("tom");
+const sar = createEngine("sar");
+
+console.log(anne); // returns {id:1, type: human, name: anne }
+console.log(bill); // returns {id:2, type: human, name: bill }
+console.log(tom); // returns {id:1, type: engine, name: tom }
+console.log(sar); // returns {id:2, type: engine, name: sar }
 ```
 
 - `init`
