@@ -64,3 +64,9 @@ This also downloads the installed 'package', and stores the package in the node_
 
 - in prod, skip dev dependencies
 - `npm install --production`
+
+## Leveraging SemVer
+
+- `Major.Minor.Patch`
+- `^Major.Minor.Patch`: the caret prefix explains to npm to install any new minor and patch versions `Major._any_._any_`
+- [NPM Docs on Semver integration](https://docs.npmjs.com/cli/v6/using-npm/semver)
