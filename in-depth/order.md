@@ -1,3 +1,4 @@
 - terminal input
 - debugging
 - js-deets
+- deps: about dependencies
