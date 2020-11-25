@@ -59,3 +59,8 @@ This also downloads the installed 'package', and stores the package in the node_
   }
 }
 ```
+
+## Only installing production dependencies
+
+- in prod, skip dev dependencies
+- `npm install --production`
