@@ -39,3 +39,23 @@ This also downloads the installed 'package', and stores the package in the node_
 ## Reviewing dependencies
 
 `npm ls` can describe the dependency tree in the `node_modules` directory
+
+## Removing dependence on node modules directory
+
+- `npm install` will read dependencies from the `package.json` file and install all of them. This makes the contents of the node_modules file irrelevant for storing
+
+## Dev Dependencies
+
+- not all dependencies are needed for prod
+- some deps are tools for development
+- `npm install --save-dev eslint`
+  - this installs the eslint package as a dev dependency
+  - This adjusts the `package.json` file, and introduces a `devDependencies` key/value pair:
+
+```json
+{
+  "devDependencies": {
+    "eslint": "^version-number-here"
+  }
+}
+```
