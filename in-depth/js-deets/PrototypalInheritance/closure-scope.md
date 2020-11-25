@@ -83,3 +83,28 @@ console.log(sar); // returns {id:2, type: engine, name: sar }
   - has access to the `a` param
   - has access to the included `id` variable
   - ...has access to the "parent closure scope"
+- the `createHuman` and `createEngine` store 2 different 'instances' of the parent-scope
+  - **notice the incrementing ids** on the 2 humans
+  - **notice the incrementing ids** on the 2 engines
+
+## Use Cases
+
+- the 'outer scope' of the init fn could...
+  - validate the param
+  - _conditionally return different inner functions_ based on input param
+
+## Advantages Over Object Composition
+
+- eliminates 'complexity' of prototype management
+- eliminates 'complexity' of context (_this_)
+- eliminates the need for the `new` keyword
+
+## Disadvantages Compared to Object Composition
+
+- multiple inner fns get created with multiple instances, where object composition does NOT re-create inner fns
+
+## This is recommended by linux foundation
+
+- use fn composition, optimize the fn 'downsides' later
+- JS engines use better && better optimization techniques internally
+  - fast-enough for the use-case matters most
