@@ -13,9 +13,29 @@
   "version": "the current version number of the package",
   "description": "a package description which is used for meta analysis in package registries",
   "main": "the entry-point file to load when the package is loaded",
-  "scripts": "namespaced shell scripts",
+  "scripts": "shell scripts used by name",
   "keywords": "array of keywords, improves discoverability of a published package",
   "author": "the package author",
   "license": "the package license"
 }
 ```
+
+## Adding Dependencies to a package
+
+`npm install express`  
+This adjusts the `package.json` file, and introduces a `dependencies` key/value pair:
+
+```json
+{
+  "dependencies": {
+    "express": "^version-number-here"
+  }
+}
+```
+
+This also creates a `node_modules` directory.  
+This also downloads the installed 'package', and stores the package in the node_modules directory
+
+## Reviewing dependencies
+
+`npm ls` can describe the dependency tree in the `node_modules` directory
