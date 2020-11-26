@@ -59,16 +59,29 @@ function cb (_,letter){ console.log(letter)};
 // runNicer()
 
 // 2, different format, logs all "at one"
+// function cbNicer (letter){ console.log(letter)};
+// async function runNicer(){
+//   const oneRes = promisify(doOne)
+//   const twoRes = promisify(doTwo)
+//   const threeRes = promisify(doThree)
+//   let a = await oneRes()
+//   let b = await twoRes()
+//   let c = await threeRes()
+//   console.log(a)
+//   console.log(b)
+//   console.log(c)
+// }
+// runNicer()
+
+// 2, different format, Promise.all, logs all "at once"
 function cbNicer (letter){ console.log(letter)};
 async function runNicer(){
   const oneRes = promisify(doOne)
   const twoRes = promisify(doTwo)
   const threeRes = promisify(doThree)
-  let a = await oneRes()
-  let b = await twoRes()
-  let c = await threeRes()
-  console.log(a)
-  console.log(b)
-  console.log(c)
+  let allPromises =[await oneRes(),await twoRes(),await threeRes()]
+  Promise.all(allPromises).then(arr => {
+    arr.map(i => console.log(i))
+  })
 }
 runNicer()
