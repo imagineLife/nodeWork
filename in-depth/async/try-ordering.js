@@ -45,14 +45,30 @@ function cb (_,letter){ console.log(letter)};
 //   })
 // })
 
-function cbNicer (letter){ console.log(letter)};
+
 // 2, nicer format
+// function cbNicer (letter){ console.log(letter)};
+// async function runNicer(){
+//   const oneRes = promisify(doOne)
+//   const twoRes = promisify(doTwo)
+//   const threeRes = promisify(doThree)
+//   await oneRes().then(cbNicer)
+//   await twoRes().then(cbNicer)
+//   await threeRes().then(cbNicer)
+// }
+// runNicer()
+
+// 2, different format, logs all "at one"
+function cbNicer (letter){ console.log(letter)};
 async function runNicer(){
   const oneRes = promisify(doOne)
   const twoRes = promisify(doTwo)
   const threeRes = promisify(doThree)
-  await oneRes().then(cbNicer)
-  await twoRes().then(cbNicer)
-  await threeRes().then(cbNicer)
+  let a = await oneRes()
+  let b = await twoRes()
+  let c = await threeRes()
+  console.log(a)
+  console.log(b)
+  console.log(c)
 }
 runNicer()
