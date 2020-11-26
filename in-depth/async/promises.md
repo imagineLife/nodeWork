@@ -35,4 +35,20 @@ function promiseWrapperFn() {
 }
 
 const promiseResult = promiseWrapperFn();
+// ...logic with promiseResult details next
+```
+
+## Leveraging Node Tool
+
+Node includes a `promisify` utility, which can wrap an async fn in a promise...
+
+```js
+const { promisify } = require("util");
+const promisifiedAsyncFn = promisify(doSomeAsyncFn);
+function asyncFn() {
+  return promisifiedAsyncFn();
+}
+
+const asyncResult = asyncFn();
+// handle asyncResult next
 ```
