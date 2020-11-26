@@ -52,3 +52,16 @@ function asyncFn() {
 const asyncResult = asyncFn();
 // handle asyncResult next
 ```
+
+## Leveraging then and catch
+
+```js
+const asyncResult = asyncFn();
+asyncResult
+  .then((promiseResult) => {
+    // handle promise result here
+  })
+  .catch((promiseError) => {
+    // handle when promise errors here
+  });
+```
