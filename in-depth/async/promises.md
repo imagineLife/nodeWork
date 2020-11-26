@@ -65,3 +65,31 @@ asyncResult
     // handle when promise errors here
   });
 ```
+
+## Promise dot all
+
+`Promise.all`
+Promise.all...
+
+- is a fn
+- takes an array
+  - an array OF PROMISES
+- returns...
+  - a promise
+  - a promise that resolves when ALL promises in the array have been ran and resolved
+  - an array of values, 1 item per promise in the starting array
+- run promises in parallel
+- Rejects...
+  - when one of the promises fails
+  - AND other promises are IGNORED!
+
+`Promise.allSettled`
+
+- like `promise.all`, but has more 'tolerance' of each promise resolution/rejection
+- is a fn
+- return an arr objs, where each object...
+  - has a `status` property, storing either `rejected` or `fulfilled`
+  - rejected status have a `reason` property
+  - fulfilled have a `value` prop
+
+`Promise.any` is also another option
