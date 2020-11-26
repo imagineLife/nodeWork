@@ -15,8 +15,14 @@ class dataHandler extends EventEmitter {
 }
 ```
 
-## Emitting events
+## Emitting Events
 
 ```js
 dataHandler.emit("event-name", { ...eventParams });
+```
+
+## Listening For Events
+
+```js
+dataHandler.on("event-name", handleParamsFn);
 ```
