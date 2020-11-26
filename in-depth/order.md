@@ -2,3 +2,6 @@
 - debugging
 - js-deets
 - deps: about dependencies
+- async
+- events
+-
