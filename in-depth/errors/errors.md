@@ -74,7 +74,20 @@ function divideNumbersAtOrGreaterThanZero(amount) {
 
 ## Customized Errors
 
-There are many ways to express an error, heres two
+There are many ways to express an error, heres two:
 
 - a 'subclass' of a native error
 - using a `code` property
+
+### Extending the Native Error
+
+```js
+class MustBeEvenError extends Error {
+  constructor(oddValue = "") {
+    super(oddValue + " must be even");
+  }
+  get name() {
+    return "MustBeEvenError";
+  }
+}
+```
