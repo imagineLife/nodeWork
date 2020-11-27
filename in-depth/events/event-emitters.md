@@ -71,3 +71,21 @@ dataHandler.removeListener("event-name", handleParamsFnTwo);
 ```js
 dataHandler.removeAllListeners("event-name");
 ```
+
+## Error Events
+
+- when an event gets emitted with an error, the error event gets triggered/emitted
+
+```js
+const { EventEmitter } = require("events");
+const thisTry = new EventEmitter();
+
+// keep process alive
+process.stdin.resume();
+
+thisTry.on("error", (err) => {
+  console.log("got error:", err.message);
+});
+
+thisTry.emit("error", new Error("dummy err message"));
+```
