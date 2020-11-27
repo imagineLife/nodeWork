@@ -25,10 +25,12 @@ dataHandler.emit("event-name", { ...eventParams });
 
 ```js
 dataHandler.on("event-name", handleParamsFn);
+dataHandler.on("event-name", handleParamsFnTwo);
 ```
 
 - the ORDER of emitting && listening matters...
   - if emit is written before the listener, the listener will not catch the emit
+- multiple fns can happen on an even, above the `handleParamsFn` and `handleParamsFnTwo` both happen
 
 ## prependListener
 
@@ -50,3 +52,22 @@ dataHandler.emit("single-event-instance-handler");
 
 - the event removes itself after it is called once
 - emitting the even _again_ will do nothing && throw no error
+
+## Removing Event Listeners
+
+### removeListener
+
+- used to remove a listener that has been registered
+- can take 2 args/params
+  - event name
+  - event listener fn
+
+```js
+dataHandler.removeListener("event-name", handleParamsFnTwo);
+```
+
+### removeAllListeners
+
+```js
+dataHandler.removeAllListeners("event-name");
+```
