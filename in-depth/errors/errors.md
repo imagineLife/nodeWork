@@ -60,3 +60,14 @@ function divideByTwo(amount) {
   - thrown by node due to runtime errors
   - apps violate operationg system constraints
 - TypeError
+
+## Example of two errors
+
+```js
+function divideNumbersAtOrGreaterThanZero(amount) {
+  if (typeof amount !== "number")
+    throw new TypeError("amount must be a number");
+  if (amount <= 0) throw new RangeError("amount must be greater than zero");
+  return amount / 2;
+}
+```
