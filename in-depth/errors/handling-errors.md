@@ -43,7 +43,7 @@ try {
 
 ## Checking The Type Of Error
 
-In the catch, can 'interpret' the error
+In the catch, can 'interpret' the error type...
 
 ```js
 try {
@@ -55,6 +55,25 @@ try {
   } else if (err instanceof RangeError) {
     console.error("out of range");
   } else if (err instanceof MustBeEvenError) {
+    console.error("cannot be odd");
+  } else {
+    console.error("Unknown error", err);
+  }
+}
+```
+
+In the catch, can 'interpret' the error code...
+
+```js
+try {
+  const isEven = validateEven(4);
+  console.log({ isEven });
+} catch (err) {
+  if (err instanceof TypeError) {
+    console.error("wrong type");
+  } else if (err instanceof RangeError) {
+    console.error("out of range");
+  } else if (err.code === "ERR_MUST_BE_EVEN") {
     console.error("cannot be odd");
   } else {
     console.error("Unknown error", err);
