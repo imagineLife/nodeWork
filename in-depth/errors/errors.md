@@ -71,3 +71,10 @@ function divideNumbersAtOrGreaterThanZero(amount) {
   return amount / 2;
 }
 ```
+
+## Customized Errors
+
+There are many ways to express an error, heres two
+
+- a 'subclass' of a native error
+- using a `code` property
