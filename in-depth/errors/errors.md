@@ -85,6 +85,7 @@ There are many ways to express an error, heres two:
 class MustBeEvenError extends Error {
   constructor(oddValue = "") {
     super(oddValue + " must be even");
+    this.code = "ERR_MUST_BE_EVEN";
   }
   get name() {
     return "MustBeEvenError";
