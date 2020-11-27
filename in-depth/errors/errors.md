@@ -41,3 +41,22 @@ function divideByTwo(amount) {
   return amount / 2;
 }
 ```
+
+## Native Errors
+
+[Node Error API](https://nodejs.org/api/errors.html)
+
+- AssertionError
+  - failed assertion, typically by the `assert` module
+- RangeError
+  - an arg was not within the expected range
+- ReferenceError
+  - a variable that was attempted to be accessed is not defined
+- SyntaxError
+  - a program is not JavaScript
+  - only thrown by code evaluation
+  - are UNdiscoverable by the syntax that created the error... only found outside the context
+- SystemError
+  - thrown by node due to runtime errors
+  - apps violate operationg system constraints
+- TypeError
