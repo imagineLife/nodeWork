@@ -15,6 +15,26 @@ There are several buffer types in js...
   - **NOTE** calling `Array.isArray` on one of thes etyped arrays returns `false`
   - JS `Buffer` is a 'subclass' of JS's `Uint8Array`
 
-## See Example
+## Example and Notes
 
 `ex.js`
+
+- create 2 arrays, one using the `Buffer` api and another using the `Uint8Array`
+- upating the `Buffer` instance changes the same piece of memory
+- updating the `Uint8Array` creates a new piece of memory
+
+## Allocating buffers
+
+- `Buffer.alloc(<number-of-bytes-here>)`
+- buffers are created and allocated from unallocated memory
+
+### Alocating unsafe buffers
+
+- `Buffer.allocUnsafe(10)`
+- this returns a different buffer of garbage bytes each time it is created
+- strongly recommended against
+
+## Note on cleaning buffers
+
+- buffers are unlinked, not wiped
+  - an allocated buffer can contain fragments of previously deleted data
