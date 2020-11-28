@@ -35,3 +35,13 @@ console.log({bC})
 bD = bC.slice(2,3);
 // { bD: Uint8Array(1) [ 0 ] }
 console.log({bD})
+
+bD[0] = 100;
+
+// { bD: Uint8Array(1) [ 100 ] }
+console.log({bD})
+
+/*
+  { bC: Uint8Array(10) [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
+*/
+console.log({bC})
