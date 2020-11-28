@@ -63,9 +63,20 @@ console.log(strBuf.toString());
 console.log(strBuf + "");
 ```
 
+- the `toString` can take an encoding arg
+  - hex
+  - base64
+
 ### Buffer vs string lengths
 
 ```js
 console.log("test".length);
 console.log(Buffer.from("test").length);
 ```
+
+## Leveraging the string decoder
+
+[Node API Docs](https://nodejs.org/dist/latest-v12.x/docs/api/string_decoder.html)
+
+- use when multiple buffers might be splitting characters across byte boundaries
+  `stringDecoder.js`
