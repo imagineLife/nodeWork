@@ -45,3 +45,16 @@ console.log({bD})
   { bC: Uint8Array(10) [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }
 */
 console.log({bC})
+
+// Strings && Buffers
+const strBuf = Buffer.from(`Demo String here`);
+// { strBuf: <Buffer 44 65 6d 6f 20 53 74 72 69 6e 67 20 68 65 72 65> }
+console.log({strBuf})
+console.log({strBuf: strBuf + ''})
+
+// Buffer vs string lengths
+console.log('buffer vs string lengths')
+console.log('👀'.length)
+console.log(Buffer.from('👀').length)
+
+

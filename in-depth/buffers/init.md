@@ -38,3 +38,34 @@ There are several buffer types in js...
 
 - buffers are unlinked, not wiped
   - an allocated buffer can contain fragments of previously deleted data
+
+## Using Buffers
+
+### Encoding
+
+- default encoding that `Buffer.from` uses is `UTF8`, which has up-to 4 bytes per character
+- String-length is not assumed to match the buffer size due to the 4-bytes per cahracter
+
+### Converting Strings to buffers
+
+```js
+const strBuf = Buffer.from(`Demo String here`);
+console.log(strBuf);
+```
+
+### Converting buffers to Strings
+
+```js
+const strBuf = Buffer.from(`Demo String here`);
+// HERE
+console.log(strBuf.toString());
+// OR...
+console.log(strBuf + "");
+```
+
+### Buffer vs string lengths
+
+```js
+console.log("test".length);
+console.log(Buffer.from("test").length);
+```
