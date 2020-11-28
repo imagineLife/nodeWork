@@ -17,7 +17,7 @@ bB[0] = 100;
 console.log({bB})
 
 //  {it: 100 }
-console.log({it: bB[0]})
+console.log({bBAtZero: bB[0]})
 
 // Change in of initial buffer
 // { bA: <Buffer 00 00 64 00 00 00 00 00 00 00> }
