@@ -80,3 +80,7 @@ console.log(Buffer.from("test").length);
 
 - use when multiple buffers might be splitting characters across byte boundaries
   `stringDecoder.js`
+
+## JSON serializastion and Buffers
+
+`jsonBuffer.js`
