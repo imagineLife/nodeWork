@@ -1,6 +1,7 @@
 const str = `dummy string here a`;
 const bufferFromString = Buffer.from(str)
 const jsonBuff = bufferFromString.toJSON()
+
 /*
   {
   jsonBuff: {
@@ -23,3 +24,10 @@ const otherJsonBuff = JSON.stringify(bufferFromString)
 }
 */ 
 console.log({otherJsonBuff})
+
+const numsArr = [1,2,3,4,5]
+const buffdArr = Buffer.from(numsArr)
+/*
+  { buffdArr: <Buffer 01 02 03 04 05> }
+*/
+console.log({buffdArr})
