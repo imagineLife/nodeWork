@@ -39,4 +39,12 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
     - default mode is binary
     - binary-mode streams read Buffer instances
   - when value is `true`, in object mode
-  - 
+    - Here, the stream can read/write JS primitive values (_except null_)
+
+## Readable Streams
+`readable-example.js`
+- can be used to read data from...
+  - a file
+  - http requests
+  - user-input in a cli
+`contrived-read-stream.js` is a...contrived readStream
