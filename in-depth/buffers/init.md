@@ -88,3 +88,5 @@ console.log(Buffer.from("test").length);
   - and obj with 2 props
     - type, always equal to `Buffer`
     - data, equal to an array of numbers. These numbers represent each byte in the buffer
+`Json.parse`
+- this method can TAKE a stringified buffer, and turns it into a a js object. the CONTENT of the resulting data-key's array must be passed to `Buffer.from(dataArray)`... THEN the buffer is retrieved
