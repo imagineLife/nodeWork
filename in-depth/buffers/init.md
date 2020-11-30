@@ -84,3 +84,7 @@ console.log(Buffer.from("test").length);
 ## JSON serializastion and Buffers
 
 `jsonBuffer.js`
+- JSON.stringifying a buffer results in...
+  - and obj with 2 props
+    - type, always equal to `Buffer`
+    - data, equal to an array of numbers. These numbers represent each byte in the buffer
