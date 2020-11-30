@@ -6,6 +6,10 @@ const cRS = () => {
   // return the readable stream
   return new Readable({
     read(){
+      /*
+        THIS
+        here, `this` points to the Readable api
+      */ 
       if(d.length === 0) this.push(null)
       else this.push(d.shift())
     }
