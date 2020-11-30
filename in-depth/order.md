@@ -4,4 +4,5 @@
 - deps: about dependencies
 - async
 - events
--
+- buffers
+- streams
