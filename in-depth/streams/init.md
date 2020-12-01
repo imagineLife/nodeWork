@@ -73,3 +73,22 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
     - Inherits the EventEmitter
 
 `write-example.js`
+
+## Read-Write Streams
+
+### Duplex
+
+- inhertis Readable constructor
+- 'mixes' functionality from the Writable constructor
+- read && write methods are implemented
+- `duplex-example.js`
+  - createServer has a listener for each client that connects
+    - the listener fn gets passed the Duplex stream (_code refers to the duplex stream as `socket`_)
+  - every `1s`
+    - a string is written to the stream `heartbeat`
+      - this leverages the writable part of the duplex stream
+  -
+
+### Transform
+
+### PassThrough
