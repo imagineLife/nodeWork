@@ -91,7 +91,18 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
     - `data` writes to the stream
       - sends back the INCOMING data after upper-casing it
     - `end` "cleans-up" the setInterval resource after the client disconnects
+- `tcp-client.js`, a client talking to the above duplex example
+  - `connectedNet` returns the Duplex stream, the TCP client socket
+  - listen for a `data` event, logging the incoming data buffer (_as a string_)
+    - leveraging the readable Duplex element
+  - `socket.write` leverages the writable stream of the duplex
+    - writes `finished` after the `killAfterTime` is triggered
+    - after another `shortTime`, kill the connection using `socket.end`
 
 ### Transform
+
+- inherits from the `Duplex` constructor
+- `transform-example.js`
+  -
 
 ### PassThrough
