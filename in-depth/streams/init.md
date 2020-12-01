@@ -85,9 +85,12 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
   - createServer has a listener for each client that connects
     - the listener fn gets passed the Duplex stream (_code refers to the duplex stream as `socket`_)
   - every `1s`
-    - a string is written to the stream `heartbeat`
+    - a string is written to the stream `heartbeat`, using `socket.write`
       - this leverages the writable part of the duplex stream
-  -
+  - the `data` & `end` events are listened for, leveraging the `readable` part of the duplex
+    - `data` writes to the stream
+      - sends back the INCOMING data after upper-casing it
+    - `end` "cleans-up" the setInterval resource after the client disconnects
 
 ### Transform
 
