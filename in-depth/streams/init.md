@@ -48,3 +48,8 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
   - http requests
   - user-input in a cli
 `contrived-read-stream.js` is a...contrived readStream
+`read-stream-with-encoding.js` is another example
+- the encoding changes the way the stream is ... encoded
+  - **readable streams emit buffers by default**
+    - most use-cases for readable streams deal with binary data 
+  - 
