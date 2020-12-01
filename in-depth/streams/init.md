@@ -71,3 +71,5 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
 - The Writable Constructor
   - Inherits the Stream Constructor
     - Inherits the EventEmitter
+
+`write-example.js`
