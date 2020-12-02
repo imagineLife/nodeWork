@@ -1,7 +1,7 @@
 'use strict'
 const { createGzip } = require('zlib')
-const encodingType = 'base64'
-const timeoutVal = 3500
+const encodingType = 'base64' //hex
+const timeoutVal = 500
 const gZipStream = createGzip()
 function dataHandler(data){
   console.log('got gzip data', data.toString(encodingType))
