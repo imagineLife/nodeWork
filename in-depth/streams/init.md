@@ -102,7 +102,10 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
 ### Transform
 
 - inherits from the `Duplex` constructor
+- `A Transform stream is a Duplex stream where the output is computed in some way from the input(i.e zlib, crypto streams that compress, encrypt, or decrypt data)`
+  - output is not expected to have ANY same characteristics as input
+  - hash stream is always only 1 output && only
+  - zlib stream output is always a different size than stream input
 - `transform-example.js`
-  -
 
 ### PassThrough
