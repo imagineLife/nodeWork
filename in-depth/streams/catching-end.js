@@ -22,6 +22,11 @@ net.createServer((socket) => {
   //write data on data
   socket.on('data', d => socket.write(d.toString().toUpperCase()))
 
+/*
+  - the stream gets passed to finished
+  - SHOULD BE STANDARD PRATICE
+   since it covers every ending eventually
+*/ 
   finished(socket, err => {
     if(err) console.error(`socket err:`, err);
     clearInterval(int);
