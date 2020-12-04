@@ -107,5 +107,13 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
   - hash stream is always only 1 output && only
   - zlib stream output is always a different size than stream input
 - `transform-example.js`
+  - 2nd part
+    - the `Transform` constructor uses a `transform` option, which performs similarly to the `write` in the writable streams
+    - `transform` takes extra option `next`, which
 
 ### PassThrough
+
+- inherits the `Transform` constructor
+- **no transformation is applied**
+- like... `val => val`
+-
