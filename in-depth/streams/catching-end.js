@@ -27,4 +27,4 @@ net.createServer((socket) => {
     clearInterval(int);
   })
 
-})
+}).listen(3000);
