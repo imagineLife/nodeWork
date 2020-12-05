@@ -12,7 +12,7 @@
       C:/file/subfile/example.js 
     - backslash is the escape character in JS strings...ugh!
 */ 
-const { join } = require('path');
+const { parse, basename, dirname, extname, join } = require('path');
 
 
 
@@ -34,3 +34,32 @@ const DEPT = 'shipping';
 const ROOM = 'packaging';
 const newDir = join(FACILITY,DEPT,ROOM);
 console.log({newDir});
+
+// leveraging more path methods
+const PARSED = parse(__filename);
+const BASED = basename(__filename);
+const DIRD = dirname(__filename);
+const EXTD = extname(__filename);
+
+/*
+  logs
+  {
+  PARSED: {
+    root: '/',
+    dir: '/Users/Jake/Desktop/projects/nodeWork/in-depth/fs',
+    base: 'init.js',
+    ext: '.js',
+    name: 'init'
+  }
+}
+*/
+console.log({PARSED});
+
+// { BASED: 'init.js' }
+console.log({BASED});
+
+// { DIRD: '/file/path/Desktop/projects/nodeWork/in-depth/fs' }
+console.log({DIRD});
+
+// { EXTD: '.js' }
+console.log({EXTD});
