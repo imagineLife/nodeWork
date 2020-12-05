@@ -6,3 +6,6 @@
 - events
 - buffers
 - streams
+- fs
+- streams
+- dirs
