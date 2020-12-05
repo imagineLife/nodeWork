@@ -11,5 +11,12 @@ const { readFileSync } = require('fs');
   Logs a buffer
   <Buffer ....>
 */ 
-const CONTENTS = readFileSync(__filename);
-console.log({CONTENTS})
+const BUFFERED_CONTENT = readFileSync(__filename);
+console.log({BUFFERED_CONTENT})
+
+/*
+  Read Current file && log the results
+  Logs the readable content as strings with breaks etc
+*/ 
+const ENCODED_CONTENT = readFileSync(__filename, {encoding: 'utf8'});
+console.log({ENCODED_CONTENT})
