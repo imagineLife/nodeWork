@@ -29,3 +29,11 @@ async function run () {
 run().catch((err) => {
   console.error(err)
 })
+
+
+/*
+  Running this returns...
+    sync [ 'exb', 'exc', 'exd', 'init.js' ]
+    callback [ 'exb', 'exc', 'exd', 'init.js' ]
+    promise [ 'exb', 'exc', 'exd', 'init.js' ]
+*/ 
