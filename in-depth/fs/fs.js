@@ -4,6 +4,10 @@ const {
   writeFile,
   writeFileSync 
 } = require('fs');
+const { 
+  readFile: rfP, 
+  writeFile: wfP 
+} = require('fs').promises;
 
 const { join } =require('path');
 /*
@@ -76,3 +80,15 @@ function writeOnSuccess(err,contents){
 }
 
 readFile(__filename, {encoding: 'utf8'}, writeOnSuccess)
+
+
+
+/*
+  Promises
+*/ 
+async function asyncRunner(){
+  const fileContent = await rfP(__filename, {encoding: 'utf8'});
+  const outFile = join(__dirname, 'promise-output.txt');
+  await wfP(outFile, fileContent.toUpperCase())
+}
+asyncRunner().catch(console.error)
