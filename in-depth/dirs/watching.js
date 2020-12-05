@@ -29,4 +29,7 @@ watch(PATH_TO_WATCH, watchHandler)
       - deletes file
       - creates event "rename"
 
+
+look into chokidar npm module for a more cross-platform-friendly tool
+https://github.com/paulmillr/chokidar
 */ 
