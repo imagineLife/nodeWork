@@ -117,3 +117,12 @@ Streams inherit the `EventEmitter` from the `events` module. The `stream` module
 - **no transformation is applied**
 - like... `val => val`
 -
+
+## Catching the End Of A Stream
+
+- Close event
+- error event
+- finish event
+- end event
+
+see `catching-end.js`
