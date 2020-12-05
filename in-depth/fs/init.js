@@ -27,3 +27,10 @@ console.log({dirname: __dirname})
 const NEW_FILE_NAME = 'new-file.txt'
 const newFilePath = join(__dirname, NEW_FILE_NAME)
 console.log({newFilePath})
+
+// Levearging JOIN to make complex nested files && directories
+const FACILITY = 'store';
+const DEPT = 'shipping';
+const ROOM = 'packaging';
+const newDir = join(FACILITY,DEPT,ROOM);
+console.log({newDir});
