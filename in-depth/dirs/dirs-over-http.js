@@ -2,7 +2,7 @@ const { createServer } = require('http')
 const { Readable, Transform, pipeline } = require('stream')
 const { opendirSync } = require('fs')
 const PORT = 3000;
-const createEntryStream = () => {
+const createTransformFormatStream = () => {
   let syntax = '[\n'
   return new Transform({
     writableObjectMode: true,
@@ -28,10 +28,10 @@ createServer((req, res) => {
     res.end('Not Found')
     return
   }
-  const dirStream = Readable.from(opendirSync(__dirname))
-  const entryStream = createEntryStream()
+  const directoryStream = Readable.from(opendirSync(__dirname))
+  const entryStream = createTransformFormatStream()
   res.setHeader('Content-Type', 'application/json')
-  pipeline(dirStream, entryStream, res, handlePipelineErr)
+  pipeline(directoryStream, entryStream, res, handlePipelineErr)
 }).listen(PORT)
 
 
