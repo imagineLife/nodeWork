@@ -3,7 +3,14 @@
 - fs
 - path
   - for normalizing path manipulation between platforms
-  - 
+  - Windows systems use \ as path separators 
+  - POSIX systems (Linux and macOS) use / 
+    - ex, a path on Linux or macOS could be
+      /file/subfile/example.js 
+      whereas on Windows it would be 
+      (assuming the path was on drive C), 
+      C:/file/subfile/example.js 
+    - backslash is the escape character in JS strings...ugh!
 */ 
 const { join } = require('path');
 
