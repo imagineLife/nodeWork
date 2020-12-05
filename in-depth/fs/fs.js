@@ -3,7 +3,7 @@ const { join } =require('path');
 /*
   SYNCHRONOUS METHODS
   - BLOCK the thread until finished
-  - maybe convenient for app-loading processes
+  - may be convenient for app-loading processes
 */
 /*
   Read Current file && log the results
@@ -19,5 +19,18 @@ console.log({BUFFERED_CONTENT})
 */ 
 const ENCODED_CONTENT = readFileSync(__filename, {encoding: 'utf8'});
 console.log({ENCODED_CONTENT})
+
+/*
+  WRITE to a new file, takes 3 params here
+  - the file path
+  - the file name
+  - the file content
+*/ 
 const OUTPUT_FILE_NAME = 'output.txt'
 writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase());
+
+// the 'a' flag ADDS if the file already has content
+// 'append' mode
+writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase(), {
+  flag: 'a'
+})
