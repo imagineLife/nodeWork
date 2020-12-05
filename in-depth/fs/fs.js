@@ -46,7 +46,9 @@ writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase(), {
 // https://nodejs.org/dist/latest-v14.x/docs/api/fs.html#fs_file_system_flags
 
 
-// Async + Callbacks
+/*
+  Async + Callbacks
+*/
 // READING A FILE
 function doWhenReadIsDone(err, contents){
   (err, contents) => {
