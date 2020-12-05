@@ -18,7 +18,15 @@ watch(PATH_TO_WATCH, watchHandler)
       - creates event "rename"
     - node -e "fs.chmodSync('test-dir', 0o644)"
       - sets permissions on dir
-      - creates event ""rename
-    
+      - creates event "rename"
+    - node -e "fs.writeFileSync('test', 'test')"
+      - write same content to previously created file
+      - creates event "change" 
+    - (node -e "fs.chmodSync('test-dir', 0o644)"
+      - set permissions on test-dir (again)
+      - creates event "change"
+    - node -e "fs.unlinkSync('test')"
+      - deletes file
+      - creates event "rename"
 
 */ 
