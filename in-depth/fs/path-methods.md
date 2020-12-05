@@ -3,3 +3,11 @@
   - with 2 paths, calculate the "relative distance between the paths
 - `resolve`
   - takes many string args, each str representing a path
+  - like...
+  - `path('/first', 'second', 'third')`
+  - returns `/first/second/third`, then figuring out what the cur working directory is
+- `normalize`
+  - resolves `..` and `.` in path str
+  - strips extra slashes
+- `format`
+  - builds a str from an obj
