@@ -4,7 +4,8 @@
 const net = require('net')
 const port = 3000
 const connectedNet = net.connect(port)
-const killAfterTime = 3500
+const killAfterTime = 3500;
+const shortTime = 250
 function handleData(data){
   console.log('got data:', data.toString())
 }
@@ -12,8 +13,8 @@ function handleData(data){
 connectedNet.on('data', handleData)
 
 setTimeout(() => {
-  connectedNet.write('all done')
+  connectedNet.write('finished')
   setTimeout(() => {
     connectedNet.end()
-  }, 250)
+  }, shortTime)
 }, killAfterTime)
