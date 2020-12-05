@@ -45,5 +45,21 @@ setTimeout(() => {
 
 /*
 NOTES
-
+- process.stdout is a writable stream
+  - console.log AUTO adds a new-line @ end!! interesting!
+- PIPE 
+  - only exists on readaable streams
+    - socket, above, is a Duplex
+      - duplex inherits from Readable
+- PIPE
+  - above, is passed a writable stream
+- PIPE
+  - sets up a 'data' listener on the stream
+  - automatically writes to the writable stream
+  - returns a stream
+  - can be chained
+    - sourceStream.pipe(goalStreamA).pipe(goalStreamB)
+    - this is common
+    - PROBLEMATIC if middle stream fails or clses
+    - the BETTER way to pipe a bunch is to use the PIPELINE utility fn
 */ 
