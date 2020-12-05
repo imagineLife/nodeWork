@@ -1,5 +1,7 @@
-const { readFile, 
-  readFileSync, 
+const { 
+  readFile, 
+  readFileSync,
+  writeFile,
   writeFileSync 
 } = require('fs');
 
@@ -45,7 +47,7 @@ writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase(), {
 
 
 // Async + Callbacks
-
+// READING A FILE
 function doWhenReadIsDone(err, contents){
   (err, contents) => {
     if (err) { 
@@ -57,3 +59,18 @@ function doWhenReadIsDone(err, contents){
   }
 }
 readFile(__filename, {encoding: 'utf8'}, doWhenReadIsDone)
+
+
+// WRITING a 'transformed' version to an output file
+function writeOnSuccess(err,contents){
+  if (err) { 
+    console.error(err)
+    return
+  }
+  const out = join(__dirname, 'out-on-success.txt')
+  writeFile(out, contents.toUpperCase(), (err) => {
+    if (err) { console.error(err) }
+  })
+}
+
+readFile(__filename, {encoding: 'utf8'}, writeOnSuccess)
