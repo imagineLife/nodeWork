@@ -17,6 +17,14 @@ const typeFromStat = stat => stat.isDirectory() ? 'dir: ' : 'file: ';
 for (const name of files) { 
   
   const stat = statSync(name)
+  const { atime, birthtime, ctime, mtime } = stat
   const typeLabel = typeFromStat(stat)
-  console.log(typeLabel, name)
+  console.group(typeLabel, name)
+  console.log(`aTime: ${atime}`)
+  console.log('atime:', atime.toLocaleString())
+  console.log('ctime:', ctime.toLocaleString())
+  console.log('mtime:', mtime.toLocaleString())
+  console.log('birthtime:', birthtime.toLocaleString())
+  console.groupEnd()
+  console.log()
 }
