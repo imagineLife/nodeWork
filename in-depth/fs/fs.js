@@ -1,11 +1,10 @@
+const { readFileSync, writeFileSync } = require('fs');
+const { join } =require('path');
 /*
-  Synchronous Methods
+  SYNCHRONOUS METHODS
   - BLOCK the thread until finished
   - maybe convenient for app-loading processes
 */
-
-const { readFileSync } = require('fs');
-
 /*
   Read Current file && log the results
   Logs a buffer
@@ -20,3 +19,5 @@ console.log({BUFFERED_CONTENT})
 */ 
 const ENCODED_CONTENT = readFileSync(__filename, {encoding: 'utf8'});
 console.log({ENCODED_CONTENT})
+const OUTPUT_FILE_NAME = 'output.txt'
+writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase());
