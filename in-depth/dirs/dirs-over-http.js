@@ -11,6 +11,14 @@ const createTransformFormatStream = () => {
       next(null, `${syntax} "${entry.name}"`)
       syntax = ',\n'
     },
+
+    /*
+      final:
+      - called before the stream ends
+      - allows for cleanup or final data to send
+        - here, this.push adds bytes to 
+          the readable side of the transform stream
+    */ 
     final (cb) {
       this.push('\n]\n')
       cb()
