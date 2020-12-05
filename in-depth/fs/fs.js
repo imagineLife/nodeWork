@@ -45,12 +45,15 @@ writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase(), {
 
 
 // Async + Callbacks
-'use strict'
-readFile(__filename, {encoding: 'utf8'}, (err, contents) => {
-  if (err) { 
-    console.error(err)
-    return
+
+function doWhenReadIsDone(err, contents){
+  (err, contents) => {
+    if (err) { 
+      console.error(err)
+      return
+    }
+    console.log('doWhenReadIsDone contents')
+    console.log(contents)
   }
-  console.log('contents')
-  console.log(contents)
-})
+}
+readFile(__filename, {encoding: 'utf8'}, doWhenReadIsDone)
