@@ -4,6 +4,7 @@ const { join } =require('path');
   SYNCHRONOUS METHODS
   - BLOCK the thread until finished
   - may be convenient for app-loading processes
+  - ERRORS thorw, SO this stuff needs to be wrapped in try/catch to handle errors
 */
 /*
   Read Current file && log the results
@@ -34,3 +35,6 @@ writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase());
 writeFileSync(join(__dirname,OUTPUT_FILE_NAME), ENCODED_CONTENT.toUpperCase(), {
   flag: 'a'
 })
+
+// SEE ALL FS FLAGS
+// https://nodejs.org/dist/latest-v14.x/docs/api/fs.html#fs_file_system_flags
