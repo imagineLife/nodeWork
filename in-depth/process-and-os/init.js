@@ -6,6 +6,8 @@
   - each is a stream
   - stdin is readable
   - stdout && stderr are writable
+  - they never finish, never error, never close
+  
 
 
   pipe-in-to-out.js
@@ -14,5 +16,6 @@
 
   - creates random character string
   - pipes input to output
+
 
 */
