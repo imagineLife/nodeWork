@@ -7,7 +7,7 @@
   - stdin is readable
   - stdout && stderr are writable
   - they never finish, never error, never close
-  
+
 
 
   pipe-in-to-out.js
@@ -17,5 +17,20 @@
   - creates random character string
   - pipes input to output
 
+
+  Can log exit codes
+  - echo $? in mac
+
+  process obj contains MORE info about the process..
+  - cwd
+    process.cwd()
+      ALSO
+      process.cwd() will change the directory...
+  - platform being run on
+    process.platform
+  - process id
+    process.pid
+  - env vars applied to the process
+    process.env
 
 */
