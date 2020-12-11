@@ -33,4 +33,15 @@
   - env vars applied to the process
     process.env
 
+  Process METHODS
+  - process.uptime()
+    - seconds that the current process has been running
+    - NOT the os
+  - process.cpuUsage
+    - returns an obj
+    {user, system}
+      - user: time that the node spent using the cpu
+      - system: time KERNEL spent using CPU 
+        due ot activity triggered by the process
+  - process.memoryUsage
 */
