@@ -1,5 +1,5 @@
 console.log('initialized');
-console.log(process.stdin.isTTY ? 'terminal' : 'piped to');
+console.log(process.stdin.isTTY ? 'terminal\n' : 'piped to\n');
 
 const { Transform } = require('stream');
 const createTransStream = () => {
@@ -18,7 +18,7 @@ process.stdin
 
 
 /*
-  2 interesting ways to use this!
+  interesting ways to use this!
   - run 
   node - "crypto.randomBytes(100).toString('hex')" | node pipe-to-uppercase.js
     - this will...
@@ -30,4 +30,10 @@ process.stdin
       - start a node server
       - allow text input in the cmd line
       - convert any text input in cmd line to UPPERCASE
+  node - "crypto.randomBytes(100).toString('hex')" | node pipe-to-uppercase.js > output.txt
+    - redirects to a file
+    - the ">" sends output to a file
+  node - "crypto.randomBytes(100).toString('hex')" | node pipe-to-uppercase.js > output.txt 2< another.txt
+    - directs stdout to the first file && stderr to the 2> file
+    
 */ 
