@@ -1,10 +1,18 @@
 // The OS module
 
-const { hostname, homedir, tmpdir } = require('os');
+const { hostname, 
+  homedir, 
+  tmpdir, 
+  platform,
+  type
+} = require('os');
+
 console.log({
   hostname: hostname(), 
   homedir: homedir(), 
-  tmpdir: tmpdir()
+  tmpdir: tmpdir(),
+  platform: platform(),
+  type: type()
 })
 
 /*
@@ -15,5 +23,11 @@ console.log({
     tmpdir: '/var/folders/2-letters/random-string/Letter'
   }
 
-  hostname of the os
+  hostname 
+    of the os
+  platform
+    returns same as process.platform
+  type
+    uses uname on non-windows
+    uses ver   on windows
 */
