@@ -6,9 +6,11 @@
 */ 
 
 const { execSync } = require('child_process');
-const RUNNABLE_PROCESS = `node -e "console.error('subprocess stdio output')"`
 
-const action = execSync(RUNNABLE_PROCESS)
+const RUNNABLE_PROCESS = `node -e "console.error('subprocess stdio output')"`
+const LIST_FILES = process.platform === 'win32' ? 'dir' : 'ls'
+
+const action = execSync(LIST_FILES) //RUNNABLE_PROCESS
 
 console.log(action.toString())
 
