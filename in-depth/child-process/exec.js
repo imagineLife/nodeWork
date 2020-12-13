@@ -36,10 +36,22 @@ const { execSync } = require('child_process');
 
 // SECOND COMMAND
 /*
-
+  execSync can fail
+  - wrap in a try/catch
 */
+// try {
+//   execSync(`${process.execPath} -e "process.exit(1)"`)
+// } catch (err) {
+//   console.error('CAUGHT ERROR:', err)
+// }
+
+
+// THIRD COMMAND
+/*
+  texx execSync to throw an err
+*/ 
 try {
-  execSync(`${process.execPath} -e "process.exit(1)"`)
+  execSync(`${process.execPath} -e "throw Error('kaboom')"`)
 } catch (err) {
   console.error('CAUGHT ERROR:', err)
 }
