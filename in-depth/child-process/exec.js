@@ -34,7 +34,7 @@ const { execSync } = require('child_process');
 
 
 
-// SECOND COMMAND
+// SECOND COMMAND, TRY?CATCH ON ERR
 /*
   execSync can fail
   - wrap in a try/catch
@@ -46,12 +46,23 @@ const { execSync } = require('child_process');
 // }
 
 
-// THIRD COMMAND
+// THIRD COMMAND, CATCHING A THRON ERROR
 /*
   texx execSync to throw an err
 */ 
-try {
-  execSync(`${process.execPath} -e "throw Error('kaboom')"`)
-} catch (err) {
-  console.error('CAUGHT ERROR:', err)
-}
+// try {
+//   execSync(`${process.execPath} -e "throw Error('kaboom')"`)
+// } catch (err) {
+//   console.error('CAUGHT ERROR:', err)
+// }
+
+
+
+
+
+// FOURTH EXAMPLE, ERRORS IN DEPTH
+/*
+  Errors are caught in err.stderr and err.output[2]
+
+
+*/
