@@ -7,10 +7,19 @@
 
 const { execSync } = require('child_process');
 
-const RUNNABLE_PROCESS = `node -e "console.error('subprocess stdio output')"`
+/*
+  replace the `node` keyword with process.execPath
+  - ensures that the subprocess will be
+   executing the same version of node of the parent procee
+
+*/
+// node version
+// const RUNNABLE_PROCESS = `node -e "console.error('subprocess stdio output')"`
+// 
+const RUNNABLE_PROCESS = `${process.execPath} -e "console.error('subprocess stdio output')"`
 const LIST_FILES = process.platform === 'win32' ? 'dir' : 'ls'
 
-const action = execSync(LIST_FILES) //RUNNABLE_PROCESS
+const action = execSync(RUNNABLE_PROCESS) //RUNNABLE_PROCESS LIST_FILES
 
 console.log(action.toString())
 
