@@ -1,0 +1,19 @@
+# Child Processes
+- `child_process` module
+  - [Docs](https://nodejs.org/api/child_process.html)
+  - allows spawning subprocesses
+  - primarily through `child_process.spawn()`
+  - a parent/child relationship exists between the "current" process and the child
+    - Child Processes can be in any language
+- `child_process.spawn()`
+  - spawns a new process using a given command
+  - can take command-line args in an arr
+- spawning methods of interest
+  - exec && execSync
+  - execFile && execFileSync
+    - variations on the exec && execSync methods
+    - attempts to execute the provided path to a binary executable directly
+  - spawn && spawnSync
+  - fork
+    - spawsn new process of the current js file
+    - sets up interprocess communication (IPC)
