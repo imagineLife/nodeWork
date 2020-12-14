@@ -7,7 +7,10 @@
       wrap in a try/catch
 */ 
 
-const { execSync } = require('child_process');
+const { 
+  execSync,
+  exec
+} = require('child_process');
 
 // FIRST COMMAND
 /*
@@ -48,7 +51,11 @@ const { execSync } = require('child_process');
 
 // THIRD COMMAND, CATCHING A THRON ERROR
 /*
-  texx execSync to throw an err
+  tell execSync to throw an err
+  - output has a lot...
+    - 2 stacks with a gap
+      - first stack is fn called inside subprocess
+      - 2nd stack is the fns called nin the parent process
 */ 
 // try {
 //   execSync(`${process.execPath} -e "throw Error('kaboom')"`)
@@ -60,9 +67,30 @@ const { execSync } = require('child_process');
 
 
 
-// FOURTH EXAMPLE, ERRORS IN DEPTH
+// FOURTH EXAMPLE, exec intor
 /*
-  Errors are caught in err.stderr and err.output[2]
-
+  exec 
+  - takes a string shell command && a callback
+  - callback has 3 things
+    - err
+    - stdout
+    - stderr
+  
 
 */
+exec(
+  `${process.execPath} -e "console.log('A');console.error('B')"`, 
+  (err, stdout, stderr) => {
+    console.log('err', err)
+    console.log('subprocess stdout: ', stdout.toString())
+    console.log('subprocess stderr: ', stderr.toString())
+  }
+)
+
+/*
+  running above returns
+    err null
+    subprocess stdout:  A
+
+    subprocess stderr:  B
+*/ 
