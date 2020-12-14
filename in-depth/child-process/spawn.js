@@ -39,8 +39,10 @@
   }
 
   - spawnSync differs than execSync
-    - execSync returns a buffer
-    - spawnSync returns an object, of metadata, with buffers in keys
+    - execSync returns a buffer that contains 
+      child-process output
+    - spawnSync returns an object, of metadata, 
+      with buffers in keys
   - 
 */ 
 
@@ -48,9 +50,9 @@
 const { spawnSync } = require('child_process')
 const RUNNABLE_STRING = `console.log('subprocess stdio output')`
 
-const result = spawnSync(
+const { stdout } = spawnSync(
   process.execPath, 
   ['-e', RUNNABLE_STRING]
 )
 
-console.log(result.stdout.toString())
+console.log(stdout.toString())
