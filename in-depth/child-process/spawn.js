@@ -1,3 +1,4 @@
+const { spawnSync } = require('child_process')
 /*
   spawn && spawnSync
   spawn is different from exec
@@ -7,12 +8,14 @@
     - command
 */ 
 
+
+
+
 // FIRST EXAMPLE, spawnSync
 /*
   - '-e' is a flag
 
 */ 
-// const { spawnSync } = require('child_process')
 // const RUNNABLE_STRING = `console.log('subprocess stdio output')`
 
 // const result = spawnSync(
@@ -43,16 +46,56 @@
       child-process output
     - spawnSync returns an object, of metadata, 
       with buffers in keys
-  - 
+    - spawnSync does NOT need a try/catch wrapper on non-zero exit code
+    - spawn does NOT accept a callback
 */ 
 
+
+
+
+
+
 // SECOND EXAMPLE, stringifying output
-const { spawnSync } = require('child_process')
-const RUNNABLE_STRING = `console.log('subprocess stdio output')`
+// const RUNNABLE_STRING = `console.log('subprocess stdio output')`
 
-const { stdout } = spawnSync(
-  process.execPath, 
-  ['-e', RUNNABLE_STRING]
-)
+// const { stdout } = spawnSync(
+//   process.execPath, 
+//   ['-e', RUNNABLE_STRING]
+// )
 
-console.log(stdout.toString())
+// console.log(stdout.toString())
+
+
+
+
+
+
+// THIRD EXAMPLE, non-zero exit code
+const spawnRes = spawnSync(process.execPath, [
+  `-e`,
+  `process.exit(1)`
+])
+console.log(spawnRes)
+/*
+  Running the above returns...
+  {
+    status: 1,
+    signal: null,
+    output: [ null, <Buffer >, <Buffer > ],
+    pid: 2422,
+    stdout: <Buffer >,
+    stderr: <Buffer >
+  }
+*/ 
+
+
+
+
+
+
+
+
+
+/*
+  FOURTH EXAMPLE, piping available stream
+*/ 
