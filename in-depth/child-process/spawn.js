@@ -1,4 +1,4 @@
-const { spawnSync } = require('child_process')
+const { spawnSync, spawn } = require('child_process')
 /*
   spawn && spawnSync
   spawn is different from exec
@@ -71,11 +71,11 @@ const { spawnSync } = require('child_process')
 
 
 // THIRD EXAMPLE, non-zero exit code
-const spawnRes = spawnSync(process.execPath, [
-  `-e`,
-  `process.exit(1)`
-])
-console.log(spawnRes)
+// const spawnRes = spawnSync(process.execPath, [
+//   `-e`,
+//   `process.exit(1)`
+// ])
+// console.log(spawnRes)
 /*
   Running the above returns...
   {
@@ -99,3 +99,64 @@ console.log(spawnRes)
 /*
   FOURTH EXAMPLE, piping available stream
 */ 
+
+// function closeHandler(resStatus){
+//   console.log(`closeHandler log, exit status is ${resStatus}`)
+// }
+
+// const RUNNABLE_CODE = `console.log('subprocess stdio out')`
+
+// const spawnRes = spawn(process.execPath,
+// [
+//   '-e',
+//   RUNNABLE_CODE
+// ])
+// console.log(`spawnRes pid is: ${spawnRes.pid}`)
+// spawnRes.stdout.pipe(process.stdout)
+// spawnRes.on('close', closeHandler)
+
+/*
+  running the above outputs...
+    spawnRes pid is: 2646
+    subprocess stdio out
+    closeHandler log, exit status is 0
+
+    NOTES
+    - spawn returns an instance of ChildProcess
+    - the pid is immediately available on spawn creation
+    - piping the child output to the parent process output
+    - when child process exits, 'close' is called
+      - close passes exit code
+*/ 
+
+
+
+
+
+
+
+/*
+  FIFTH EXAMPLE, spawn + non-zero exit
+*/ 
+
+function closeHandler(resStatus){
+  console.log(`closeHandler log, exit status is ${resStatus}`)
+}
+
+const RUNNABLE_CODE = `process.exit(1)`
+
+const spawnRes = spawn(process.execPath,
+[
+  '-e',
+  RUNNABLE_CODE
+])
+console.log(`spawnRes pid is: ${spawnRes.pid}`)
+spawnRes.stdout.pipe(process.stdout)
+spawnRes.on('close', closeHandler)
+
+/* 
+  Running the above outputs...
+    spawnRes pid is: 2789
+    closeHandler log, exit status is 1
+*/ 
+
