@@ -78,8 +78,28 @@ const {
   
 
 */
+// exec(
+//   `${process.execPath} -e "console.log('A');console.error('B')"`, 
+//   (err, stdout, stderr) => {
+//     console.log('err', err)
+//     console.log('subprocess stdout: ', stdout.toString())
+//     console.log('subprocess stderr: ', stderr.toString())
+//   }
+// )
+
+/*
+  running above returns
+    err null
+    subprocess stdout:  A
+
+    subprocess stderr:  B
+*/ 
+
+
+
+// FIFTH EXAMPLE, ERR IN EXEC
 exec(
-  `${process.execPath} -e "console.log('A');console.error('B')"`, 
+  `${process.execPath} -e "console.log('A'); throw Error('B')"`, 
   (err, stdout, stderr) => {
     console.log('err', err)
     console.log('subprocess stdout: ', stdout.toString())
@@ -88,9 +108,47 @@ exec(
 )
 
 /*
-  running above returns
-    err null
+  Running above returns
+    err Error: Command failed: /usr/local/bin/node -e "console.log('A'); throw Error('B')"
+    [eval]:1
+    console.log('A'); throw Error('B')
+                      ^
+
+    Error: B
+        at [eval]:1:25
+        at Script.runInThisContext (vm.js:132:18)
+        at Object.runInThisContext (vm.js:309:38)
+        at internal/process/execution.js:77:19
+        at [eval]-wrapper:6:22
+        at evalScript (internal/process/execution.js:76:60)
+        at internal/main/eval_string.js:23:3
+
+        at ChildProcess.exithandler (child_process.js:308:12)
+        at ChildProcess.emit (events.js:315:20)
+        at maybeClose (internal/child_process.js:1048:16)
+        at Socket.<anonymous> (internal/child_process.js:439:11)
+        at Socket.emit (events.js:315:20)
+        at Pipe.<anonymous> (net.js:673:12) {
+      killed: false,
+      code: 1,
+      signal: null,
+      cmd: `/usr/local/bin/node -e "console.log('A'); throw Error('B')"`
+    }
     subprocess stdout:  A
 
-    subprocess stderr:  B
+    subprocess stderr:  [eval]:1
+    console.log('A'); throw Error('B')
+                      ^
+
+    Error: B
+        at [eval]:1:25
+        at Script.runInThisContext (vm.js:132:18)
+        at Object.runInThisContext (vm.js:309:38)
+        at internal/process/execution.js:77:19
+        at [eval]-wrapper:6:22
+        at evalScript (internal/process/execution.js:76:60)
+        at internal/main/eval_string.js:23:3
+
+  // Here, the err is not null
+  - err.code contains exit code
 */ 
