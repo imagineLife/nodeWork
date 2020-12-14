@@ -13,7 +13,11 @@
   - execFile && execFileSync
     - variations on the exec && execSync methods
     - attempts to execute the provided path to a binary executable directly
-  - spawn && spawnSync
+  - spawn 
+    - spawn is the only process of all these options that DOES NOT BUFFER THE CHILD PROCESS OUT
+    - spawn will continue streaming output regardless of child-process output max: the others have a configurable max output max
+    - because spawn will not max-out, spawn is the best option for long-running child-processes
+  - spawnSync
   - fork
     - spawsn new process of the current js file
     - sets up interprocess communication (IPC)
