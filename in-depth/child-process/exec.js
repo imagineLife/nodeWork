@@ -98,14 +98,14 @@ const {
 
 
 // FIFTH EXAMPLE, ERR IN EXEC
-exec(
-  `${process.execPath} -e "console.log('A'); throw Error('B')"`, 
-  (err, stdout, stderr) => {
-    console.log('err', err)
-    console.log('subprocess stdout: ', stdout.toString())
-    console.log('subprocess stderr: ', stderr.toString())
-  }
-)
+// exec(
+//   `${process.execPath} -e "console.log('A'); throw Error('B')"`, 
+//   (err, stdout, stderr) => {
+//     console.log('err', err)
+//     console.log('subprocess stdout: ', stdout.toString())
+//     console.log('subprocess stderr: ', stderr.toString())
+//   }
+// )
 
 /*
   Running above returns
@@ -151,4 +151,28 @@ exec(
 
   // Here, the err is not null
   - err.code contains exit code
+*/ 
+
+
+
+
+
+
+
+
+
+// SIXTH EXAMPLE, no callback, piping
+const RUNNABLE_STR = `${process.execPath} -e "console.log('subprocess stdio output')"`
+const execRes = exec(RUNNABLE_STR);
+function  closeHandler(resStatus){
+  console.log(`child onClose, resStatus is ${resStatus}`)
+}
+console.log(`PARENT LOG, execRes pid is ${execRes.pid}`);
+execRes.stdout.pipe(process.stdout)
+execRes.on('close', closeHandler)
+/*
+  Running the above returns 
+    PARENT LOG, execRes pid is 4293
+    subprocess stdio output
+    child onClose, resStatus is 0
 */ 
