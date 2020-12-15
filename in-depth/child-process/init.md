@@ -21,3 +21,6 @@
   - fork
     - spawsn new process of the current js file
     - sets up interprocess communication (IPC)
+- Config Options
+  - exec && execSync take an options obj as 2nd param
+  - spawn && spawnSync take an options obj as 3rd param
