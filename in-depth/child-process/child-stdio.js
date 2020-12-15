@@ -12,6 +12,7 @@ const RUNNABLE_STRING = `console.error('child-process error output');process.std
 const STRING_INPUT = 'string input from parent here\n'
 const DEFAULT_ARR = ['pipe','pipe','pipe']
 const INHERIT_ARR = ['pipe','inherit','pipe']
+const STREAM_ERR = ['pipe','inherit', process.stdout]
 
 // PROCESS 1, using explicit default stdio values
 // const spawnRes = spawn(
@@ -70,18 +71,18 @@ const INHERIT_ARR = ['pipe','inherit','pipe']
 
 
 // PROCESS 2, replacing pipe in array with inherit in 2nd param
-const spawnRes = spawn(
-  process.execPath,
-  [
-    NODE_FLAG,
-    RUNNABLE_STRING
-  ],
-  { stdio: INHERIT_ARR }
-)
+// const spawnRes = spawn(
+//   process.execPath,
+//   [
+//     NODE_FLAG,
+//     RUNNABLE_STRING
+//   ],
+//   { stdio: INHERIT_ARR }
+// )
 
-spawnRes.stderr.pipe(process.stdout)
-spawnRes.stdin.write(STRING_INPUT)
-spawnRes.stdin.end()
+// spawnRes.stderr.pipe(process.stdout)
+// spawnRes.stdin.write(STRING_INPUT)
+// spawnRes.stdin.end()
 
 /*
   Running the above outputs...
@@ -96,5 +97,34 @@ spawnRes.stdin.end()
     - BECAUSE the inherit sets the child out to go to parent out...
       - removed the spawnRes.stdout.pipe(process.stdout)
       - the work is done via 'inherit' string
+*/ 
 
+
+
+
+
+// PROCESS 3, using a stream as 3rd param
+const spawnRes = spawn(
+  process.execPath,
+  [
+    NODE_FLAG,
+    RUNNABLE_STRING
+  ],
+  { stdio: STREAM_ERR }
+)
+
+spawnRes.stdin.write(STRING_INPUT)
+spawnRes.stdin.end()
+
+/*
+  Running the above will output
+    child-process error output
+    string input from parent here
+  
+  NOTES:
+  - passing a direct stream as array value, here in the err position
+  - BECAUSE OF THIS REPLACEMENT, 
+    the  manually-written spawnRes.stderr.pipe(process.stdout)
+      has been removed! as the array arg makes same action happen
+      
 */ 
