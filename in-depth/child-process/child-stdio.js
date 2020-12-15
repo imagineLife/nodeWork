@@ -10,19 +10,23 @@ const { spawn } = require('child_process');
 const NODE_FLAG = `-e`
 const RUNNABLE_STRING = `console.error('child-process error output');process.stdin.pipe(process.stdout)`;
 const STRING_INPUT = 'string input from parent here\n'
-const spawnRes = spawn(
-  process.execPath,
-  [
-    NODE_FLAG,
-    RUNNABLE_STRING
-  ],
-  { stdio: ['pipe','pipe','pipe'] }
-)
+const DEFAULT_ARR = ['pipe','pipe','pipe']
+const INHERIT_ARR = ['pipe','inherit','pipe']
 
-spawnRes.stdout.pipe(process.stdout)
-spawnRes.stderr.pipe(process.stdout)
-spawnRes.stdin.write(STRING_INPUT)
-spawnRes.stdin.end()
+// PROCESS 1, using explicit default stdio values
+// const spawnRes = spawn(
+//   process.execPath,
+//   [
+//     NODE_FLAG,
+//     RUNNABLE_STRING
+//   ],
+//   { stdio: DEFAULT_ARR }
+// )
+
+// spawnRes.stdout.pipe(process.stdout)
+// spawnRes.stderr.pipe(process.stdout)
+// spawnRes.stdin.write(STRING_INPUT)
+// spawnRes.stdin.end()
 
 /*
   NOTES
@@ -59,5 +63,38 @@ spawnRes.stdin.end()
     - write to child input stream
   - exit the child
     - triggers the parent to exit
+*/ 
+
+
+
+
+
+// PROCESS 2, replacing pipe in array with inherit in 2nd param
+const spawnRes = spawn(
+  process.execPath,
+  [
+    NODE_FLAG,
+    RUNNABLE_STRING
+  ],
+  { stdio: INHERIT_ARR }
+)
+
+spawnRes.stderr.pipe(process.stdout)
+spawnRes.stdin.write(STRING_INPUT)
+spawnRes.stdin.end()
+
+/*
+  Running the above outputs...
+    child-process error output
+    string input from parent here
+
+  NOTES
+  - used INHERIT_ARR
+    - using inherit here because inherit, well, inherits the parent stream?!
+    - piping child out to parent out
+  - SO!
+    - BECAUSE the inherit sets the child out to go to parent out...
+      - removed the spawnRes.stdout.pipe(process.stdout)
+      - the work is done via 'inherit' string
 
 */ 
