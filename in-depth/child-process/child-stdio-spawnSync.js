@@ -29,6 +29,7 @@ spawnSync(
     - pipe child input to parent output
   - pass config to child process
     - pass input to child process
+      - THIS MUST have the 'pipe' option in the next arr
     - pass stdio arr
       - pipe std input
       - inherit std output
