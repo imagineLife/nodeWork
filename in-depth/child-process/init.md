@@ -24,3 +24,7 @@
 - Config Options
   - exec && execSync take an options obj as 2nd param
   - spawn && spawnSync take an options obj as 3rd param
+- `ChildProcess` instances
+  - `exec` && `spawn` return a `ChildProcess`instance
+  - this instance has a `stdin`, `stdout`, && a `stderr` stream, representing the I/O of the subprocess
+  - tis output can be altered (_see child-stdio.js_)
