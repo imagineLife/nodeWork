@@ -5,4 +5,40 @@
 - throws if not matching
 - `assert` module
   - throws an `AssertionError` when val is falsy
--
+
+## Assert Module Methods
+
+- `ok(val)`
+  - same as `assert(val)`
+- `equal(a,b)`
+  - a == b
+- `notEqual(a,b)`
+  - a != b
+- `strictEqual(a,b)`
+  - a === b
+- `notStrictEqual(a,b)`
+  - a !== b
+- `deepEqual(a,b)`
+  - cooercive deep equaling of all vals in an obj
+- `notDeepEqual(a,b)`
+  - cooercive deep unequality comparison of all vals in an obj
+- `deepStrictEqual(a,b)`
+  - strict equal for all vals in an obj
+- `notDeepStrictEqual(a,b)`
+  - strict unequal for all vals in an obj
+- `throws(fn)`
+  - asserts that a fn throws
+- `doesNotThrow(fn)`
+  - asserts a fn doesn't throw
+- `rejects(promise-or-async-fn)`
+  - asserts the promise, or async fn, rejects
+- `doesNotReject(promise-or-async-fn)`
+  - asserts that the promise resolves
+- `ifError(errObj)`
+  - asserts err object is falsy
+- `match(str,regex)`
+  - asserts string fits in regex
+- `doesNotMatch(str,regex)`
+  - str fails on regex
+- `fail()`
+  - force an `AssertionError` to throw
