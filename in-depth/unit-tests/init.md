@@ -5,6 +5,7 @@
 - throws if not matching
 - `assert` module
   - throws an `AssertionError` when val is falsy
+  - does "nothing" on success
 
 ## Assert Module Methods
 
@@ -42,3 +43,18 @@
   - str fails on regex
 - `fail()`
   - force an `AssertionError` to throw
+
+## Grouping Assert Methods
+
+- Check for thruthiness
+  - assert
+  - assert.ok
+- Equality
+  - strict && loose
+  - pattern matching
+- Deep Equality
+  - ifError
+  - throws
+  - rejects
+- Unreachability
+  - fail
