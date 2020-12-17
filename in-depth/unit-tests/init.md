@@ -58,3 +58,21 @@
   - rejects
 - Unreachability
   - fail
+
+## All That is needed
+
+- there are other testing libraries
+- the more 'complpex' the test, the more use-case-speific the test will be, proving less-valuable over time
+
+## Deprecated Modules as of node 15.x
+
+- `deepEqual`
+  - use `deepStrictEqual`
+- `notDeepEqual`
+  - use `notDeepStrictEqual`
+- `equal`
+  - use `strictEqual`
+- `notEqual`
+  - use `notStrictEqual`
+- `fail`
+  - use .... `fail([message])`?
