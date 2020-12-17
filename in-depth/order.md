@@ -9,3 +9,5 @@
 - fs
 - streams
 - dirs
+- process-and-os
+- child-process
