@@ -8,3 +8,9 @@ const add = (a, b) => {
 }
 throws(() => add('5', '5'), FAIL_ERR)
 doesNotThrow(() => add(5, 5))
+
+/*
+  NOTICE
+  the test of `add`
+  is wrapped in an anonymous fn
+*/
