@@ -1,4 +1,4 @@
-const assert = require('assert')
+const { throws, doesNotThrow} = require('assert')
 const FAIL_ERR = Error('inputs must be numbers')
 const add = (a, b) => {
   if (typeof a !== 'number' || typeof b !== 'number') {
@@ -6,5 +6,5 @@ const add = (a, b) => {
   }
   return a + b
 }
-assert.throws(() => add('5', '5'), FAIL_ERR)
-assert.doesNotThrow(() => add(5, 5))
+throws(() => add('5', '5'), FAIL_ERR)
+doesNotThrow(() => add(5, 5))
