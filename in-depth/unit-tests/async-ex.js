@@ -35,10 +35,22 @@ const mockRequest = (reqURL, cb) => {
   }, TIME_VAL)
 }
 
-mockRequest(REAL_URL, (err, data) => { 
-  ifError(err) 
-})
+function ifErrorCB(err, data){
+  ifError(err)
+}
 
-mockRequest(ERR_URL, (err, data) => {
+function dseCB(err,data){
   deepStrictEqual(err, ERR_OBJ)
-})
+}
+
+mockRequest(REAL_URL, ifErrorCB)
+
+mockRequest(ERR_URL, dseCB)
+
+
+/*
+  NOTICE on above
+  - built a mockRequest, simulating a fetch req
+    - includes a callback
+  - 
+*/ 
