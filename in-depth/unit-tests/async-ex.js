@@ -75,3 +75,14 @@ const mockAsyncReq = async fetchURL => {
 
 doesNotReject(mockAsyncReq(REAL_URL))
 rejects(mockAsyncReq(ERR_URL), ERR_OBJ)
+
+/*
+  NOTES on above
+  - asyncs always return a promise
+  - leverage asunc fn as mockAsyncReq
+  - the promise allows leveraging the `rejects` and the `doesNotReject` methods
+    - THESE methods return promises
+    - these promises REJECT with an AssertionError
+    - AssertionError will not be THROWN
+  - 
+*/ 
