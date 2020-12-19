@@ -51,6 +51,8 @@ mockRequest(ERR_URL, dseCB)
 /*
   NOTICE on above
   - built a mockRequest, simulating a fetch req
-    - includes a callback
-  - 
+    - includes a callback for testing
+  - REAL_URL makes ifError NOT throw the AssertionError
+  - ERR_URL makes deepStrictEqual NOT throw error
+    when comparing the error to the ERR_OBJ
 */ 
