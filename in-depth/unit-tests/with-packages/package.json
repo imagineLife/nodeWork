@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "tap-add": "./node_modules/.bin/tap test/add.test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
