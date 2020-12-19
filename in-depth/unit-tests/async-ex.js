@@ -1,4 +1,4 @@
-const { throws, doesNotThrow} = require('assert')
+const { throws, doesNotThrow, ifError } = require('assert')
 const FAIL_ERR = Error('inputs must be numbers')
 const add = (a, b) => {
   if (typeof a !== 'number' || typeof b !== 'number') {
@@ -14,3 +14,4 @@ doesNotThrow(() => add(5, 5))
   the test of `add`
   is wrapped in an anonymous fn
 */
+
