@@ -84,3 +84,9 @@
     - 1 primitive value is a string "1"
     - 1 primitive value is a number 1
   - `deepStrictEqual` will fail on that comparison
+- error handling assertions
+  - `throws`
+  - `ifError`
+  - `rejects`
+    - useful for asserting errors are occuring in async logic
+  - 
