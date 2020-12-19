@@ -2,9 +2,13 @@ const {
   throws, 
   doesNotThrow, 
   ifError,
-  deepStrictEqual
+  deepStrictEqual,
+  doesNotReject,
+  rejects
 } = require('assert')
+
 const FAIL_ERR = Error('inputs must be numbers')
+
 const add = (a, b) => {
   if (typeof a !== 'number' || typeof b !== 'number') {
     throw FAIL_ERR
@@ -56,3 +60,18 @@ mockRequest(ERR_URL, dseCB)
   - ERR_URL makes deepStrictEqual NOT throw error
     when comparing the error to the ERR_OBJ
 */ 
+
+
+
+
+const { promisify } = require('util')
+const promiseTimeout = promisify(setTimeout)
+
+const mockAsyncReq = async fetchURL => {
+  await promiseTimeout(TIME_VAL)
+  if(fetchURL == ERR_URL) throw ERR_OBJ
+  return Buffer.from(FAKE_DATA_STR)
+}
+
+doesNotReject(mockAsyncReq(REAL_URL))
+rejects(mockAsyncReq(ERR_URL), ERR_OBJ)
