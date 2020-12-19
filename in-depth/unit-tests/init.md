@@ -89,4 +89,12 @@
   - `ifError`
   - `rejects`
     - useful for asserting errors are occuring in async logic
-  - 
+
+
+## AssertionErros
+- when an assertion fails, an `AssertionError` i shtrown
+- this causes the process to crash
+- all following assertions dont run, in this case
+- `Test Harnesses` group tests together
+  - Pure (_library_)
+  - Jest (_library_)
