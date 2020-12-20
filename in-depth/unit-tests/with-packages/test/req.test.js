@@ -23,9 +23,9 @@ test('responds with data', ({ ok, strictDeepEqual, ifError, end }) => {
     */ 
     ok(Buffer.isBuffer(data))
 
-    // 
+    // strictDeepEqual works same as node's assert.deepStrictEqual
     strictDeepEqual(data, Buffer.from(ASSUMED_SUCCESSFUL_RES_STR))
-    
+
     end()
   })
 })
