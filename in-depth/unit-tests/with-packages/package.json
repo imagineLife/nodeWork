@@ -7,12 +7,13 @@
     "tap-all": "./node_modules/.bin/tap test/*",
     "tap-req": "./node_modules/.bin/tap test/req.test.js",
     "tap-add": "./node_modules/.bin/tap test/add.test.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jest": "^26.6.3",
     "tap": "^14.11.0"
   }
 }

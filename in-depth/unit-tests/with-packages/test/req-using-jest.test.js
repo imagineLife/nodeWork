@@ -51,5 +51,9 @@ test('responds with data', (done) => {
 
   NOTES
   - `test` && `expect` come from jest
-  - 
+  - testing responds with data
+    - assuring err == null.toBe(true)
+      - coercive quality check
+    - assuring Buffer.isBuffer
+      - toBeTruthy is like testiting `ok` in the tap test approach
 */ 
