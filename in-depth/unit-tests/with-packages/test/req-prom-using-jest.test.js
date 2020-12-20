@@ -1,4 +1,5 @@
-// make Jest work with nodes setTimeout instead of overriding it
+// make Jest work with nodes setTimeout instead of overriding setTimeout
+//https://nodejs.org/dist/latest-v14.x/docs/api/timers.html
 global.setTimeout = require('timers').setTimeout
 const req = require('../req-prom')
 
