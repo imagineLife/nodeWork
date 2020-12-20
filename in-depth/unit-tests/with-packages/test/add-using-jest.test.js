@@ -24,6 +24,8 @@ test('adds two numbers', async () => {
     `test` and `expect` vars
     `./node_modules/.bin/jest test/add-using-jest.test.js`
 
+
+
     RESULTS
      PASS  test/add-using-jest.test.js
     ✓ throw when inputs are not numbers (4 ms)
@@ -33,5 +35,31 @@ test('adds two numbers', async () => {
     Tests:       2 passed, 2 total
     Snapshots:   0 total
     Time:        1.726 s
+    Ran all test suites matching /test\/add-using-jest.test.js/i.
+
+
+
+
+
+
+
+    CAN include a 'coverage report'
+    `./node_modules/.bin/jest test/add-using-jest.test.js --coverage`    
+
+    RESULTS 
+     PASS  test/add-using-jest.test.js
+    ✓ throw when inputs are not numbers (4 ms)
+    ✓ adds two numbers (1 ms)
+
+    ----------|---------|----------|---------|---------|-------------------
+    File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+    ----------|---------|----------|---------|---------|-------------------
+    All files |     100 |      100 |     100 |     100 |                   
+     add.js   |     100 |      100 |     100 |     100 |                   
+    ----------|---------|----------|---------|---------|-------------------
+    Test Suites: 1 passed, 1 total
+    Tests:       2 passed, 2 total
+    Snapshots:   0 total
+    Time:        1.541 s
     Ran all test suites matching /test\/add-using-jest.test.js/i.
 */ 
