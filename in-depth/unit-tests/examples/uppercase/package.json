@@ -1,0 +1,12 @@
+{
+  "name": "uppercase",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node uc.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
