@@ -21,5 +21,19 @@ function dseCB(err,data){
   deepStrictEqual(err, NO_BUFFER_ERR)
 }
 
+function ifErrorCB(err, data){
+  ifError(err)
+}
+
 doesNotThrow(() => store(Buffer.from('1234'),(res) => {}))
 store(1234, dseCB)
+
+// asserts no error
+store(Buffer.from('123456789'), ifErrorCB)
+
+// assert res.id.length === 4
+store(Buffer.from('123456789'),(n, obj) => {
+  console.log('obj')
+  console.log(obj)
+  equal(obj.id.length, 4)
+})

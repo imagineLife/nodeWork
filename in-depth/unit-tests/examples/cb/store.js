@@ -1,8 +1,7 @@
-const ERR_STR = 'input must be a buffer'
-const NO_BUFFER_ERR = Error(ERR_STR)
+'use strict'
 module.exports = (value, cb) => {
   if (Buffer.isBuffer(value) === false) {
-    cb(NO_BUFFER_ERR)
+    cb(Error('input must be a buffer'))
     return
   }
   setTimeout(() => {
