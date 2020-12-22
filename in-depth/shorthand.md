@@ -58,9 +58,14 @@
 
 ### Adding A Breakpoint
 
-`node --inspect-brk`
+`node --inspect-brk file-name.js`
 
 - start the thing in inspect-brk mode
 - click a line-number in the sources output
 - click the blue arrow on the right
--
+
+`node inspect file-name.js`
+
+- **leverage a "debugger" keyord in the code before starting**
+- starthe the thing in inspect mode
+- open the chrome inspector (_see above_)
