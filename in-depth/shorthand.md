@@ -37,3 +37,19 @@
 - `node —require`
 - `node -r preloadingfile.js real-file.js`
   - useful when the pre-loaded file is used to configure the process
+
+## Debugging
+
+`--inspect`
+
+- starts inspect mode
+
+`--inspect-brk`
+
+- tell the process to start with an active breakpoint at the beginning
+- to USE the inspect && debugging process
+  - open chrome
+  - navigate to `chrome://inspect`
+  - click the `inspect` link under the **Target** header
+  - assure the `Sources ` tab is open
+    - `F9` will be the tool for navigating, step-by-step, through the code
