@@ -1,3 +1,10 @@
+/*
+  a "functional" approach
+  - levearging object.create
+  - takes 2 params
+    - a 'base' object to inherit
+    - an optional Properties Descriptor Object
+*/ 
 // 'Base' object
 const animal = {
   type: `animal`,
@@ -6,7 +13,7 @@ const animal = {
       console.warn(`Please add a name to this ${this.type}`)
       return;
     }
-    console.log(`${this.name}, an ${this.type}  can${this.canDo}`)
+    console.log(`${this.name}, an ${this.type} can ${this.canDo}`)
   },
 };
 
@@ -25,5 +32,20 @@ const ralph = Object.create(dog, {
   name: { value: `Ralph` },
 });
 
+const sally = Object.create(dog, {
+  name: { value: `Sally` },
+});
+
 ralph.sayItAll()
-cow.sayItAll()
+sally.sayItAll()
+
+// console.log(Object.getOwnPropertyDescriptor(ralph, 'name'))
+/* 
+  Returns 
+    {
+      value: 'Ralph',
+      writable: false,
+      enumerable: false,
+      configurable: false
+    }
+*/
