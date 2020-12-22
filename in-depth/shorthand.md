@@ -9,6 +9,8 @@
     - [Leveraging CLI options](#leveraging-cli-options)
     - [Adding A Breakpoint](#adding-a-breakpoint)
   - [Functions](#functions)
+    - [Scoped THIS keyword](#scoped-this-keyword)
+    - [Calling objects on functions](#calling-objects-on-functions)
 
 # Shorthand notes
 
@@ -84,6 +86,8 @@
 
 ## Functions
 
+### Scoped THIS keyword
+
 - when fn is assigned to an obj
   - the `this` keyword within the fn REFERS TO THE OBJ on which the fn was called
 
@@ -98,4 +102,19 @@ const b = { id: 234, fn: a.fn };
 
 a.fn(); //123
 b.fn(); //234
+```
+
+### Calling objects on functions
+
+- fns have a `call` method
+- the `call` method can be used to set the fns `this` context
+
+```js
+function doIt() {
+  console.log(this.water);
+}
+const a = { water: "melon" };
+const b = { water: "slide" };
+doIt.call(a); //melon
+doIt.call(b); //slide
 ```
