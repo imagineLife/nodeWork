@@ -40,6 +40,8 @@
 
 ## Debugging
 
+### Leveraging CLI options
+
 `--inspect`
 
 - starts inspect mode
@@ -53,3 +55,12 @@
   - click the `inspect` link under the **Target** header
   - assure the `Sources ` tab is open
     - `F9` will be the tool for navigating, step-by-step, through the code
+
+### Adding A Breakpoint
+
+`node --inspect-brk`
+
+- start the thing in inspect-brk mode
+- click a line-number in the sources output
+- click the blue arrow on the right
+-
