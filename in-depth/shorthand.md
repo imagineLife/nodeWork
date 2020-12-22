@@ -1,3 +1,16 @@
+- [Shorthand notes](#shorthand-notes)
+  - [CLI args](#cli-args)
+      - [Check Syntax](#check-syntax)
+      - [Evaluate From Shell](#evaluate-from-shell)
+        - [Print Results](#print-results)
+        - [Evaluate Results](#evaluate-results)
+      - [PreLoad a Module](#preload-a-module)
+  - [Debugging](#debugging)
+    - [Leveraging CLI options](#leveraging-cli-options)
+    - [Adding A Breakpoint](#adding-a-breakpoint)
+  - [Functions](#functions)
+    -
+
 # Shorthand notes
 
 ## CLI args
@@ -69,3 +82,5 @@
 - **leverage a "debugger" keyord in the code before starting**
 - starthe the thing in inspect mode
 - open the chrome inspector (_see above_)
+
+## Functions
