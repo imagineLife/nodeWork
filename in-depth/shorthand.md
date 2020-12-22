@@ -9,7 +9,6 @@
     - [Leveraging CLI options](#leveraging-cli-options)
     - [Adding A Breakpoint](#adding-a-breakpoint)
   - [Functions](#functions)
-    -
 
 # Shorthand notes
 
@@ -84,3 +83,19 @@
 - open the chrome inspector (_see above_)
 
 ## Functions
+
+- when fn is assigned to an obj
+  - the `this` keyword within the fn REFERS TO THE OBJ on which the fn was called
+
+```js
+const a = {
+  id: 123,
+  fn: function () {
+    console.log(this.id);
+  },
+};
+const b = { id: 234, fn: a.fn };
+
+a.fn(); //123
+b.fn(); //234
+```
