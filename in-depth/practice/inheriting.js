@@ -49,3 +49,14 @@ sally.sayItAll()
       configurable: false
     }
 */
+
+
+// to MAXIMIZE the functional paradigm
+function createCow(name){
+  return Object.create(cow, {
+    name: { value: name }
+  })
+}
+
+const colly = createCow('ted')
+colly.sayItAll()
