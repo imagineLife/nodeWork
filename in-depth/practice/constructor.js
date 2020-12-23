@@ -34,16 +34,28 @@ function Dog(name){
   Wolf.call(this, `${name} the dog`)
 }
 
+/*
+  inherit
+  - uses empty constructor fn
+  - creates a new obj with prototype
+    POINTING to the passed param obj prototype
+*/ 
 function inherit(protoProp){
   function ChainLink(){}
   ChainLink.prototype = protoProp;
   return new ChainLink()
 }
 
+// Dog inherits wolf
 Dog.prototype = inherit(Wolf.prototype)
+
+// add bark to dog
 Dog.prototype.bark = function () {
   console.log(`${this.name}: arf`)
 }
+
+const Waldo = new Wolf('Waldo')
+Waldo.yowl() // Waldo hoooowl
 
 // the prototype of Dolly is Dog
 const Dolly = new Dog('Dolly')
