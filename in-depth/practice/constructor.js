@@ -61,3 +61,24 @@ Waldo.yowl() // Waldo hoooowl
 const Dolly = new Dog('Dolly')
 Dolly.bark()
 Dolly.yowl()
+
+
+/*
+  can also use native node module for inheritance
+  
+  const { inherits } = require('utils')
+  function Animal(name){
+    this.name = name
+  }
+
+  function Mammal(){
+    this.type = 'mammal'
+    this.sayType = `${this.name} is a mammal`
+  }
+
+  Bear.prototype.move = function(){
+    console.log(`${this.name} crawling`)
+  }
+
+  inherits()
+*/ 
