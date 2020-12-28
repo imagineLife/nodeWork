@@ -19,3 +19,6 @@ class SportsCar extends Vehicle{
 const zippy = new SportsCar('Zippy')
 zippy.honk()
 zippy.vroom()
+
+console.log(Object.getPrototypeOf(zippy) === SportsCar.prototype) //true
+console.log(Object.getPrototypeOf(SportsCar.prototype) === Vehicle.prototype) //true
