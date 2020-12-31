@@ -66,7 +66,6 @@ async function doItAsync(){
 
 
 // Promise.all syntax
-
 async function doItAsync(){
   let allPromises =[await CRes(),await BRes(),await ARes()]
   Promise.all(allPromises).then(arr => {
