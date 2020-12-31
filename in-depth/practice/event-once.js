@@ -13,3 +13,6 @@
       - logs 'passed'
 
 */ 
+
+const { EventEmitter } = require('events');
+let count = 0;
