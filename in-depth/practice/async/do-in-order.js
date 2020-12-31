@@ -36,11 +36,11 @@ const fnC = (cb) => {
 // })
 
 // leveraging nodes's 'promisify' module
-// Promise then chaining
 const ARes = promisify(fnA)
 const BRes = promisify(fnB)
 const CRes = promisify(fnC)
 
+// Promise chaining
 async function doItAsync(){
   CRes()
   .then(cLetter => {
@@ -56,4 +56,21 @@ async function doItAsync(){
   })
 }
 
+// await syntax
+// async function doItAsync(){
+//   const c = await CRes()
+//   const b = await BRes()
+//   const a = await ARes()
+//   console.log(c,b,a)
+// }
+
+
+// Promise.all syntax
+
+async function doItAsync(){
+  let allPromises =[await CRes(),await BRes(),await ARes()]
+  Promise.all(allPromises).then(arr => {
+    arr.map(i => console.log(i))
+  })
+}
 doItAsync()
