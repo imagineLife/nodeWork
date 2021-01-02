@@ -11,6 +11,10 @@
   - [Functions](#functions)
     - [Scoped THIS keyword](#scoped-this-keyword)
     - [Calling objects on functions](#calling-objects-on-functions)
+  - [Prototypical Inheritance](#prototypical-inheritance)
+    - [Functionally](#functionally)
+    - [Using Constructor Functions](#using-constructor-functions)
+    - [With Class-Syntax Constructor](#with-class-syntax-constructor)
 
 # Shorthand notes
 
@@ -118,3 +122,38 @@ const b = { water: "slide" };
 doIt.call(a); //melon
 doIt.call(b); //slide
 ```
+
+## Prototypical Inheritance
+
+### Functionally
+
+see `practice/inheriting.js` for a more robust example
+
+```js
+// the 'parent' or 'base' obj
+const animal = {
+  about: `A lovely animal`,
+  sayItAll: `${this.name}, ${this.about} ${this.canDo}`,
+};
+
+// consuming the base obj, creating
+const dog = Object.create(animal, {
+  canDo: { value: "that can bark" },
+});
+
+// consuming the above obj
+const ralph = Object.create(dog, {
+  name: { value: `Ralph` },
+});
+```
+
+### Using Constructor Functions
+
+see `practice/constructor.js` for a more robbust example
+
+- create a fn
+  - take a name param
+  - dont return anything
+  - assign `this.name = name`
+
+### With Class-Syntax Constructor
