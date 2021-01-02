@@ -13,6 +13,7 @@ const STRING_INPUT = 'string input from parent here\n'
 const DEFAULT_ARR = ['pipe','pipe','pipe']
 const INHERIT_ARR = ['pipe','inherit','pipe']
 const STREAM_ERR = ['pipe','inherit', process.stdout]
+const IGNORE_ERROR = ['pipe', 'inherit', 'ignore']
 
 // PROCESS 1, using explicit default stdio values
 // const spawnRes = spawn(
@@ -104,17 +105,17 @@ const STREAM_ERR = ['pipe','inherit', process.stdout]
 
 
 // PROCESS 3, using a stream as 3rd param
-const spawnRes = spawn(
-  process.execPath,
-  [
-    NODE_FLAG,
-    RUNNABLE_STRING
-  ],
-  { stdio: STREAM_ERR }
-)
+// const spawnRes = spawn(
+//   process.execPath,
+//   [
+//     NODE_FLAG,
+//     RUNNABLE_STRING
+//   ],
+//   { stdio: STREAM_ERR }
+// )
 
-spawnRes.stdin.write(STRING_INPUT)
-spawnRes.stdin.end()
+// spawnRes.stdin.write(STRING_INPUT)
+// spawnRes.stdin.end()
 
 /*
   Running the above will output
@@ -127,4 +128,32 @@ spawnRes.stdin.end()
     the  manually-written spawnRes.stderr.pipe(process.stdout)
       has been removed! as the array arg makes same action happen
       
+*/ 
+
+
+
+
+
+
+
+// PROCESS 4, ignoring error output
+const spawnRes = spawn(
+  process.execPath,
+  [
+    NODE_FLAG,
+    RUNNABLE_STRING
+  ],
+  { stdio: IGNORE_ERROR }
+)
+
+spawnRes.stdin.write(STRING_INPUT)
+spawnRes.stdin.end()
+
+/*
+  Running the above outputs
+    string input from parent here
+  
+  NOTE:
+  - ignore... ignores the stream, in this case the sterr stream
+  - 
 */ 
