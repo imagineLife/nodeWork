@@ -6,7 +6,9 @@ const {
   closeSync, 
   openSync,
   readFileSync,
-  readdir
+  readdir,
+  writeFile,
+  promises
 } = require('fs')
 
 
@@ -30,24 +32,38 @@ for (const f of files) closeSync(openSync(f, 'w'))
 
 const out = join(__dirname, 'out.txt')
 
-function exercise () {  
+// read the files
+// write the filenames to the out.txt file (the 'out' var)
+
+// Callbacks
+function readAndWrite () {  
   readdir(PROJECT_PATH, (err, filesArr) => {
     if(err) console.log({err})
-    console.log('files: ')
-    console.log(filesArr)
+    writeFile(out, filesArr.toString(), {flag: 'a'}, (err) => {
+      if (err) throw err;
+    });
   })
-  // TODO read the files in the project folder  
-  // and write them to the out.txt file
 }
 
-exercise()
+// async
+async function readAndWrite () {  
+  try{
+    const filesArr = await promises.readdir(PROJECT_PATH)//, (err, filesArr) => {
+    const x = await promises.writeFile(out, filesArr.toString(), {flag: 'a'})
+    const stringifiedOutput = readFileSync(out).toString()
+    const stringFiles = files.toString()
+
+    assert(stringifiedOutput, stringFiles)
+    console.log('passed!')
+  }catch(e){
+    console.log({e})
+  }
+}
+
+readAndWrite()
 
 // const stringifiedOutput = readFileSync(out).toString()
-
-const stringFiles = files.toString()
-console.log('stringFiles')
-console.log(stringFiles)
-
+// const stringFiles = files.toString()
 
 // assert(stringifiedOutput, stringFiles)
-console.log('passed!')
+// console.log('passed!')
