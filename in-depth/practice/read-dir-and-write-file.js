@@ -36,14 +36,14 @@ const out = join(__dirname, 'out.txt')
 // write the filenames to the out.txt file (the 'out' var)
 
 // Callbacks
-function readAndWrite () {  
-  readdir(PROJECT_PATH, (err, filesArr) => {
-    if(err) console.log({err})
-    writeFile(out, filesArr.toString(), {flag: 'a'}, (err) => {
-      if (err) throw err;
-    });
-  })
-}
+// function readAndWrite () {  
+//   readdir(PROJECT_PATH, (err, filesArr) => {
+//     if(err) console.log({err})
+//     writeFile(out, filesArr.toString(), {flag: 'a'}, (err) => {
+//       if (err) throw err;
+//     });
+//   })
+// }
 
 // async
 async function readAndWrite () {  
@@ -59,6 +59,7 @@ async function readAndWrite () {
     console.log({e})
   }
 }
+
 
 readAndWrite()
 
