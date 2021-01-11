@@ -23,12 +23,10 @@ if(args.length > 2){
 
     if(a.includes(`--DIR`)){
       WATCH_DIR = applyArgToCurDir(a)
-      console.log(`watching ${WATCH_DIR}`)
     }
 
     if(a.includes(`--LOG`)){
       LOG_FILE = applyArgToCurDir(a)
-      console.log(`logging to ${LOG_FILE}`)
     }
   })
   
