@@ -1,9 +1,26 @@
 const EventEmitter = require('events');
-const { watch, statSync } = require('fs');
+const { 
+  watch, 
+  statSync,
+  readdirSync 
+} = require('fs');
 const { join } = require('path');
 
+/*
+  Setup Event-Manager
+*/ 
 const Ev = new EventEmitter()
-console.log(`Event-Emitter created`);
+console.log(`Event-Handler setup`);
+
+Ev.on('file-created',function(f){
+  console.log(`file-created`)
+  console.log({f})
+  knownFiles.add(f)
+})
+
+console.log({'Event Listeners': Ev.eventNames()})
+
+
 
 let args = process.argv
 
@@ -33,12 +50,23 @@ if(args.length > 2){
   }) 
 }
 
+// track the files in the watched dir
+let knownFiles = new Set(readdirSync(WATCH_DIR))
+console.log({knownFiles})
+
 watch(WATCH_DIR, (e, fileName) => {
   console.log({fileName})
-  // get change-times of the file
-  // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
-  const stats = statSync(join(WATCH_DIR, fileName))
-  console.log({stats})
-  // console.log({mtimeMs})
-  
+
+  // when file is NOT known
+  if (knownFiles.has(fileName) === false) {
+    e = 'file-created'
+    Ev.emit(e,fileName)
+  }
+
+  else{
+    // get change-times of the file
+    // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
+    const stats = statSync(join(WATCH_DIR, fileName))
+    console.log({stats})
+  }
 })
