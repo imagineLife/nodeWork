@@ -1,4 +1,6 @@
 const EventEmitter = require('events');
+const { watch, statSync } = require('fs');
+const { join } = require('path');
 
 const Ev = new EventEmitter()
 console.log(`Event-Emitter created`);
@@ -28,7 +30,15 @@ if(args.length > 2){
     if(a.includes(`--LOG`)){
       LOG_FILE = applyArgToCurDir(a)
     }
-  })
-  
+  }) 
 }
 
+watch(WATCH_DIR, (e, fileName) => {
+  console.log({fileName})
+  // get change-times of the file
+  // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
+  const stats = statSync(join(WATCH_DIR, fileName))
+  console.log({stats})
+  // console.log({mtimeMs})
+  
+})
