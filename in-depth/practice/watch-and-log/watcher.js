@@ -16,6 +16,15 @@ Ev.on('file-created',function(f){
   console.log(`file-created`)
   console.log({f})
   knownFiles.add(f)
+  console.log({knownFiles})
+})
+
+Ev.on('file-deleted',function(f){
+  console.log(`file-deleted`)
+  console.log({f})
+  knownFiles.delete(f)
+  console.log({knownFiles})
+  
 })
 
 console.log({'Event Listeners': Ev.eventNames()})
@@ -64,9 +73,17 @@ watch(WATCH_DIR, (e, fileName) => {
   }
 
   else{
-    // get change-times of the file
-    // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
-    const stats = statSync(join(WATCH_DIR, fileName))
-    console.log({stats})
+    try{
+      // get change-times of the file
+      // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
+      const stats = statSync(join(WATCH_DIR, fileName))
+      console.log({stats})
+    } catch(err){
+      // catch DELETED FILES
+      if(err.code === 'ENOENT'){
+        e = 'file-deleted'
+        Ev.emit(e,fileName)
+      }
+    }
   }
 })
