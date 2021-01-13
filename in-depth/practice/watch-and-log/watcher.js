@@ -6,6 +6,8 @@
     the file to post json logs to, relative to current dir
 */ 
 
+
+// Dependencies
 const EventEmitter = require('events');
 const { 
   watch, 
@@ -14,13 +16,15 @@ const {
 } = require('fs');
 const { join } = require('path');
 
+const { create } = require('./lib')
+
 /*
   Setup Event-Manager
 */ 
 const Ev = new EventEmitter()
 console.log(`Event-Handler setup`);
 
-Ev.on('file-created',function(f){
+Ev.on('file-created', async function(f){
   console.log(`file-created`)
   console.log({f})
   knownFiles.add(f)
@@ -44,8 +48,6 @@ let args = process.argv
 // default vars
 let WATCH_DIR = __dirname;
 let LOG_FILE = __filename;
-// console.log({LOG_FILE})
-// console.log({WATCH_DIR})
 
 function applyArgToCurDir(str){
   let argVal = str.substring(6);
