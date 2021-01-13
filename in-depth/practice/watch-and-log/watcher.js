@@ -1,3 +1,11 @@
+/*
+  takes 2 cli params
+  --DIR
+    the directory to watch, relative to current dir
+  --LOG
+    the file to post json logs to, relative to current dir
+*/ 
+
 const EventEmitter = require('events');
 const { 
   watch, 
