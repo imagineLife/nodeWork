@@ -44,7 +44,7 @@ async function create(fileName,data,callback){
 	}
 }
 
-async function update(fileName, data){
+function update(fileName, data){
 
 	/*open the file
 		passes the r+ flag for allowing writing
@@ -52,39 +52,35 @@ async function update(fileName, data){
 		WANNA KNOW MORE ABOUT FLAGS?
 			https://nodejs.org/api/fs.html#fs_file_system_flags
 	*/
-	try{
-		
-		const { fd } = await fs.promises.open(fileName,'r+');
-		
+	fs.open(fileName,'r+', (err, fileDescriptor) => {
+		if(err || !fileDescriptor){
+			console.log('Could not open the file for editing. This file may not exist.')
+		}
+			
 		// convert fileData to string
 		const stringData = JSON.stringify(data)
 
 		//truncate the file
-		fs.ftruncate(fd, (err) => {
+		fs.ftruncate(fileDescriptor, (err) => {
 			if(err){
 				console.log('Error truncating file')
 			}
 
 			//write to the file and close the file
 			//writeSync might not be worth it
-			fs.writeFile(fd, stringData, (err) => {
+			fs.writeFile(fileDescriptor, stringData, (err) => {
 				if(err){
 					console.log('Error Writing to existing file')
 				}
 
-				fs.close(fd, err => {
+				fs.close(fileDescriptor, err => {
 					if(err){
 						console.log('Error CLOSING file')
 					}
 				})
 			})
 		})
-	}catch(e){
-		console.log('lib update error')
-		console.log(e)
-		console.log('// - - - - - //')
-		return callback('Could not open the file for editing. This file may not exist.')
-	}
+	})
 }
 
 module.exports.create = create;
