@@ -16,19 +16,20 @@ const {
 } = require('fs');
 const { join } = require('path');
 
-const { create } = require('./lib')
+const { update } = require('./lib')
 
 /*
   Setup Event-Manager
 */ 
 const Ev = new EventEmitter()
-console.log(`Event-Handler setup`);
 
 Ev.on('file-created', async function(f){
-  console.log(`file-created`)
-  console.log({f})
   knownFiles.add(f)
-  console.log({knownFiles})
+  update(LOG_FILE, {
+    date: new Date(),
+    action: 'file-created',
+    file: f
+  })
 })
 
 Ev.on('file-deleted',function(f){
@@ -74,7 +75,6 @@ let knownFiles = new Set(readdirSync(WATCH_DIR))
 console.log({knownFiles})
 
 watch(WATCH_DIR, (e, fileName) => {
-  console.log({fileName})
 
   // when file is NOT known
   if (knownFiles.has(fileName) === false) {
@@ -84,10 +84,11 @@ watch(WATCH_DIR, (e, fileName) => {
 
   else{
     try{
+      console.log('file NOT in og unknown file list')
       // get change-times of the file
       // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
-      const stats = statSync(join(WATCH_DIR, fileName))
-      console.log({stats})
+      // const stats = statSync(join(WATCH_DIR, fileName))
+      // console.log({stats})
     } catch(err){
       // catch DELETED FILES
       if(err.code === 'ENOENT'){
