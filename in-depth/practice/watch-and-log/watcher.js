@@ -6,16 +6,6 @@
     the file to post json logs to, relative to current dir
 */ 
 
-function d(){ return new Date() }
-
-function logObj(action,file){
-  return {
-    date: new Date(),
-    action,
-    file
-  }
-}
-
 // Dependencies
 const EventEmitter = require('events');
 const { 
@@ -24,8 +14,11 @@ const {
   readdirSync 
 } = require('fs');
 const { join } = require('path');
-
 const { update } = require('./lib/async')
+const { d,
+  logObj,
+  applyArgToCurDir 
+} = require('./helpers');
 
 /*
   Setup Event-Manager
@@ -43,21 +36,13 @@ Ev.on('file-deleted',function(file){
   update(LOG_FILE, logObj('file-deleted',file))
 })
 
-console.log({'Event Listeners': Ev.eventNames()})
-
-
-
 let args = process.argv
 
 // default vars
 let WATCH_DIR = __dirname;
 let LOG_FILE = __filename;
 
-function applyArgToCurDir(str){
-  let argVal = str.substring(6);
-    return `${__dirname}/${argVal}`
-}
-
+// Inpterpret CLI Args
 if(args.length > 2){
   args.forEach((a, argIdx) => {
     // skip default args
@@ -73,9 +58,8 @@ if(args.length > 2){
   }) 
 }
 
-// track the files in the watched dir
+// Global State
 let knownFiles = new Set(readdirSync(WATCH_DIR))
-console.log({knownFiles})
 
 watch(WATCH_DIR, (e, fileName) => {
 
