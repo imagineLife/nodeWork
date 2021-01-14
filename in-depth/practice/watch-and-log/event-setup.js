@@ -1,6 +1,8 @@
 // Dependencies
 const EventEmitter = require('events');
 const { update } = require('./lib/async')
+const { c } = require('./helpers');
+
 /*
   Setup Event-Manager
 */ 
@@ -24,6 +26,8 @@ function registerEventLoggers(logFile, filesSet){
     filesSet.delete(file)
     update(logFile, logObj('file-deleted',file))
   })
+
+  console.log(c.green, c.black,'Events are Registered', c.reset);
 }
 
 module.exports = { Ev, registerEventLoggers };

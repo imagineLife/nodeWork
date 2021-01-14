@@ -26,6 +26,8 @@ const {
   Ev,
   registerEventLoggers
  } = require('./event-setup');
+ const { c } = require('./helpers')
+
 
 //  helper
 function applyArgToCurDir(str){
@@ -51,6 +53,7 @@ if(args.length > 2){
       LOG_FILE = applyArgToCurDir(a)
     }
   }) 
+  console.log(c.green, c.black,'CLI Ars are Processed', c.reset);
 }
 
 // Global State
