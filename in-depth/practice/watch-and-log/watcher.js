@@ -31,7 +31,6 @@ Ev.on('file-created', async function(file){
 })
 
 Ev.on('file-deleted',function(file){
-  console.log('delete event handler')
   knownFiles.delete(file)
   update(LOG_FILE, logObj('file-deleted',file))
 })
