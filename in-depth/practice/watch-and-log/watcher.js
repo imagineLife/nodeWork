@@ -4,6 +4,15 @@
     the directory to watch, relative to current dir
   --LOG
     the file to post json logs to, relative to current dir
+
+
+  File Overview
+  - import dependencies
+  - create a 'helper fn'
+  - interpret CLI args
+  - build global state of existing file names in watched-directory
+  - register event handlers
+  - watch the directory
 */ 
 
 // Dependencies
@@ -24,13 +33,11 @@ function applyArgToCurDir(str){
     return `${__dirname}/${argVal}`
 }
 
+// Interpret CLI Args
 let args = process.argv
-
-// default vars
 let WATCH_DIR = __dirname;
 let LOG_FILE = __filename;
 
-// Inpterpret CLI Args
 if(args.length > 2){
   args.forEach((a, argIdx) => {
     // skip default args
@@ -47,14 +54,14 @@ if(args.length > 2){
 }
 
 // Global State
-let knownFiles = new Set(readdirSync(WATCH_DIR))
+let existingFileNames = new Set(readdirSync(WATCH_DIR))
 
-registerEventLoggers(LOG_FILE, knownFiles);
+registerEventLoggers(LOG_FILE, existingFileNames);
 
 watch(WATCH_DIR, (e, fileName) => {
 
   // when file is NOT known
-  if (knownFiles.has(fileName) === false) {
+  if (existingFileNames.has(fileName) === false) {
     e = 'file-created'
   }
   else{
