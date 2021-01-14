@@ -5,6 +5,8 @@
   --LOG
     the file to post json logs to, relative to current dir
 
+  Try running with 
+  node watcher.js --DIR=dir-to-watch --LOG=log.json
 
   File Overview
   - import dependencies
