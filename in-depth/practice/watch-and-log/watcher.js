@@ -16,28 +16,29 @@ const {
 } = require('fs');
 const { join } = require('path');
 
-const { update } = require('./lib')
+const { update } = require('./lib/async')
 
 /*
   Setup Event-Manager
 */ 
 const Ev = new EventEmitter()
 
-Ev.on('file-created', async function(f){
-  knownFiles.add(f)
+Ev.on('file-created', async function(file){
+  knownFiles.add(file)
   update(LOG_FILE, {
     date: new Date(),
     action: 'file-created',
-    file: f
+    file
   })
 })
 
-Ev.on('file-deleted',function(f){
-  console.log(`file-deleted`)
-  console.log({f})
-  knownFiles.delete(f)
-  console.log({knownFiles})
-  
+Ev.on('file-deleted',function(file){
+  knownFiles.delete(file)
+  update(LOG_FILE, {
+    date: new Date(),
+    action: 'file-deleted',
+    file
+  })
 })
 
 console.log({'Event Listeners': Ev.eventNames()})
