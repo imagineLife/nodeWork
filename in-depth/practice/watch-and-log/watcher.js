@@ -6,6 +6,15 @@
     the file to post json logs to, relative to current dir
 */ 
 
+function d(){ return new Date() }
+
+function logObj(action,file){
+  return {
+    date: new Date(),
+    action,
+    file
+  }
+}
 
 // Dependencies
 const EventEmitter = require('events');
@@ -25,20 +34,13 @@ const Ev = new EventEmitter()
 
 Ev.on('file-created', async function(file){
   knownFiles.add(file)
-  update(LOG_FILE, {
-    date: new Date(),
-    action: 'file-created',
-    file
-  })
+  update(LOG_FILE, logObj('file-created',file))
 })
 
 Ev.on('file-deleted',function(file){
+  console.log('delete event handler')
   knownFiles.delete(file)
-  update(LOG_FILE, {
-    date: new Date(),
-    action: 'file-deleted',
-    file
-  })
+  update(LOG_FILE, logObj('file-deleted',file))
 })
 
 console.log({'Event Listeners': Ev.eventNames()})
@@ -80,22 +82,9 @@ watch(WATCH_DIR, (e, fileName) => {
   // when file is NOT known
   if (knownFiles.has(fileName) === false) {
     e = 'file-created'
-    Ev.emit(e,fileName)
   }
-
   else{
-    try{
-      console.log('file NOT in og unknown file list')
-      // get change-times of the file
-      // const { ctimeMs, mtimeMs } = statSync(join(WATCH_DIR, fileName))
-      // const stats = statSync(join(WATCH_DIR, fileName))
-      // console.log({stats})
-    } catch(err){
-      // catch DELETED FILES
-      if(err.code === 'ENOENT'){
-        e = 'file-deleted'
-        Ev.emit(e,fileName)
-      }
-    }
+    e = 'file-deleted'
   }
+  Ev.emit(e,fileName)
 })
