@@ -74,3 +74,5 @@ watch(WATCH_DIR, (e, fileName) => {
   }
   Ev.emit(e,fileName)
 })
+Ev.once('tick', () => console.log(''))
+console.log(c.green, c.black,'Node File-Watcher Is On And Watching!', c.reset);
