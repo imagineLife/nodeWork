@@ -40,16 +40,14 @@ if(OUTPUT.length < 1){
   process.exit()
 }
 
-console.log({INPUT})
-console.log({OUTPUT})
+// Init Streams
+const gzip = createGzip();
+const source = createReadStream(INPUT);
+const destination = createWriteStream(OUTPUT);
 
-// const gzip = createGzip();
-// const source = createReadStream('input.txt');
-// const destination = createWriteStream('input.txt.gz');
-
-// pipeline(source, gzip, destination, (err) => {
-//   if (err) {
-//     console.error('An error occurred:', err);
-//     process.exitCode = 1;
-//   }
-// });
+pipeline(source, gzip, destination, (err) => {
+  if (err) {
+    console.error('An error occurred:', err);
+    process.exitCode = 1;
+  }
+});
