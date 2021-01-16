@@ -47,7 +47,9 @@ const destination = createWriteStream(OUTPUT);
 
 pipeline(source, gzip, destination, (err) => {
   if (err) {
-    console.error('An error occurred:', err);
+    console.error('Read-Compress-Write Error:', err);
     process.exitCode = 1;
+    return;
   }
+  console.log(`Process Complete!`)
 });
