@@ -1,5 +1,6 @@
 ## Child-Process Practice
 
+### Using exec && execSync
 - run a parent && child process
 - set the parent process to wait for the child process to finish (synchronous)
   - A: return a console.log of 'test child string'
@@ -12,4 +13,7 @@
   - E: set the child process to...
     - log a string of 'A'
     - throw and error with string of 'B'
-- 
+
+### Using spawn && spawnSync
+- F: output the entire result set of a spawnSunc process, evaluating a console.log(`subprocess stdio output`)
+- F2: output a stringified result
