@@ -17,3 +17,5 @@
 ### Using spawn && spawnSync
 - F: output the entire result set of a spawnSunc process, evaluating a console.log(`subprocess stdio output`)
 - F2: output a stringified result
+- F3: instead of outputting the above console.log, return non-zero exit to the process ( `process.exit(1)` ). Output the entire result of the child process
+- 
