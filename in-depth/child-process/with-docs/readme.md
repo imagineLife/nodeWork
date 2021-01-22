@@ -28,3 +28,8 @@
     - pid is 26868
     - subprocess stdio output
     - exit status was 0
+- G2:
+  - return a childProcess in var `chPro`
+  - from the parent, log a string that logs the childProcess pid, using `pid is ${chPro.pid}`
+  - pipe the childProcess stdout to the parent process stdout
+  - set the onClose event listener to log a string with the exist status - `exit status was ${exitStatusCode}`
