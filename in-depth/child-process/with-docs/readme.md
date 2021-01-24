@@ -5,8 +5,8 @@
 - run a parent && child process
 - set the parent process to wait for the child process to finish (synchronous)
   - A: set child to evaluate a console.log of 'test child string'
-  - B: exit with a non-zero exit code from the child-process:
-  - C: throw an error with a string reading 'manually thrown error', and catch the error gracefully
+  - B: exit with a non-zero exit code from the child-process
+  - C: set child to evaluate an error being thrown with a string reading 'manually thrown error', and catch the error gracefully in the parent
 - set the child-process method to work with a callback, asynchronously
   - D: set the child process to...
     - log a string of 'A'
@@ -62,3 +62,7 @@
     - pipe the childProcess stderr to the parent process stdout
   - write to the childProcess stdin 'this input from parent will become output\n'
   - end the childProcess stdin
+- J2:
+  - repeat the above ACCEPT...
+    - leverage a synchronous method of spawning a child process
+    - include in the options a 'write' to the input of the stream 'this input from parent will become output\n'
