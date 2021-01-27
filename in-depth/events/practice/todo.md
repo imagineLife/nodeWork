@@ -1,0 +1,21 @@
+## Practice
+1 - Create an eventEmitter object
+  - include 2 parts, a constructor and a destroy method
+    - set destroy to...
+      - be a fn that takes a `err` arg
+      - if err, emit an error event, passing the err as the data
+      - emit a close event
+- 2
+  - Create an EventEmitter var, built from a new EventEmitter constructor
+  - listen for a 'close' event, where logs `close event fired!`
+  - emit close event
+- 3
+  - create an eventEmitter var from EventEmitter constructor
+  - on event-a, log `1st string`
+  - on event-a, again, log `2st string`
+  - emit 'my-event'
+- 4
+  - create an eventEmitter var from EventEmitter constructor
+  - on event-a, only the first time it is fired, log `event fired`
+  - emit `event-a` 3x, and the `event fired` string should only log 1x
+- 
