@@ -28,3 +28,9 @@
   - register an event listener for a `new-event` event
     - set a console.log('new-event fired') as the response of the `new-event` listener
   - inject a listener into the top position on the `new-event`, logging `injected here`
+- 7
+  - create an eventEmitter from an EE constructor
+  - set a listener for an event `do-this`
+    - set this listener to 'remove' itself after it has been called 1x
+    - log 'this done' in the handler
+    - emit `do-this` 3x, && the output should only happen 1x
