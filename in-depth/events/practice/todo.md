@@ -18,4 +18,13 @@
   - create an eventEmitter var from EventEmitter constructor
   - on event-a, only the first time it is fired, log `event fired`
   - emit `event-a` 3x, and the `event fired` string should only log 1x
-- 
+- 5
+  - create an eventEmitter from an EE constructor
+  - register a close listener
+    - logging `close event`
+  - emit a close event
+- 6
+  - create an eventEmitter from an EE constructor
+  - register an event listener for a `new-event` event
+    - set a console.log('new-event fired') as the response of the `new-event` listener
+  - inject a listener into the top position on the `new-event`, logging `injected here`
