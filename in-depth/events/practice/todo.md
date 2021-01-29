@@ -34,3 +34,15 @@
     - set this listener to 'remove' itself after it has been called 1x
     - log 'this done' in the handler
     - emit `do-this` 3x, && the output should only happen 1x
+- 8
+  - create an eventEmitter from an EE constructor
+  - keep the process alive (process.stdin.resume())
+  - emit an error, returning an error object + string combo of 'uh-oh'
+    - SHOULD show the error in the terminal
+- 9
+  - create an eventEmitter from an EE constructor
+  - keep the process alive (process.stdin.resume())
+  - register an error listener, logging a string with `got error: ${err.message}`
+  - emit an error, returning an error object + string combo of 'uh-oh'
+    - SHOULD show a string in the terminal
+    - 
