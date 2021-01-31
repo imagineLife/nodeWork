@@ -5,7 +5,6 @@
   - set this error to return a stack trace ()
 - else return param / 2
   2 -
-- write a definition of an `EvalError`
 - write a definition of a `SyntaxError`
 - write a definition of a `RangeError`
 - write a definition of a `ReferenceError`
