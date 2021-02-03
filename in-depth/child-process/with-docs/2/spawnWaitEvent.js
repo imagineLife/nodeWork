@@ -12,5 +12,3 @@ const s = spawn(RUN_VAR, [
 
 s.stdout.on('data',d => console.log(` stdout d: ${d}`))
 s.stdout.on('message',d => console.log(` stdout m: ${d}`))
-s.on('data',d => console.log(`d: ${d}`))
-s.on('message',d => console.log(`m: ${d}`))
