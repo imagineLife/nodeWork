@@ -10,3 +10,13 @@
 - write a definition of a `ReferenceError`
 - write a definition of a `TypeError`
 - write a definition of a `URIError`
+  3 -
+- create a fn `divideWhenEven`
+- if not a number type, throw a type error with a string `must be a number`
+- if less than or equal to zero, throw a range error with a string `must be greater than 0`
+- if not even...
+  - build a generic error
+  - string 'amount must be even'
+  - code = 'ERR_MUST_BE_EVEN'
+  - throw it
+- if even, return param / 2
