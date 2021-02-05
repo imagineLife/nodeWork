@@ -20,3 +20,10 @@
   - code = 'ERR_MUST_BE_EVEN'
   - throw it
 - if even, return param / 2
+  4 -
+- create an new Error called `OutError`
+  - extend the native Error
+  - pass the new `OutError` a var called `v`
+    - set the default `v` to an empty string
+    - set the error to return `${v} must be even` when instantiated
+    - assure that the name of the error returns when displayed in a terminal
