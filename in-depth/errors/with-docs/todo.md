@@ -23,7 +23,7 @@
   4 -
 - create an new Error called `OutError`
   - extend the native Error
-  - pass the new `OutError` a var called `v`
-    - set the default `v` to an empty string
-    - set the error to return `${v} must be even` when instantiated
-    - assure that the name of the error returns when displayed in a terminal
+  - pass the new `OutError` a var called `v` - set the default `v` to an empty string - set the error to return `${v} must be even` when instantiated - assure that the name of the error returns when displayed in a terminal - throw the new `OutError` in the above step 3 instance when not even
+    5 -
+- repeat above step 4
+- gracefully catch the error
