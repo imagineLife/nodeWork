@@ -27,3 +27,11 @@
     5 -
 - repeat above step 4
 - gracefully catch the error
+- on error, log an error with a string `Err caught, ${err}`
+  6 -
+- repeat step 6 with a graceful catch of the error
+- log a string based on the type of error that is thrown
+- check for TypeError
+- check for RangeError
+- check for OutError
+- if none of those, log an error with a string `Err caught, ${err}`
