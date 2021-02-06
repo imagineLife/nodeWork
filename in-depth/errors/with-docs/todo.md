@@ -35,3 +35,11 @@
 - check for RangeError
 - check for OutError
 - if none of those, log an error with a string `Err caught, ${err}`
+- run the fn a few times, throwing a few different errors
+  7-
+- build a function, takes a param `val`
+  - return a promise
+  - if the param is not a number type, reject the promise with a TypeError and a string
+  - if the param is less than or equal 0, return a RangeError
+  - if the amount is not divisible by two, return the `OutError` as described above (maybe re-recreate the OutError in the same file)
+  - else resolve the promise with the result of `val / 2`
