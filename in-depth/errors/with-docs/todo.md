@@ -67,7 +67,7 @@
   - call it using call.then.catch syntax
   - set it to handle known errors internally
   - set it to propogate unknown errors to a catch
-  - set it to call `divideWhenEven` && save the result && log the result
+  - set it to call another async fn, `divideWhenEven`, && save the result && log the result
   - set it to handle 'known erros'
     - Errs with code 1
       - throw a plain error with `wrong type`
@@ -77,3 +77,9 @@
       - throw a plain error with `gotta be even`
   - set it to throw the erro when NOT one of the above err codes
     - catch this 'unknown' error in the catch block
+  - CALL THE FN
+    - with 1
+      - should log `gotta be even`
+    - with `apple`
+      - should log `wrong type`
+      -
