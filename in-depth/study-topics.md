@@ -2,6 +2,7 @@
 
 [CLI && Binary](#cli-&&-binary)  
 [Debugging](#debugging)
+[JS](#js)
 
 ### CLI && Binary
 
@@ -22,3 +23,12 @@
     - add a `debugger` keyword where the breakpoint will be leveraged
   - in the inspector
     - add a blue 'flag' to the line number that the breakpoint will be leveraged
+
+## JS
+
+- proptypal Inheritance
+  - Functionally
+    - using `Object.create` syntax
+    - levearging the `Properties Descriptor Object`
+    - express how js executes the calling of a method that is NOT directly set on the parent-most Object, rather a deeply nested protype
+    - inspecting the prototype of an object using `getPrototypeOf`
