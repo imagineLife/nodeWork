@@ -32,3 +32,10 @@
     - levearging the `Properties Descriptor Object`
     - express how js executes the calling of a method that is NOT directly set on the parent-most Object, rather a deeply nested protype
     - inspecting the prototype of an object using `getPrototypeOf`
+  - Leveraging Constructor Fns
+    - using the `prototype` property of a fn
+    - building an `inherit` fn, that...
+      - takes a `protoProp`
+      - builds a `NewObj` fn
+      - attaches the `protoProp` to the prototype of the `NewObj`
+      - returns a new instance of the `NewObj`
