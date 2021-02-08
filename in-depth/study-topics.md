@@ -47,4 +47,20 @@
       - contains a method `sayName` that logs `my name is ${this.name}`
     - build another class, `kid`
       - inherits/extends the `person` class
-      - passes a prop `thisName` to the parent class (_through the construcotr + super_) but includes a string `${thisName}, and I'm a kid`
+      - passes a prop `thisName` to the parent class (_through the construcotr + super_) but adjusts `thisName` to be a string `${thisName}, and I'm a kid`
+      - include a method called `shout` and log `${this.name}: ahh!`
+- levearging closure scope
+  - (_similar to currying_)
+  - write an example where...
+    - a fn ...
+      - take a prop `type`
+      - contains an inner counter var, set to 0
+      - returns a fn, a fn that operates on a param `name`
+        - increases inner counter var by 1
+        - returns an obj
+        - {
+          - counter
+          - type
+          - name
+        - }
+      -
