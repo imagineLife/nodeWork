@@ -39,3 +39,12 @@
       - builds a `NewObj` fn
       - attaches the `protoProp` to the prototype of the `NewObj`
       - returns a new instance of the `NewObj`
+      - ...using this `inherit` fn to make 1 Constructor fn inherit another Constructor's prototype
+    - leveraging the util fn `inherits` to assign the prototype of 1 obj to another
+  - Leveraging Class Syntax
+    - building a class `person` that
+      - takes a prop `name`
+      - contains a method `sayName` that logs `my name is ${this.name}`
+    - build another class, `kid`
+      - inherits/extends the `person` class
+      - passes a prop `thisName` to the parent class (_through the construcotr + super_) but includes a string `${thisName}, and I'm a kid`
