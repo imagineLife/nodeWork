@@ -52,7 +52,7 @@
 - levearging closure scope
   - (_similar to currying_)
   - write an example where...
-    - a fn ...
+    - a fn `starter` ...
       - take a prop `type`
       - contains an inner counter var, set to 0
       - returns a fn, a fn that operates on a param `name`
@@ -63,4 +63,5 @@
           - type
           - name
         - }
-      -
+  - call the fn 1x with type `human`, name results as `createHuman`
+  - call the fn 1x with type `furniture`, name result `createFurniture`
