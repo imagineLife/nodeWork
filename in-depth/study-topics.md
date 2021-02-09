@@ -75,3 +75,15 @@
 
 - Know 5 'major' Types of streams
   - know other node core APIs that are also streams
+- Know the main events on a stream
+- Know the 2 stream modes
+  - they read different things
+- Know what streams inherit from
+
+### Readable streams
+
+- build one with the readable constructor
+  - leverage the internal `read` function for pushing data on
+  - leveraging the `data` event
+  - leverage the encoding param for decoding incoming buffer
+  - leveraging the objectMode to go without reading buffers
