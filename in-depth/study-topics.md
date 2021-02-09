@@ -102,10 +102,15 @@
 
 - leveraging a TCP network socket as an example of a duplex stream
   - creating a `net` server
-  - setting an interval to write a string on an interval to the stream
-  - setting a listener on the stream
-    - write to the writable stream a stringified && uppercased version of the data that was passed through the data listener
-    -
+    - in the server callback,
+      - set an interval of 1s to write to the socket a string of `heart-beat`
+      - listen for the data event, && write back to the socket a stringified-upper-cased version of the data
+    - register an end listener that clears the interval that was set in the callback
+  - creating a `net` client
+    - listening for the data event && logging a stringified version of the data
+    - write `hello` to the socket
+    - set a timeout for 3.25s that
+      - writes `finished` to the socket
+      - sets another internal timeout @ 250ms ending the socket connection
 - understanding...
   - not everything WRITTEN to a duplex stream affects the stream output
--
