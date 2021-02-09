@@ -82,8 +82,18 @@
 
 ### Readable streams
 
-- build one with the readable constructor
+- build a fn that returns one with the readable constructor
   - leverage the internal `read` function for pushing data on
   - leveraging the `data` event
   - leverage the encoding param for decoding incoming buffer
   - leveraging the objectMode to go without reading buffers
+  - leveraging the `from` utility to more directly consume data from a js object input
+
+### Writable streams
+
+- build a fn that returns one with the writable constructor
+  - leverage the internam `write` method in the Writable Constructor, including the **3 default params**
+  - writing directly to a writable string using the `write` method
+  - leveraging the `decodeStrings` option to skip converting stream input to buffers
+  - leveraging the `objectMode` option to consume native js content
+  - ending stream input leveraging the `end` method
