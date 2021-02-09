@@ -97,3 +97,15 @@
   - leveraging the `decodeStrings` option to skip converting stream input to buffers
   - leveraging the `objectMode` option to consume native js content
   - ending stream input leveraging the `end` method
+
+### Duplex streams
+
+- leveraging a TCP network socket as an example of a duplex stream
+  - creating a `net` server
+  - setting an interval to write a string on an interval to the stream
+  - setting a listener on the stream
+    - write to the writable stream a stringified && uppercased version of the data that was passed through the data listener
+    -
+- understanding...
+  - not everything WRITTEN to a duplex stream affects the stream output
+-
