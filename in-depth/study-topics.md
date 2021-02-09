@@ -65,3 +65,13 @@
         - }
   - call the fn 1x with type `human`, name results as `createHuman`
   - call the fn 1x with type `furniture`, name result `createFurniture`
+    - call `createHuman` 2 different times, storing as `bob` and `jane`
+    - call `createFurniture` 1x, storing as `chair`
+    - LOGGING EACH OBJECT should return
+      - incrementing IDs on humans, 1,2
+      - single id on furniture, 1
+
+## Streams
+
+- Know 5 'major' Types of streams
+  - know other node core APIs that are also streams
