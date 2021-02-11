@@ -127,3 +127,8 @@
   - in the file put 4 paragraphs of lorem ipsum from [a generator](https://www.lipsum.com/)
   - upper-case the incoming stream
   - send the uppercased results to an output file `outgoing.txt`
+
+#### catch the end
+
+- use the `finished` utility to catch when the incoming stream is completed, and log a string `done parsing input`
+- use the `finished` utility to catch when the outoging stream is completed, and log a string `done writing output`
