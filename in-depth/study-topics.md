@@ -114,3 +114,16 @@
       - sets another internal timeout @ 250ms ending the socket connection
 - understanding...
   - not everything WRITTEN to a duplex stream affects the stream output
+
+### Transform Streams
+
+- write a transform stream that...
+  - encrypts some input with a salt string of `salted`
+  - leverages the native crypto scrypt method for encrypting
+
+### Leveraging Pipeline
+
+- build a readable stream from a file `incoming.txt`
+  - in the file put 4 paragraphs of lorem ipsum from [a generator](https://www.lipsum.com/)
+  - upper-case the incoming stream
+  - send the uppercased results to an output file `outgoing.txt`
