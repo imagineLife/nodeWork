@@ -130,5 +130,13 @@
 
 #### catch the end
 
+with the above stream example,
+
 - use the `finished` utility to catch when the incoming stream is completed, and log a string `done parsing input`
 - use the `finished` utility to catch when the outoging stream is completed, and log a string `done writing output`
+
+## FS
+
+- get the current executing filename
+- get the absolute path to the dir that the current executing file is in
+- create a cross-platform path to a file
