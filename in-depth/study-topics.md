@@ -140,3 +140,10 @@ with the above stream example,
 - get the current executing filename
 - get the absolute path to the dir that the current executing file is in
 - create a cross-platform path to a file
+- understand leveargin the path utility
+  - building paths
+    - calculating the relative path between 2 paths
+    - getting the absolute path from a small part of a path
+    - normalizing path strings
+  - deconstructing paths
+  -
