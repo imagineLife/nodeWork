@@ -156,3 +156,20 @@ with the above stream example,
 - reading a file
   - outputting to a buffer
   - outputting to an encoded string
+  - blocking the proecss
+  - not blocking the process
+- writing to a file
+  - blocking the proecss
+  - not blocking the process
+- leveraging flags to...
+  - open a file for appending
+    - creating if not existent
+    - failing if path already exists
+    - and for reading
+    - synchronously
+  - reading a file
+    - returing exception if not isting
+    - and writing
+    - and writing, in syncronous mode
+  - writing to a file
+    - creating or truncating if existing
