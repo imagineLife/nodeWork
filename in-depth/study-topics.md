@@ -140,6 +140,9 @@ with the above stream example,
 - get the current executing filename
 - get the absolute path to the dir that the current executing file is in
 - create a cross-platform path to a file
+
+### Paths
+
 - understand leveargin the path utility
   - building paths
     - calculating the relative path between 2 paths
@@ -147,3 +150,9 @@ with the above stream example,
     - normalizing path strings
   - deconstructing paths
   -
+
+### Reading && Writing to FS
+
+- reading a file
+  - outputting to a buffer
+  - outputting to an encoded string
