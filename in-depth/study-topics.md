@@ -173,3 +173,12 @@ with the above stream example,
     - and writing, in syncronous mode
   - writing to a file
     - creating or truncating if existing
+
+#### Reading && Writing with streams
+
+- reading using streams
+- writing using streams
+
+### Reading Directories
+
+- read directories
