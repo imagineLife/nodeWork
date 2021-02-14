@@ -183,7 +183,12 @@ with the above stream example,
 
 - read directories
 
-### Leveraging File Metadata
+### Leveraging File Metadata (stats)
 
 - following symbolic links
--
+- checking is an item is a directory
+- accessing time data
+  - last accessed
+  - last written to
+  - last done ANYTHING to
+  - initialized
