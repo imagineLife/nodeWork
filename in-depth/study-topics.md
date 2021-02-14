@@ -192,3 +192,14 @@ with the above stream example,
   - last written to
   - last done ANYTHING to
   - initialized
+
+### Watching Files
+- watch a file system
+  - leveraging [chokidar](https://www.npmjs.com/package/chokidar)
+- try...
+  - wathcing a file
+  - maintaining state of the files in the dir
+  - logging when...
+    - a new file is added
+    - a file is deleted
+    - a file is updated
