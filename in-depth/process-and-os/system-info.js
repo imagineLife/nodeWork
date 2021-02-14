@@ -50,8 +50,11 @@ function logSysStats(){
 
     System STATS
     - uptime
+      system uptime
     - free memory
+      available system memory
     - total memory
+      total system memory
 */
 
 
