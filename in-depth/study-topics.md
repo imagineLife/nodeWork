@@ -203,3 +203,10 @@ with the above stream example,
     - a new file is added
     - a file is deleted
     - a file is updated
+
+
+## Process && OS
+- Interact with terminal input && output
+- try this...
+  - levearge node to print the results from a string to the terminal
+  - in the same line, pipe to a file that pipes stdin to the stdout
