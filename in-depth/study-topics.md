@@ -182,3 +182,8 @@ with the above stream example,
 ### Reading Directories
 
 - read directories
+
+### Leveraging File Metadata
+
+- following symbolic links
+-
