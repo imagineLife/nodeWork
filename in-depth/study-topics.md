@@ -207,6 +207,11 @@ with the above stream example,
 
 ## Process && OS
 - Interact with terminal input && output
-- try this...
-  - levearge node to print the results from a string to the terminal
-  - in the same line, pipe to a file that pipes stdin to the stdout
+- try...
+  1. passing cli input to file
+     1. - levearge node to print the results from a string to the terminal
+     2. - in the same line, pipe to a file that pipes stdin to the stdout
+  2. passing cli input to file that...
+     1. pipes cli input to an uppercase transform stream
+     2. pipes taht to the stdout
+  3. 
