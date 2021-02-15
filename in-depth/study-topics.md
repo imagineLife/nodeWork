@@ -207,9 +207,21 @@ with the above stream example,
 
 ## Process && OS
 
-- Interact with terminal input && output
+- Interact with terminal std input && std output leveraging the process module
 - pipe a cli process output to a node process file
 - in a node process file, detect wether or not the file is being called from a cli process pipe or called via `node thisProcess.js`
+- create stdout && stderr streams from the fs module
+- force a process to exit
+  - with exit code 0
+  - with non-zero exit code (try 1)
+- view the previous process exit code using `echo $?`
+- view process info
+
+  - current working directory of the process
+  - platform that the process is running on
+  - the process ID
+  - env vars applied to the process
+
 - a 3-section-process
 
   - from the cli, print an encrypted hex string of 25 random bytes
@@ -227,5 +239,5 @@ with the above stream example,
      2. pipes that to the stdout
      3. EXTRA CREDIT
         1. in the file, log wether or not the file is getting called directly from a cli pipe OR by its name
-  3. pipe the above #2 from the node file to an output text file - **skip logging anything custom** to not put the custom logs into the output file
+  3. through the terminal, pipe the above #2 from the node file to an output text file - **skip logging anything custom** to avoid adding the custom logs into the output file
   4.
