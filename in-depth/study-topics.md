@@ -194,6 +194,7 @@ with the above stream example,
   - initialized
 
 ### Watching Files
+
 - watch a file system
   - leveraging [chokidar](https://www.npmjs.com/package/chokidar)
 - try...
@@ -204,14 +205,27 @@ with the above stream example,
     - a file is deleted
     - a file is updated
 
-
 ## Process && OS
+
 - Interact with terminal input && output
+- pipe a cli process output to a node process file
+- in a node process file, detect wether or not the file is being called from a cli process pipe or called via `node thisProcess.js`
+- a 3-section-process
+
+  - from the cli, print an encrypted hex string of 25 random bytes
+  - in the same cli line, pipe the results of the encrypted string to a node file `toUpper.js`
+    - here, take the process' stdin
+    - pipe the stdin to a transform stream that uppercases all the characters
+    - pipe the results of the uppercase stream to the process stdout
+
 - try...
   1. passing cli input to file
      1. - levearge node to print the results from a string to the terminal
      2. - in the same line, pipe to a file that pipes stdin to the stdout
-  2. passing cli input to file that...
+  2. passing cli input to a file that...
      1. pipes cli input to an uppercase transform stream
-     2. pipes taht to the stdout
-  3. 
+     2. pipes that to the stdout
+     3. EXTRA CREDIT
+        1. in the file, log wether or not the file is getting called directly from a cli pipe OR by its name
+  3. pipe the above #2 from the node file to an output text file - **skip logging anything custom** to not put the custom logs into the output file
+  4.
