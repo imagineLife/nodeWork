@@ -248,10 +248,17 @@ with the above stream example,
   - what is the best practice for executing the node binary as a child process
     - ANSWER: refer to the full path of the node binary of the cur process
       - `process.execPath`
+
+### Levearge a Synchronous approach
 - return a non-zero exit code from a child process
   - gracefully catch the error in the parent process
 - throw an error from a child process
   - gracefully catch the error in the parent process
-- 
 
-### 
+### Leverage an Async Approach
+- in the same chile process
+  - log a string of `A` and then log an error of `B`
+  - handle the results: 
+    - log the err on one line (_should return null_)
+    - log the stdout on another line (_should return A_)
+    - log the stderr on another line (_should return B_)
