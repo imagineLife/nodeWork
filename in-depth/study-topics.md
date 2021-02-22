@@ -240,4 +240,8 @@ with the above stream example,
      3. EXTRA CREDIT
         1. in the file, log wether or not the file is getting called directly from a cli pipe OR by its name
   3. through the terminal, pipe the above #2 from the node file to an output text file - **skip logging anything custom** to avoid adding the custom logs into the output file
-  4.
+
+
+## Child Processees
+- name the methods that node gives for creating child processes
+- 
