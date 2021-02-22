@@ -256,9 +256,15 @@ with the above stream example,
   - gracefully catch the error in the parent process
 
 ### Leverage an Async Approach
-- in the same chile process
+- in the same child process
   - log a string of `A` and then log an error of `B`
   - handle the results: 
     - log the err on one line (_should return null_)
     - log the stdout on another line (_should return A_)
     - log the stderr on another line (_should return B_)
+- in another example, 
+  - log a string of `A` and then throw an error containing a string of `B`
+  - handle the results: 
+    - log the err on one line (_should return the complex err obj with B_)
+    - log the stdout on another line (_should return A_)
+    - log the stderr on another line (_should return a bunc of stuff_)
