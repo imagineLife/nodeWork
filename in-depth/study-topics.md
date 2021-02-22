@@ -249,13 +249,15 @@ with the above stream example,
     - ANSWER: refer to the full path of the node binary of the cur process
       - `process.execPath`
 
-### Levearge a Synchronous approach
+### Levearging the Execution approach
+
+#### Levearge a Synchronous approach
 - return a non-zero exit code from a child process
   - gracefully catch the error in the parent process
 - throw an error from a child process
   - gracefully catch the error in the parent process
 
-### Leverage an Async Approach
+#### Leverage an Async Approach
 - in the same child process
   - log a string of `A` and then log an error of `B`
   - handle the results: 
