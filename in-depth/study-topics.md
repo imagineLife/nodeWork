@@ -241,8 +241,8 @@ with the above stream example,
         1. in the file, log wether or not the file is getting called directly from a cli pipe OR by its name
   3. through the terminal, pipe the above #2 from the node file to an output text file - **skip logging anything custom** to avoid adding the custom logs into the output file
 
-
 ## Child Processees
+
 - name the methods that node gives for creating child processes
   - including the options that executes a file, rather than a command passed in the shell
   - what is the best practice for executing the node binary as a child process
@@ -252,21 +252,31 @@ with the above stream example,
 ### Levearging the Execution approach
 
 #### Levearge a Synchronous approach
+
 - return a non-zero exit code from a child process
   - gracefully catch the error in the parent process
 - throw an error from a child process
   - gracefully catch the error in the parent process
 
 #### Leverage an Async Approach
+
 - in the same child process
   - log a string of `A` and then log an error of `B`
-  - handle the results: 
+  - handle the results:
     - log the err on one line (_should return null_)
     - log the stdout on another line (_should return A_)
     - log the stderr on another line (_should return B_)
-- in another example, 
+- in another example,
   - log a string of `A` and then throw an error containing a string of `B`
-  - handle the results: 
+  - handle the results:
     - log the err on one line (_should return the complex err obj with B_)
     - log the stdout on another line (_should return A_)
     - log the stderr on another line (_should return a bunc of stuff_)
+
+#### Leverage the Spawn Approach
+
+- compare spawn vs exec syntax
+- compare the returned values of execSync && spawnSync
+  - A:
+    - execSync returns a buffer containing child-process output
+    - spawnSync returns an obj containing info about the child-process
