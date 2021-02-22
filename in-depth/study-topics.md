@@ -244,4 +244,10 @@ with the above stream example,
 
 ## Child Processees
 - name the methods that node gives for creating child processes
-- 
+  - including the options that executes a file, rather than a command passed in the shell
+  - what is the best practice for executing the node binary as a child process
+    - ANSWER: refer to the full path of the node binary of the cur process
+      - `process.execPath`
+
+
+### 
