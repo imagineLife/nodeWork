@@ -248,6 +248,10 @@ with the above stream example,
   - what is the best practice for executing the node binary as a child process
     - ANSWER: refer to the full path of the node binary of the cur process
       - `process.execPath`
-
+- return a non-zero exit code from a child process
+  - gracefully catch the error in the parent process
+- throw an error from a child process
+  - gracefully catch the error in the parent process
+- 
 
 ### 
