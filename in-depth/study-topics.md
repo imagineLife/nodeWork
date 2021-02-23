@@ -298,3 +298,22 @@ with the above stream example,
       - log a string `child process is ${process.cwd()}`
       - log another string, `env is ${process.env}`
     - when IS_CHILD is not present, do the above process
+
+#### Leverage the stdio option in spawn
+- be able to expose all std streams from the child to the parent
+  - try passing to the child process a 2-part string
+    - log an error "error in the child"
+    - pipe stdin to stdout
+  - Follow-up with...
+    - VERSION A
+      - then piping the child stderr to parent stdout
+      - then piping the child stdout to parent stdout
+      - then write to the child stdin
+    - V B
+      - set the child stdout to inherit the parent stdout
+        - (_this will allow removing one of the above pipes_)
+    - V C
+      - pass the parent stdout directly to the stderr representative in the stdio array
+        - (_this will allow removing one of the above pipes_)
+    - V D
+      - ignore the child error
