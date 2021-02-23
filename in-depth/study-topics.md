@@ -317,3 +317,26 @@ with the above stream example,
         - (_this will allow removing one of the above pipes_)
     - V D
       - ignore the child error
+
+## Asserting Errors
+- Name ways that assertions can be "grouped" 
+  - A:
+    - Truthiness 
+      - ok
+    - Equality && pattern matching
+      - strict
+      - loose
+      - match
+    - Deep Equality
+    - Error Checking
+    - Unreachability
+      - fail
+
+### Assertion to-os
+  - assert an `add` fn, which takes 2 params...
+    - 1 test - returns what it should (correct && incorrect)
+    - 1 test - returns a number (type)
+    - 2 nearly identical tests- assert 2 + 2 returns a number of four
+      - leverage 2 different methods for testing these 2 things at the same time
+  - assert that a variable holding an object is deeply equal to a written-out instance of the object
+  - 
