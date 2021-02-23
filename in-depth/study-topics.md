@@ -280,3 +280,21 @@ with the above stream example,
   - A:
     - execSync returns a buffer containing child-process output
     - spawnSync returns an obj containing info about the child-process
+- spawn a child process that exits with a non-zero exit code
+- pipe the sub-process stdout to the parent process stdout && log a string in the subprocess stdout (_the log should appear in the parent process stdout_)
+- a few parts
+  - pass an en var to the child process 
+  - print the env var from the child process
+  - pipe the child process stdout to the parent process stdout
+- another several steps
+  - import the parse part of the path module
+  - pull the `root` var out of a parsed process.current working directory
+  - spawn a child process that runs the current file (_potentially infinite loop, keep reading tho!_)
+  - pass 2 env vars to the spawned process
+    - `cwd: root`
+    - `env: {IS_CHILD: '1'}`
+  - ADJUST THE CURRENT FILE
+    - if the env var IS_CHILD is present
+      - log a string `child process is ${process.cwd()}`
+      - log another string, `env is ${process.env}`
+    - when IS_CHILD is not present, do the above process
