@@ -283,7 +283,7 @@ with the above stream example,
 - spawn a child process that exits with a non-zero exit code
 - pipe the sub-process stdout to the parent process stdout && log a string in the subprocess stdout (_the log should appear in the parent process stdout_)
 - a few parts
-  - pass an en var to the child process 
+  - pass an en var to the child process
   - print the env var from the child process
   - pipe the child process stdout to the parent process stdout
 - another several steps
@@ -300,6 +300,7 @@ with the above stream example,
     - when IS_CHILD is not present, do the above process
 
 #### Leverage the stdio option in spawn
+
 - be able to expose all std streams from the child to the parent
   - try passing to the child process a 2-part string
     - log an error "error in the child"
@@ -319,9 +320,10 @@ with the above stream example,
       - ignore the child error
 
 ## Asserting Errors
-- Name ways that assertions can be "grouped" 
+
+- Name ways that assertions can be "grouped"
   - A:
-    - Truthiness 
+    - Truthiness
       - ok
     - Equality && pattern matching
       - strict
@@ -333,10 +335,21 @@ with the above stream example,
       - fail
 
 ### Assertion to-os
-  - assert an `add` fn, which takes 2 params...
-    - 1 test - returns what it should (correct && incorrect)
-    - 1 test - returns a number (type)
-    - 2 nearly identical tests- assert 2 + 2 returns a number of four
-      - leverage 2 different methods for testing these 2 things at the same time
-  - assert that a variable holding an object is deeply equal to a written-out instance of the object
-  - 
+
+- assert an `add` fn, which takes 2 params...
+  - 1 test - returns what it should (correct && incorrect)
+  - 1 test - returns a number (type)
+  - 2 nearly identical tests- assert 2 + 2 returns a number of four
+    - leverage 2 different methods for testing these 2 things at the same time
+- assert that a variable holding an object is deeply equal to a written-out instance of the object
+  use this object shape
+
+```js
+{
+  num: 3,
+    {
+      f: "Harry",
+      l: "Hendsan",
+    };
+}
+```
