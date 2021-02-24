@@ -336,6 +336,8 @@ with the above stream example,
 
 ### Assertion to-os
 
+#### Asserting equality
+
 - assert an `add` fn, which takes 2 params...
   - 1 test - returns what it should (correct && incorrect)
   - 1 test - returns a number (type)
@@ -356,3 +358,42 @@ with the above stream example,
 - assert against this object shape with 2 different node assertion methods
   - coerc the string number to a number in the assertion, and pass the test
   - do not coerc the string number and fail the strict equality
+
+#### Asserting for errors
+
+- assert that a function throws the expected error
+  - manually throw an error
+- assert that a fn does not throw an error
+  - maybe make the same function throw && not throw conditionally
+
+#### Asserting for async results
+
+- assert against a mock async fn, leveraging setTimeout, that takes a callback
+  - does not return error appropriately
+  - returns an expected error
+    - A:
+
+```js
+const assert = require("assert");
+const GOOD_URL = "http://example.com";
+const BAD_URL = "http://error.com";
+const NETWORK_ERR = Error("network error");
+
+function ifErrorCB(err, data) {
+  assert.ifError(err);
+}
+
+function deepStrictCB(err, data) {
+  assert.deepStrictEqual(err, NETWORK_ERR);
+}
+
+const pseudoReq = (url, cb) => {
+  setTimeout(() => {
+    if (url === BAD_URL) cb(NETWORK_ERR);
+    else cb(null, Buffer.from("some data"));
+  }, 300);
+};
+
+pseudoReq(GOOD_URL, ifErrorCB);
+pseudoReq(BAD_URL, deepStrictCB);
+```
