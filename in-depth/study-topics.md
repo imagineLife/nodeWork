@@ -341,15 +341,18 @@ with the above stream example,
   - 1 test - returns a number (type)
   - 2 nearly identical tests- assert 2 + 2 returns a number of four
     - leverage 2 different methods for testing these 2 things at the same time
-- assert that a variable holding an object is deeply equal to a written-out instance of the object
-  use this object shape
+- assert that a variable holding an object is deeply equal to a written-out instance of the object -use this object shape
 
 ```js
 {
-  num: 3,
+  num: "3",
     {
       f: "Harry",
       l: "Hendsan",
     };
 }
 ```
+
+- assert against this object shape with 2 different node assertion methods
+  - coerc the string number to a number in the assertion, and pass the test
+  - do not coerc the string number and fail the strict equality
