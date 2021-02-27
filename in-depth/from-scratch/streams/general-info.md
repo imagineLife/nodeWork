@@ -16,3 +16,14 @@
 - Duplex
 - Transform
 - ...Stream?!
+
+### Node apis that are streams
+
+- fs has a few
+  - createReadStream
+  - createWriteStream
+- process.stdio
+  - stdin
+  - stdout
+- child-processes
+- http/https
