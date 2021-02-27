@@ -8,7 +8,16 @@ function LivingSpace(name){
   this.name = name;
 }
 
-LivingSpace.prototype.sayName = function(){ console.log(`${this.name}`) }
+LivingSpace.prototype.sayName = async function(){ 
+  console.log('Starting say-name...')
+  
+  return new Promise((res) => {
+    setTimeout(() => {
+      console.log(`${this.name}`)
+      console.log('done saying name')
+    },1000)
+  })
+ }
 
 function Ranch(name, orientation){
   LivingSpace.call(this, `${name} the Ranch`);
