@@ -27,3 +27,11 @@
   - stdout
 - child-processes
 - http/https
+
+### Main Stream Events
+
+- data
+  - when data is being passed
+- end/finished
+  - depends on the implementation, but at the end of the stream
+- error
