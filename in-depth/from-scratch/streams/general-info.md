@@ -35,3 +35,9 @@
 - end/finished
   - depends on the implementation, but at the end of the stream
 - error
+
+### Stream Modes
+
+- Object mode
+- Stream/binary mode
+- streams inherit from eventEmitter
