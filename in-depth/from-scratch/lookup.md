@@ -1,0 +1,4 @@
+- the debugger key && the `--inspect` flag - don't seem to do anything?!
+- assure object.create with prototype object is shaped correctly
+- know the core node modules that are stream-based
+- build a readable stream that parses a hardcoded array of content && on data logs content to console
