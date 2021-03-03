@@ -70,6 +70,13 @@ const writeDeCompressedFile = createWriteStream(`./${SMALL_OUT_DOC}`)
 //   console.log('Done! see outgoing.txt for the transformed stream')
 // });
 
+
+
+
+
+// Pipeline including decompression
+// @NOTE run the above compression one first
+// @NOTE assure only the file-stream constants that are needed are uncommented @ top of the file
 const unzipStream = createGunzip()
 
 // NO DICE
