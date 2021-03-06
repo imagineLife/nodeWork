@@ -7,3 +7,7 @@
     - a file is deleted
     - a file is updated
 */ 
+
+const { watch } = require('fs');
+
+const DIR_STR_TO_WATCH = './watching'
