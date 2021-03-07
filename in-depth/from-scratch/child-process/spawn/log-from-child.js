@@ -5,7 +5,7 @@
     (_the log should appear in the parent process stdout_)
 */ 
 
-const { spawnSync } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 
 // first bullet
 // console.log('--start--')
@@ -27,13 +27,21 @@ const { spawnSync } = require('child_process');
     && log a string in the subprocess stdout 
     (_the log should appear in the parent process stdout_)
 */
-console.log('--start--')
-const chPro = spawnSync(process.execPath, [
-  '-e',
-  'console.log("child string here")'
-],
-{
-  stdio:['pipe','inherit','inherit']
-});
+// console.log('--start--')
+// const chPro = spawnSync(process.execPath, [
+//   '-e',
+//   'console.log("child string here")'
+// ],
+// {
+//   stdio:['pipe','inherit','inherit']
+// });
 
+// Second bullet using spawn && no stdio opts
+console.log('--start--')
+const chPro = spawn(process.execPath, [
+  '-e',
+  'console.log("spawnchild string here")'
+]);
+
+chPro.stdout.pipe(process.stdout)
 console.log('--end--')
