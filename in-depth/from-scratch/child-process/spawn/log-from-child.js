@@ -35,9 +35,5 @@ const chPro = spawnSync(process.execPath, [
 {
   stdio:['pipe','inherit','inherit']
 });
-// console.log('chPro')
-// console.log(chPro)
-
-// chPro.stdout.pipe(process.stdout)
 
 console.log('--end--')
