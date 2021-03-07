@@ -30,10 +30,13 @@ if(process.env.IS_CHILD){
 }else{
   console.log('NOT is-child')
   let {root} = parse(process.cwd())
+  console.log('root')
+  console.log(root)
+  
   spawn(process.execPath, [ __filename ],
   {
     env: {
-      cwd: root,
+      cwd: root, //could prob also be '/'
       IS_CHILD: 1
     },
     stdio: ['pipe','inherit','inherit']
