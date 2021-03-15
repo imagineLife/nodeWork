@@ -168,7 +168,7 @@ with the above stream example,
     - and for reading
     - synchronously
   - reading a file
-    - returing exception if not isting
+    - returing exception if not existing
     - and writing
     - and writing, in syncronous mode
   - writing to a file
@@ -333,8 +333,6 @@ with the above stream example,
     - Error Checking
     - Unreachability
       - fail
-
-### Assertion to-os
 
 #### Asserting equality
 
