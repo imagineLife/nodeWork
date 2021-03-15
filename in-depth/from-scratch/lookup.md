@@ -20,4 +20,4 @@ assure practice on ...
   - exec syntax vs spawn syntax
 - Asserting errors
   - naming assertion 'groups'
-  - 
+  - review the assertion to-dos!
