@@ -5,17 +5,40 @@
 */ 
 
 const { rejects, doesNotReject } = require('assert');
-
 const THROWER = Error('thrown')
 
-function mockFetch(cb, boolParam){
-  return new Promise((res, rej) =>{
-    if(boolParam == true) rej(THROWER);
-    setTimeout(() => {
-      res(true)
-    }, 1000)
-  })
+
+
+// V1, raw promise fn
+
+// function promiseMockAsync(cb, boolParam){
+//   return new Promise((res, rej) =>{
+//     if(boolParam == true) rej(THROWER);
+//     setTimeout(() => {
+//       res(true)
+//     }, 1000)
+//   })
+// }
+
+// rejects(promiseMockAsync(() => {}, true), THROWER)
+// doesNotReject(promiseMockAsync(() => {}, false), THROWER)
+
+
+
+
+
+
+// V2, with promisify utility
+const { promisify } = require('util')
+
+function asyncWait(cb, boolParam){
+  setTimeout(() => {
+    if(boolParam == true) cb(THROWER);
+    cb(null, true)
+  },800)
 }
 
-rejects(mockFetch(() => {}, true), THROWER)
-doesNotReject(mockFetch(() => {}, false), THROWER)
+const promiseVersion = promisify(asyncWait)
+
+rejects(promiseVersion(() => {}, true), THROWER)
+doesNotReject(promiseVersion(() => {}, false), THROWER)
