@@ -2,6 +2,7 @@
 const http = require('http');
 const port = 3000;
 const urlNode = require('url')
+const isPrime = require('./is-prime');
 
 const server = http.createServer(({url, method, query, path}, res) => {
 
@@ -17,17 +18,12 @@ const server = http.createServer(({url, method, query, path}, res) => {
   }
 	//get http method that was used. its in the req object
 	var reqMethod = method.toLowerCase()
-
-	//'log' the request path
-	console.log(`request recieved on ${trimmedPathTxt || '/'} with method ${reqMethod}`)
-  console.log(queryString.v)
-  
-  
   
   if(trimmedPathTxt !== 'favicon.ico'){
     if(queryString && queryString.v){
       // send the response
-      return res.end(`number passed: ${queryString.v}`);
+      // return res.end(`number passed: ${queryString.v} on pid ${process.pid}`);
+      return res.end(JSON.stringify(isPrime(parseInt(queryString.v), process.pid)));
     }else{
       return res.end('add a number')
     }
@@ -39,40 +35,6 @@ const server = http.createServer(({url, method, query, path}, res) => {
 
 //Start the server, listen on port 3000
 server.listen(port, () => console.log(`Server is listening on port ${port}!!`))
-
-// app.get("/isprime", (req, res) => {
-//     res.setHeader("Access-Control-Allow-Origin","*")
-//     const jsonResponse = isPrime(parseInt(req.query.number))
-//     res.send(jsonResponse)
-// } )
-
-// app.listen(8081, ()=>console.log("Listening on 8081") )
-
-// function isPrime(number) {
-//     let startTime = new Date();
-//     let endTime = new Date();
-//     let isPrime = true;
-//     for (let i = 3; i < number; i ++)
-//     {   
-//         //it is not a prime break the loop,
-//         // see how long it took
-//         if (number % i === 0) 
-//         {
-//             endTime = new Date();
-//             isPrime = false;
-//             break;
-//         }
-//     }
-
-//     if (isPrime) endTime = new Date();
-
-//     return {
-//         "number" : number,
-//         "isPrime": isPrime,
-//         "time": endTime.getTime() - startTime.getTime()
-//         }
-
-// }
 
 /*
 2367949 (16 ms)
