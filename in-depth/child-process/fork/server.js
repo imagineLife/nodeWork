@@ -40,6 +40,8 @@ const urlNode = require('url')
 const isPrime = require('./is-prime');
 const { fork } = require('child_process');
 const server = http.createServer(({url, method, query, path}, res) => {
+  console.log('Server req start')
+  
 
 	//get & parse the url
 	const parsedUrl = urlNode.parse(url, true);
