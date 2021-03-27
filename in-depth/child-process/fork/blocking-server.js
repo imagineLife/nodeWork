@@ -28,7 +28,6 @@ const server = http.createServer(({url, method, query, path}, res) => {
 
 	//get & parse the url
 	const parsedUrl = urlNode.parse(url, true);
-  const queryString = urlNode.parse(url, true).query;
 
 	//get the 'path' name from the url, trim the pathText
 	const pathText = parsedUrl.pathname;
@@ -40,6 +39,8 @@ const server = http.createServer(({url, method, query, path}, res) => {
 	var reqMethod = method.toLowerCase()
   
   if(trimmedPathTxt !== 'favicon.ico'){
+    const queryString = urlNode.parse(url, true).query;
+    
     if(queryString && queryString.v){
       // send the response
       // return res.end(`number passed: ${queryString.v} on pid ${process.pid}`);
