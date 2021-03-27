@@ -1,3 +1,23 @@
+/*
+  2367949 (16 ms)
+  43686389 (200 ms)
+  93686687 (500 ms)
+  936868033(4 seconds)
+  29355126551 (very long time)
+
+  on blocking
+  - to see the 'bocking'
+    - start an instance of the server
+    - navigate to http://localhost:3000/number?v=93686687
+      - should take ~400ms
+    - open another browser tab
+    - navigate to http://localhost:3000/number?v=936868033
+      - should take ~ 4s
+    - start the one that takes 4s then immediated start the one that takes 400ms
+      - HERE the 400ms one wont finish until the 4s one is done
+
+
+*/
 //Dependency
 const http = require('http');
 const port = 3000;
@@ -36,11 +56,3 @@ const server = http.createServer(({url, method, query, path}, res) => {
 
 //Start the server, listen on port 3000
 server.listen(port, () => console.log(`Server is listening on port ${port}!!`))
-
-/*
-2367949 (16 ms)
-43686389 (200 ms)
-93686687 (500 ms)
-936868033(4 seconds)
-29355126551 (very long time)
-*/
