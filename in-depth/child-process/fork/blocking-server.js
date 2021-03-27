@@ -23,7 +23,8 @@ const server = http.createServer(({url, method, query, path}, res) => {
     if(queryString && queryString.v){
       // send the response
       // return res.end(`number passed: ${queryString.v} on pid ${process.pid}`);
-      return res.end(JSON.stringify(isPrime(parseInt(queryString.v), process.pid)));
+      let startTime = new Date();
+      return res.end(JSON.stringify(isPrime(parseInt(queryString.v), process.pid, startTime)));
     }else{
       return res.end('add a number')
     }

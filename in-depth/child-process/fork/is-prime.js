@@ -1,5 +1,4 @@
-module.exports =  function isPrime(number, pid) {
-    let startTime = new Date();
+module.exports =  function isPrime(number, pid, startTime) {
     let endTime = new Date();
     let isPrime = true;
     for (let i = 3; i < number; i ++)
