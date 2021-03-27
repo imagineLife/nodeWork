@@ -3,23 +3,34 @@ const http = require('http');
 const port = 3000;
 const urlNode = require('url')
 
-const server = http.createServer(({url, method, query}, res) => {
+const server = http.createServer(({url, method, query, path}, res) => {
 
 	//get & parse the url
 	const parsedUrl = urlNode.parse(url, true);
+  const queryString = urlNode.parse(url, true).query;
 
 	//get the 'path' name from the url, trim the pathText
 	const pathText = parsedUrl.pathname;
 	const trimmedPathTxt = pathText.replace(/^\/+|\/+$/g,'')
-  
+  if(!trimmedPathTxt.includes('number')){
+    return res.writeHead(500).end('try a request at route "/number"');
+  }
 	//get http method that was used. its in the req object
 	var reqMethod = method.toLowerCase()
 
 	//'log' the request path
 	console.log(`request recieved on ${trimmedPathTxt || '/'} with method ${reqMethod}`)
+  console.log(queryString.v)
+  
+  
+  
   if(trimmedPathTxt !== 'favicon.ico'){
-    // send the response
-	  res.end('basic node server response string\n');
+    if(queryString && queryString.v){
+      // send the response
+      return res.end(`number passed: ${queryString.v}`);
+    }else{
+      return res.end('add a number')
+    }
   }else{
     res.end('favicon')
   }
