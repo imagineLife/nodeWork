@@ -44,36 +44,42 @@ const server = http.createServer(({url, method, query, path}, res) => {
   
 
 	//get & parse the url
-	const parsedUrl = urlNode.parse(url, true);
+  //get the 'path' name from the url, trim the pathText
+	const { pathname } = urlNode.parse(url, true);
 
-	//get the 'path' name from the url, trim the pathText
-	const pathText = parsedUrl.pathname;
-	const trimmedPathTxt = pathText.replace(/^\/+|\/+$/g,'')
-  if(!trimmedPathTxt.includes('number')){
-    return res.writeHead(500).end('try a request at route "/number"');
+	const trimmedPathTxt = pathname.replace(/^\/+|\/+$/g,'')
+  
+  // 'ignore' favicon request
+  if(trimmedPathTxt == 'favicon.ico'){
+    return res.end('favicon');
   }
+  
+  // 'ignore' routes NOT at '/number'
+  if(!trimmedPathTxt.includes('number')){
+    return res.writeHead(200).end('try a request at route "/number"');
+  }
+  
 	//get http method that was used. its in the req object
 	var reqMethod = method.toLowerCase()
   
-  if(trimmedPathTxt !== 'favicon.ico'){
-    const queryString = urlNode.parse(url, true).query;
-    
-    if(queryString && queryString.v){
-      let startTime = new Date();
-      if(process.argv[2] !== 'non'){
-        return res.end(JSON.stringify(isPrime(parseInt(queryString.v), process.pid, startTime.getTime())));
-      }else{
-        const childProcess = fork('./is-prime-process.js');
-        childProcess.send({"number": parseInt(queryString.v), pid: childProcess.pid, startTime: startTime.getTime()})
-        childProcess.on("message", message => res.end(JSON.stringify(message)))
-      }
-    }else{
-      return res.end('add a number')
-    }
-  }else{
-    res.end('favicon')
+  const queryString = urlNode.parse(url, true).query;
+  
+  if(!queryString || !queryString.v){
+    return res.end('add a number')
   }
 
+  let startTime = new Date();
+
+  // handle blocking version
+  if(process.argv[2] !== 'non'){
+    return res.end(JSON.stringify(isPrime(parseInt(queryString.v), process.pid, startTime.getTime())));
+  }
+  
+  // handle non-blocking version
+  const childProcess = fork('./is-prime-process.js');
+  childProcess.send({"number": parseInt(queryString.v), pid: childProcess.pid, startTime: startTime.getTime()})
+  childProcess.on("message", message => res.end(JSON.stringify(message)))
+  return;
 })
 
 //Start the server, listen on port 3000
