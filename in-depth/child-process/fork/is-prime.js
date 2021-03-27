@@ -18,7 +18,7 @@ module.exports =  function isPrime(number, pid, startTime) {
     return {
         "number" : number,
         "isPrime": isPrime,
-        "time": endTime.getTime() - startTime.getTime(),
+        "time": endTime.getTime() - startTime,
         pid
         }
 
