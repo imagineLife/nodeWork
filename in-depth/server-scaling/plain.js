@@ -8,7 +8,7 @@ const server = app.listen(port, () => {
 
 function rootHandler(req,res){
   // mock a waiting process;
-  for(var x = 0; x < 2e6; x++){}
+  for(var x = 0; x < 2e8; x++){}
   res.send('server response here!')
 }
 app.get('/', rootHandler)
