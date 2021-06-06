@@ -5,7 +5,8 @@
   "main": "plain.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run-plain": "node plain.js"
+    "plain": "node plain.js",
+    "with-cluster": "node with-cluster.js"
   },
   "keywords": [],
   "author": "",
