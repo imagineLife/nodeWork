@@ -10,21 +10,21 @@ let r = add.call(this,2,3);
   2, chaining constructor && call
 */
 function Box(h,w){
-  console.log('BOX')
-  console.log(this)
+  console.log('3. BOX')
+  console.log(`4. box this -> ${this}`);
   this.height = h;
   this.width = w;
-  console.log(`Box: H-${this.height}, W-${this.width}`)
+  console.log(`5. Box: H-${this.height}, W-${this.width}`)
 }
 
 function Widget(h,w,c){
-  console.log('WIDGET')
-  console.log(this)
+  console.log('1. WIDGET')
+  console.log(`2. Widget THIS ${this}`)
   Box.call(this, h,w);
   this.color = c;
-  console.log(`Widget: H-${this.height}, W-${this.width}`)
+  console.log(`6. Widget: H-${this.height}, W-${this.width}`)
 }
 
-let w = new Widget('orange',20,10);
-console.log('w result ->')
+let w = new Widget(20,10,'orange');
+console.log('7. w result ->')
 console.log(w)
