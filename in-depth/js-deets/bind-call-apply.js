@@ -43,8 +43,35 @@ console.log({evenBig})
 /*
   BIND
   does NOT give the result when logged result
-  below, returns a fn
+  below, returns a "bound" function
+  binds the function to the bind recieved object
 */ 
 let bindOne = addToThis.bind(o,4);
 console.log({bindOne})
 console.log({bindOne: bindOne.toString()})
+
+let addToO = addToThis.bind(o);
+console.dir(addToO)
+console.dir(addToO.toString())
+let addedTo0 = addToO(14)
+console.log({addedTo0})
+
+
+let personOne = {
+  name: 'Joe',
+  job: 'mailman'
+};
+
+let personTwo = {
+  name: 'Wanda',
+  job: 'wizard'
+};
+
+function talkAboutMe(favFood){
+  return `I'm ${this.name} and I'm a ${this.job} and my fav food is ${favFood}`
+}
+
+const aboutJoe = talkAboutMe.bind(personOne)
+console.log(aboutJoe('pizza'))
+const aboutWanda = talkAboutMe.bind(personTwo)
+console.log(aboutWanda('salmon'))
