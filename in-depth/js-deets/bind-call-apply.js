@@ -68,10 +68,14 @@ let personTwo = {
 };
 
 function talkAboutMe(favFood){
+  console.log(`** TALK ABOUT ME THIS`)
+  console.log(this)
   return `I'm ${this.name} and I'm a ${this.job} and my fav food is ${favFood}`
 }
 
 const aboutJoe = talkAboutMe.bind(personOne)
+
+
 console.log(aboutJoe('pizza'))
 const aboutWanda = talkAboutMe.bind(personTwo)
 console.log(aboutWanda('salmon'))
