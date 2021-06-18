@@ -43,6 +43,8 @@ console.log({evenBig})
 /*
   BIND
   does NOT give the result when logged result
+  below, returns a fn
 */ 
 let bindOne = addToThis.bind(o,4);
 console.log({bindOne})
+console.log({bindOne: bindOne.toString()})
