@@ -11,7 +11,13 @@
 */
 
 'use strict';
-const inquirer = require('..');
+const inquirer = require('inquirer');
+const {
+  clarifyEnums,
+  loopThroughFieldsAndDefineTypes,
+  createModuleString
+} = require('./fns')
+// const inquirer = require('..');
 const model = {
   name: null,
   fields: [],
@@ -19,8 +25,6 @@ const model = {
   enumFields: null,
   firstEnumIdxWIthoutVals: 0
 }
-
-const fieldTypes = ['string', 'int', 'bool', 'enum', 'primaryKey','foreignKey'];
 
 const whatsTheResource = {
   type: 'input',
@@ -39,69 +43,18 @@ const startingQuestions = [
   listTheFields
 ]
 
-function likesFood(aFood) {
-  return function (answers) {
-    return answers[aFood];
-  };
-}
-
 async function doTheWork() { 
   let initialAnswers = await inquirer.prompt(startingQuestions)
+  model.name = initialAnswers.modelName;
   model.fields = initialAnswers.fields.replaceAll(' ', '').split(',')
-  loopThroughFieldsAndDefineTypes(model.firstFieldIdxWithoutType)
-}
-
-function buildTypeValidationQuestion(field) { 
-  return {
-    type: 'list',
-    name: 'type',
-    message: `TYPE: ${field}: What type is the ${field} field?`,
-    choices: fieldTypes
-
-  }
-}
-
-function buildEnumClarificationQuestion(str) { 
-  return {
-    type: 'input',
-    name: 'enumVals',
-    message: `ENUM: ${str}: What are the enum values for this field? (use "|" separator)`
-  }
-}
-
-async function loopThroughFieldsAndDefineTypes(idx) { 
-  // ask & collection feedback
-  let fieldWithoutType = model.fields[idx]
-  let thisTypeQuestion = buildTypeValidationQuestion(fieldWithoutType)
-  let { type } = await inquirer.prompt(thisTypeQuestion)
-  
-  // update state
-  model.fields[idx] = {name: fieldWithoutType, type};
-  model.firstFieldIdxWithoutType++;
-  
-  // decide next steps
-  // keep looping
-  if (model.firstFieldIdxWithoutType <= model.fields.length - 1) {
-    loopThroughFieldsAndDefineTypes(model.firstFieldIdxWithoutType)
-  }
-  else { 
-    // move on
-    clarifyEnums()
-  }
-}
-
-async function clarifyEnums() { 
-  for (let i = 0; i < model.fields.length; i++) { 
-    let thisField = model.fields[i]
-    if (thisField.type === 'enum') { 
-      let thisFieldQuestion = buildEnumClarificationQuestion(thisField.name)
-      let res = await inquirer.prompt(thisFieldQuestion)
-      model.fields[i].enumVals = res.enumVals
-    }
-  }
-  console.log('model.fields')
-  console.log(model.fields)
+  await loopThroughFieldsAndDefineTypes(model.firstFieldIdxWithoutType, model)
+  await clarifyEnums(model)
+  const textBlob = createModuleString(model)
+  console.log('textBlob')
+  console.log(textBlob)
   
 }
+
+
 
 doTheWork()
