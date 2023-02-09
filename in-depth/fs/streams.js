@@ -2,8 +2,13 @@ const { pipeline } = require('stream');
 const { join } = require('path');
 const { createReadStream, createWriteStream } = require('fs');
 const { Transform } = require('stream');
+const STREAM_INPUT_FILENAME = __filename;
+const STREAM_OUTPUT_FILENAME = 'stream-out.txt';
+const UPPERCASE_OUTPUT_FILENAME = 'out-upper-stream.txt'
 
-function handlePipelineError(err){
+console.log(`reading a stream from ${STREAM_INPUT_FILENAME} to ${STREAM_OUTPUT_FILENAME}`);
+
+function handlePipelineError(err) {
   if(err){
     console.error(err);
     return;
@@ -13,9 +18,9 @@ function handlePipelineError(err){
 
 pipeline(
   createReadStream(__filename),
-  createWriteStream(join(__dirname,'stream-out.txt')),
+  createWriteStream(join(__dirname, STREAM_OUTPUT_FILENAME)),
   handlePipelineError
-)
+);
 
 /*
   Good for...
@@ -26,9 +31,11 @@ pipeline(
 
 
 // Levearging Transform stream between files
-const createUpperCaseStream = () => {
+function createUpperCaseStream(){
   return new Transform({
-    transform (chunk, enc, nxt){
+    transform(chunk, enc, nxt) {
+      console.log('upper chunk here')
+      
       const upd = chunk.toString().toUpperCase()
       nxt(null,upd);
     }
@@ -38,6 +45,6 @@ const createUpperCaseStream = () => {
 pipeline(
   createReadStream(__filename),
   createUpperCaseStream(),
-  createWriteStream(join(__dirname, 'out-upper-stream.txt')),
+  createWriteStream(join(__dirname, UPPERCASE_OUTPUT_FILENAME)),
   handlePipelineError
-)
+);
