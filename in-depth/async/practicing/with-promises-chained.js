@@ -1,12 +1,12 @@
-// a follow-up to "with-callbacks
+// a follow-up to "with-promises-manually"
 
 const { readFile, readdir } = require('fs');
 
 const STATE = {
   fileIteration: 0,
   filesData: [],
-  filesToRead: [],
-};
+  filesToRead: []
+}
 const FILES_DIR = './files';
 
 /*
@@ -21,43 +21,48 @@ const FILES_DIR = './files';
   - run async readAndUpdateState
     - which awaits the running of myFSPromise
     - if there are more files to read, re-run readAndUpdateState
-*/
-function myFSPromise(fileToRead) {
-  return new Promise((res, rej) => {
+*/ 
+function myFSPromise(fileToRead) { 
+  return new Promise((resolve) => {
     readFile(fileToRead, (e, fileContent) => {
+      
       // increment state count
       STATE.fileIteration = STATE.fileIteration + 1;
       if (e) {
         console.error(e);
       } else {
-        console.log(`DONE reading ${fileToRead}`);
-
+        console.log(`DONE reading ${fileToRead}`)
+        
         STATE.filesData.push(fileContent);
 
         // conditional continue
-        if (STATE.fileIteration < STATE.filesToRead.length) {
-          readAndUpdateState();
-        } else {
-          console.log('DONE!');
-          console.log(STATE.filesData.length);
-        }
+        const MORE_FILES_TO_READ = Boolean(STATE.fileIteration < STATE.filesToRead.length);
+        resolve(MORE_FILES_TO_READ)
       }
     });
-  });
+  })
 }
 
 async function readAndUpdateState() {
-  const FILE_TO_READ = `${FILES_DIR}/${STATE.filesToRead[STATE.fileIteration]}`;
-  console.log(`READING ${FILE_TO_READ} with readAndUpdateState`);
-  await myFSPromise(FILE_TO_READ);
+  const FILE_TO_READ = `${FILES_DIR}/${STATE.filesToRead[STATE.fileIteration]}`
+  console.log(`READING ${FILE_TO_READ} with readAndUpdateState`)
+  myFSPromise(FILE_TO_READ).then(res => {
+    console.log('promise then result: ',res)
+    
+    if (res === true) readAndUpdateState();
+    else { 
+      console.log('DONE!');
+      console.log(STATE.filesData.length);
+    }
+  });
 }
 
-function readFilesAndStart(err, files) {
+function readFilesAndStart(err, files) { 
   if (err) {
     console.error(err);
     return;
   }
   STATE.filesToRead = files;
-  readAndUpdateState();
+  readAndUpdateState()
 }
-readdir(FILES_DIR, readFilesAndStart);
+readdir(FILES_DIR, readFilesAndStart)
