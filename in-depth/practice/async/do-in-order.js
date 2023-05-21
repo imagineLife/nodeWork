@@ -41,20 +41,20 @@ const BRes = promisify(fnB)
 const CRes = promisify(fnC)
 
 // Promise chaining
-async function doItAsync(){
-  CRes()
-  .then(cLetter => {
-    console.log(cLetter)
-      BRes()
-      .then(bLetter => {
-        console.log(bLetter)
-        ARes()
-        .then(aLetter => {
-          console.log(aLetter)
-        })
-      })
-  })
-}
+// async function doItAsync(){
+//   CRes()
+//   .then(cLetter => {
+//     console.log(cLetter)
+//       BRes()
+//       .then(bLetter => {
+//         console.log(bLetter)
+//         ARes()
+//         .then(aLetter => {
+//           console.log(aLetter)
+//         })
+//       })
+//   })
+// }
 
 // await syntax
 // async function doItAsync(){
@@ -72,4 +72,8 @@ async function doItAsync(){
     arr.map(i => console.log(i))
   })
 }
+
+
+
+
 doItAsync()
