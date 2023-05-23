@@ -1,9 +1,8 @@
 import { once, EventEmitter } from 'events';
 // import { setTimeout } from 'timers/promises';
 
-console.log('1')
+console.log('1: start')
 
 const uneventful = new EventEmitter();
-console.log('2');
 await once(uneventful, 'ping');
-console.log('3');
+console.log('2: after await once');
