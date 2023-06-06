@@ -17,10 +17,31 @@ app.use(express.json());
 // Configure cookie-session middleware
 app.use(cookieSession(sessionObj));
 
-// Endpoint to create a session
+// Endpoint to create the session
 app.get('/make-a-session', (req, res) => {
-  req.session.example = 'Hello, session!'; // Set session data
-  res.send('Session created!');
+  return res.json(req.session);
+});
+
+app.get('/read-the-session', (req, res) => {
+  return res.json(req.session)
+});
+
+app.get('/update-session/:randomString', (req, res) => {
+  req.session.randomString = req.params.randomString
+  return res.json(req?.session);
+});
+
+app.get('/keyVal/:myKey/:myVal', (req, res) => {
+  console.log('req.params.myKey')
+  console.log(req.params.myKey)
+  
+  req.session[`${req.params.myKey}`] = `${req.params.myVal}`;
+  return res.json(req?.session);
+});
+
+app.get('/clear-session', (req, res) => {
+  req.session = null;
+  return res.json(req?.session)
 });
 
 // Start the server
