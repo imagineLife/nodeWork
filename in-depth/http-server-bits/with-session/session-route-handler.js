@@ -22,7 +22,4 @@ sessionsRouter.get('/clear', (req, res) => {
   return res.json(req?.session)
 });
 
-// sessionsRouter.get('/justNext', (req, res, next) => {
-//   next()
-// });
 module.exports = sessionsRouter;
