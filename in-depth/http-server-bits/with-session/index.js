@@ -1,7 +1,10 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const sessionsRouter = require('./session-route-handler')
+
+// vars
 const PORT = process.env.PORT || 3000;
+const ROOT_ROUTE = 'mySession';
 const SESSION_NAME = 'test-session';
 const SESSION_SECRET = process.env.SESSION_SECRET || 'generic-secret';
 const SESSION_AGE = 24 * 60 * 60 * 1000; // 1 day
@@ -22,7 +25,7 @@ app.use(express.json());
 // Configure cookie-session middleware
 app.use(cookieSession(sessionObj));
 
-app.use('/mySession', sessionsRouter);
+app.use(ROOT_ROUTE, sessionsRouter);
 
 // Start the server
 app.listen(PORT, startCallback);
