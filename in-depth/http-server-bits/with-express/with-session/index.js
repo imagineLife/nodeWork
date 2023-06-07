@@ -1,17 +1,15 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const sessionsRouter = require('./session-route-handler')
+const { routes: { session }, cookie } = require('./constants')
 
 // vars
 const PORT = process.env.PORT || 3000;
-const ROOT_ROUTE = 'mySession';
-const SESSION_NAME = 'test-session';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'generic-secret';
-const SESSION_AGE = 24 * 60 * 60 * 1000; // 1 day
+const SESSION_SECRET = process.env.SESSION_SECRET || cookie.secret;
 const sessionObj = {
-  name: SESSION_NAME,
+  name: cookie.name,
   secret: SESSION_SECRET,
-  maxAge: SESSION_AGE
+  maxAge: cookie.age
 }
 const app = express();
 
@@ -25,7 +23,7 @@ app.use(express.json());
 // Configure cookie-session middleware
 app.use(cookieSession(sessionObj));
 
-app.use(ROOT_ROUTE, sessionsRouter);
+app.use(session.root, sessionsRouter);
 
 // Start the server
 app.listen(PORT, startCallback);
