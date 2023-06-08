@@ -1,16 +1,16 @@
 const { usersById } = require('./byId');
 const { userData } = require('./../userData')
 
-function getUsers(request, reply) {
-  reply.send(userData);
+function getUsers(req, res) {
+  res.send(userData);
 }
 
-function postAUser(request, reply) {
-  const { name } = request.body;
+function postAUser(req, res) {
+  const { name } = req.body;
   const id = userData.length + 1;
   const newUser = { id, name };
   userData.push(newUser);
-  reply.code(201).send(newUser);
+  res.code(201).send(newUser);
 }
 
 module.exports.usersHandlers = (fastify, _, done) => {
