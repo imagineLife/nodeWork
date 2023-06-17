@@ -18,9 +18,16 @@ sessionsRouter.get(session.updateWithKeyVal, (req, res) => {
   return res.json(req?.session);
 });
 
+sessionsRouter.get(session.removeKeyVal, (req, res) => {
+  delete req.session[`${req.params.myKey}`];
+  return res.json(req?.session);
+});
+
 sessionsRouter.get(session.clear, (req, res) => {
-  req.session = null;
-  return res.json(req?.session)
+  req.session.destroy(e => {
+    if (e) throw new Error(e);
+    return res.json(req?.session);
+  })
 });
 
 module.exports = sessionsRouter;

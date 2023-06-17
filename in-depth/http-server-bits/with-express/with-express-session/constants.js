@@ -4,6 +4,7 @@ const routes = {
     updateWithRandom: '/update/:randomString',
     updateWithKeyVal: '/keyVal/:myKey/:myVal',
     clear: '/clear',
+    removeKeyVal: '/remove-key/:myKey'
   },
 };
 

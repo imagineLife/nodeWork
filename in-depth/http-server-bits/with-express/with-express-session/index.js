@@ -16,7 +16,7 @@ const sessionObj = {
 const app = express();
 
 function startCallback() {
-  console.log(`Server started on port ${PORT} there`);  
+  console.log(`Server started on port ${PORT}`);  
 }
 
 // Middleware to parse request bodies
