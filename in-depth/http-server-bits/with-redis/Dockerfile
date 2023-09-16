@@ -1,15 +1,10 @@
 # USE THIS to debug!
-# CMD ["/bin/sh", "-c", "pwd; ls -la; pwd; cd ../; pwd; ls -l;"]
+# CMD ["/bin/sh", "-c", "pwd; ls -la; pwd;"]
 
-# FROM node:alpine as nodebuild
-FROM node:18-slim as nodebuild
+FROM node:18-slim
 WORKDIR /app
-COPY package.json index.js .
+COPY package.json index.js ./
 RUN npm install
-
-FROM nodebuild
-WORKDIR /app
 EXPOSE 3000
 
-# this run time
 CMD [ "npm","start"]
