@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    container_name: apibox
+    ports:
+      - '3000:3000'
+    networks:
+      - mynetwork
+    depends_on:
+      - redis
+  redis:
+    container_name: redisbox
+    image: 'redis:latest'
+    restart: always
+    command: redis-server --save
+    networks:
+      - mynetwork
+networks:
+  mynetwork:
+    driver: bridge
