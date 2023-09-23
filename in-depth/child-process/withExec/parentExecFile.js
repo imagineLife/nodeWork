@@ -5,12 +5,12 @@ console.time('shebang')
 const { execFile } = require('child_process');
 const waysToAnalyze = [
   {
-    file: './logastring.js',
+    file: './simple-analysis/logastring.js',
     name: 'logAString',
   },
   {
-    file: './countLength.js',
-    name: 'countLength'
+    file: './simple-analysis/countLength.js',
+    name: 'countLength',
   },
 ];
 
