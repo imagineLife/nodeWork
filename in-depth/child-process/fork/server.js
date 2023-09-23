@@ -77,7 +77,12 @@ const server = http.createServer(({url, method, query, path}, res) => {
   
   // handle non-blocking version
   const childProcess = fork('./is-prime-process.js');
-  childProcess.send({"number": parseInt(queryString.v), pid: childProcess.pid, startTime: startTime.getTime()})
+  childProcess.send({
+    "number": parseInt(queryString.v),
+    pid: childProcess.pid,
+    startTime: startTime.getTime()
+  })
+  
   childProcess.on("message", message => res.end(JSON.stringify(message)))
   return;
 })
