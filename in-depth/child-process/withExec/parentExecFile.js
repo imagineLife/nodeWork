@@ -198,7 +198,7 @@ let sentences = [
 ];
 let sentencesDone = 0;
 let analysisDone = 0;
-const HOW_MANY_PROCESSES = 8;
+const HOW_MANY_PROCESSES = 4;
 
 console.log(`Processing ${sentences.length} sentences with ${HOW_MANY_PROCESSES} processes and ${waysToAnalyze.length} analysis per sentence`)
 
