@@ -1,3 +1,6 @@
+/*
+
+*/ 
 console.time('shebang')
 const { exec } = require('child_process');
 const waysToAnalyze = [
@@ -73,10 +76,11 @@ let sentences = [
   'I thank my predecessors of both parties for their presence here.',
   'I thank them from the bottom of my heart.',
 ];
-let doneCount = 0;
-let analysisIndex = 0;
-const HOW_MANY_PROCESSES = 16;
+let sentencesDone = 0;
+let analysisDone = 0;
+const HOW_MANY_PROCESSES = 20;
 
+console.log(`Processing ${sentences.length} sentences with ${HOW_MANY_PROCESSES} processes and ${waysToAnalyze.length} analysis per sentence`)
 
 
 
@@ -84,12 +88,12 @@ const HOW_MANY_PROCESSES = 16;
 // 
 // 
 function checkAnalysisDone() {
-  let isDone = doneCount === sentences.length &&
-    analysisIndex !== waysToAnalyze.length - 1;
+  let isDone = sentencesDone === sentences.length &&
+    analysisDone !== waysToAnalyze.length - 1;
   // console.log('checkAnalysisDone', isDone);
   if (isDone) {
-    analysisIndex = analysisIndex + 1;
-    doneCount = 0;
+    analysisDone = analysisDone + 1;
+    sentencesDone = 0;
     startProcessingInput({ maxProcesses: HOW_MANY_PROCESSES });
   }
 }
@@ -100,7 +104,7 @@ function checkAnalysisDone() {
 // 
 // 
 function checkDoneAndFinish() {
-  if (doneCount === sentences.length) {
+  if (sentencesDone === sentences.length) {
     // console.log('sentences');
     // console.log(sentences);
     console.timeEnd('shebang');
@@ -125,14 +129,14 @@ function handleProcessResponse(sentenceIdx) {
 
     if (stdout) {
       // prep resulting analytics object per sentence
-      if (analysisIndex === 0) {
+      if (analysisDone === 0) {
         let originalSentenceText = (' ' + sentences[sentenceIdx]).slice(1);
         sentences[sentenceIdx] = {};
         sentences[sentenceIdx].text = originalSentenceText;
       }
 
-      sentences[sentenceIdx][`${waysToAnalyze[analysisIndex].name}`] = JSON.parse(stdout);
-      doneCount++;
+      sentences[sentenceIdx][`${waysToAnalyze[analysisDone].name}`] = JSON.parse(stdout);
+      sentencesDone++;
       // console.log(`DONE with idx ${sentenceIdx}`);
 
       if (sentenceIdx + HOW_MANY_PROCESSES < sentences.length + HOW_MANY_PROCESSES - 1) {
@@ -154,7 +158,7 @@ function handleProcessResponse(sentenceIdx) {
 function processSentenceByIndex(sentenceIdx) {
   if (sentenceIdx < sentences.length) {
     exec(
-      `${process.execPath} ${waysToAnalyze[analysisIndex].file}`,
+      `${process.execPath} ${waysToAnalyze[analysisDone].file}`,
       {
         env: {
           idx: sentenceIdx,

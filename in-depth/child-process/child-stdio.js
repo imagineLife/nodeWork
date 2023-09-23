@@ -16,19 +16,19 @@ const STREAM_ERR = ['pipe','inherit', process.stdout]
 const IGNORE_ERROR = ['pipe', 'inherit', 'ignore']
 
 // PROCESS 1, using explicit default stdio values
-// const spawnRes = spawn(
-//   process.execPath,
-//   [
-//     NODE_FLAG,
-//     RUNNABLE_STRING
-//   ],
-//   { stdio: DEFAULT_ARR }
-// )
+const spawnRes = spawn(
+  process.execPath,
+  [
+    NODE_FLAG,
+    RUNNABLE_STRING
+  ],
+  { stdio: DEFAULT_ARR }
+)
 
-// spawnRes.stdout.pipe(process.stdout)
-// spawnRes.stderr.pipe(process.stdout)
-// spawnRes.stdin.write(STRING_INPUT)
-// spawnRes.stdin.end()
+spawnRes.stdout.pipe(process.stdout)
+spawnRes.stderr.pipe(process.stdout)
+spawnRes.stdin.write(STRING_INPUT)
+spawnRes.stdin.end()
 
 /*
   NOTES
@@ -137,17 +137,17 @@ const IGNORE_ERROR = ['pipe', 'inherit', 'ignore']
 
 
 // PROCESS 4, ignoring error output
-const spawnRes = spawn(
-  process.execPath,
-  [
-    NODE_FLAG,
-    RUNNABLE_STRING
-  ],
-  { stdio: IGNORE_ERROR }
-)
+// const spawnRes = spawn(
+//   process.execPath,
+//   [
+//     NODE_FLAG,
+//     RUNNABLE_STRING
+//   ],
+//   { stdio: IGNORE_ERROR }
+// )
 
-spawnRes.stdin.write(STRING_INPUT)
-spawnRes.stdin.end()
+// spawnRes.stdin.write(STRING_INPUT)
+// spawnRes.stdin.end()
 
 /*
   Running the above outputs
