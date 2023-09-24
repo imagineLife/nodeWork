@@ -17,6 +17,9 @@ const waysToAnalyze = [
 ];
 
 let forks;
+let sentencesDone = 0;
+
+
 
 function setupForks() { 
   console.log('setting up forks')
@@ -33,6 +36,8 @@ function setupForks() {
    })
 }
 
+
+
 function killForks() { 
   forks.forEach((f) => {
     f.send({ kill: true });
@@ -41,11 +46,7 @@ function killForks() {
 }
 
 
-let sentencesDone = 0;
 
-// // 
-// // 
-// // 
 function checkAnalysisDone(sentenceIdx) {
   let doneAnalyzingCurSentence = Object.keys(sentences[sentenceIdx]).length === waysToAnalyze.length + 1;
   const isProcessingLastSentence = sentenceIdx === sentences.length - 1;
@@ -60,9 +61,9 @@ function checkAnalysisDone(sentenceIdx) {
   if (isDone) {
     console.log('DONE-ZO?!');
     killForks()
+    return;
   }
 
-  // if (!doneAnalyzingCurSentence && moreSentencesToBeDone && !isDone) {
   if (doneAnalyzingCurSentence && moreSentencesToBeDone && !isDone) {
     processSentenceByIndex(sentenceIdx + waysToAnalyze.length);
   }
@@ -70,11 +71,6 @@ function checkAnalysisDone(sentenceIdx) {
 
 
 
-
-
-// 
-// store data in sentence object
-// 
 function handleProcessResponse(processResponse) {
   let { sentenceIdx, analysis: dataToStore, forkIdx } = processResponse;
 
@@ -102,16 +98,9 @@ function handleProcessResponse(processResponse) {
 } 
 
 
-
-
-
-// 
-// for for this sentence index
-// use both forks and run 2x analysis
-// 
 function processSentenceByIndex(sentenceIdx) {
   if (sentenceIdx < sentences.length) {
-    forks.forEach((f,fidx) => {
+    forks.forEach((f) => {
       f.send({
         text:
           typeof sentences[sentenceIdx] === 'string'
@@ -124,12 +113,6 @@ function processSentenceByIndex(sentenceIdx) {
 }
 
 
-
-
-
-// // 
-// // 
-// // 
 function startProcessingSentences() {
   for (let i = 0; i < forks.length; i++){
     processSentenceByIndex(i)

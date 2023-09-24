@@ -6,7 +6,6 @@ process.on('message', (sentData) => {
     process.exit();
   }
 
-  // console.log(`${PROCESS_NAME} message! sentenceIdx ${sentData.idx}`); //pid: ${process.pid}
   process.send({
       sentenceIdx: sentData.idx,
       analysis: {
