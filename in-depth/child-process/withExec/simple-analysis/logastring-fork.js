@@ -6,8 +6,11 @@ process.on('message', (sentData) => {
     process.exit();
   }
 
+  // console.log(`${PROCESS_NAME} message! sentenceIdx ${sentData.idx}`); //pid: ${process.pid}
   process.send({
-    name: 'logastring',
-    data: process.env.text.split(' ')
+      sentenceIdx: sentData.idx,
+      analysis: {
+        wordCount: sentData.text.split(' ').length,
+      },
   });
 });
