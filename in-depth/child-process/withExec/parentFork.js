@@ -4,6 +4,7 @@
 */ 
 console.time('shebang')
 const { fork } = require('child_process');
+const sentences = require('./sentences')
 const waysToAnalyze = [
   {
     file: './simple-analysis/logastring-fork.js',
@@ -15,318 +16,126 @@ const waysToAnalyze = [
   },
 ];
 
+let forks;
 
-const forks = waysToAnalyze.map((way, wayIdx) => {  
-  console.log(`Creating a fork of ${way.name}`)
-  const childProcess = fork(way.file);
-  childProcess.on('message', (message) => { 
-    console.log('got a message from child-process')
-    
-    res.end(JSON.stringify(message));
+function setupForks() { 
+  console.log('setting up forks')
+  return new Promise(res => {
+    forks = waysToAnalyze.map((way, wayIdx) => {
+      console.log(`Creating a fork of ${way.name}`);
+      const childProcess = fork(way.file);
+      childProcess.on('message', (message) => {
+        handleProcessResponse({ ...message, forkIdx: wayIdx});
+      });
+      return childProcess;
+    });
+    res(true);
+   })
+}
+
+function killForks() { 
+  forks.forEach((f) => {
+    f.send({ kill: true });
   });
-  return childProcess;
+  console.timeEnd('shebang');
+}
+
+
+let sentencesDone = 0;
+
+// // 
+// // 
+// // 
+function checkAnalysisDone(sentenceIdx) {
+  let doneAnalyzingCurSentence = Object.keys(sentences[sentenceIdx]).length === waysToAnalyze.length + 1;
+  const isProcessingLastSentence = sentenceIdx === sentences.length - 1;
+  if (doneAnalyzingCurSentence && sentencesDone < sentenceIdx + 1) {
+    sentencesDone = sentencesDone + 1;
+  }  
+
+  const moreSentencesToBeDone = sentencesDone !== sentences.length;
+  
+  // Completely done!
+  const isDone = doneAnalyzingCurSentence && !moreSentencesToBeDone && isProcessingLastSentence
+  if (isDone) {
+    console.log('DONE-ZO?!');
+    killForks()
+  }
+
+  // if (!doneAnalyzingCurSentence && moreSentencesToBeDone && !isDone) {
+  if (doneAnalyzingCurSentence && moreSentencesToBeDone && !isDone) {
+    processSentenceByIndex(sentenceIdx + waysToAnalyze.length);
+  }
+}
+
+
+
+
+
+// 
+// store data in sentence object
+// 
+function handleProcessResponse(processResponse) {
+  let { sentenceIdx, analysis: dataToStore, forkIdx } = processResponse;
+
+  
+  // let originalSentenceText;
+  // prep resulting analytics object per sentence
+  let curSentenceText =
+    typeof sentences[sentenceIdx] === 'string' ? sentences[sentenceIdx] : sentences[sentenceIdx].text;
+  
+  let dataForSentence = {
+    ...dataToStore,
+  }
+  if (typeof sentences[sentenceIdx] !== 'string') {
+    dataForSentence = {
+      ...sentences[sentenceIdx],
+      ...dataToStore,
+    }
+  }
+
+    sentences[sentenceIdx] = {
+      text: curSentenceText,
+      ...dataForSentence,
+    };
+  checkAnalysisDone(sentenceIdx);
+} 
+
+
+
+
+
+// 
+// for for this sentence index
+// use both forks and run 2x analysis
+// 
+function processSentenceByIndex(sentenceIdx) {
+  if (sentenceIdx < sentences.length) {
+    forks.forEach((f,fidx) => {
+      f.send({
+        text:
+          typeof sentences[sentenceIdx] === 'string'
+            ? sentences[sentenceIdx]
+            : sentences[sentenceIdx].text,
+        idx: sentenceIdx,
+      });
+    })
+  }
+}
+
+
+
+
+
+// // 
+// // 
+// // 
+function startProcessingSentences() {
+  for (let i = 0; i < forks.length; i++){
+    processSentenceByIndex(i)
+  }
+}
+
+setupForks().then(()=> {
+  startProcessingSentences();
 })
-
-forks.forEach(f => {
-  f.send({kill: true})
-})
-// let sentences = [
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Through a crucible for the ages America has been tested anew and America has risen to the challenge.',
-//   'Today, we celebrate the triumph not of a candidate, but of a cause, the cause of democracy.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'The will of the people has been heard and the will of the people has been heeded.',
-//   'We have learned again that democracy is precious.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-//   'Democracy is fragile.',
-//   'And at this hour, my friends, democracy has prevailed.',
-//   'So now, on this hallowed ground where just days ago violence sought to shake this Capitol’s very foundation, we come together as one nation, under God, indivisible, to carry out the peaceful transfer of power as we have for more than two centuries.',
-//   'We look ahead in our uniquely American way – restless, bold, optimistic – and set our sights on the nation we know we can be and we must be.',
-//   'I thank my predecessors of both parties for their presence here.',
-//   'I thank them from the bottom of my heart.',
-// ];
-// let sentencesDone = 0;
-// let analysisDone = 0;
-// const HOW_MANY_PROCESSES = 4;
-
-// console.log(`Processing ${sentences.length} sentences with ${HOW_MANY_PROCESSES} processes and ${waysToAnalyze.length} analysis per sentence`)
-
-
-
-// // 
-// // 
-// // 
-// function checkAnalysisDone() {
-//   let isDone = sentencesDone === sentences.length &&
-//     analysisDone !== waysToAnalyze.length - 1;
-//   // console.log('checkAnalysisDone', isDone);
-//   if (isDone) {
-//     analysisDone = analysisDone + 1;
-//     sentencesDone = 0;
-//     startProcessingInput({ maxProcesses: HOW_MANY_PROCESSES });
-//   }
-// }
-
-
-
-// // 
-// // 
-// // 
-// function checkDoneAndFinish() {
-//   if (sentencesDone === sentences.length) {
-//     // console.log('sentences');
-//     // console.log(sentences);
-//     console.timeEnd('shebang');
-//     console.log(sentences[0])
-//   }
-// }
-
-
-
-
-
-// // 
-// // 
-// // 
-// function handleProcessResponse(sentenceIdx) { 
-//   return function execHandler(err, stdout, stderr){
-//     if (err) {
-//       console.log('err', err);
-//     }
-//     if (stderr) {
-//       console.log('subprocess stderr: ', stderr.toString());
-//     }
-
-//     if (stdout) {
-//       // prep resulting analytics object per sentence
-//       if (analysisDone === 0) {
-//         let originalSentenceText = (' ' + sentences[sentenceIdx]).slice(1);
-//         sentences[sentenceIdx] = {};
-//         sentences[sentenceIdx].text = originalSentenceText;
-//       }
-
-//       sentences[sentenceIdx][`${waysToAnalyze[analysisDone].name}`] = JSON.parse(stdout);
-//       sentencesDone++;
-//       // console.log(`DONE with idx ${sentenceIdx}`);
-
-//       if (sentenceIdx + HOW_MANY_PROCESSES < sentences.length + HOW_MANY_PROCESSES - 1) {
-//         processSentenceByIndex(sentenceIdx + HOW_MANY_PROCESSES);
-//       }
-//       checkAnalysisDone();
-//       checkDoneAndFinish();
-//     }
-//   }
-// } 
-
-
-
-
-
-// // 
-// // 
-// // 
-// function processSentenceByIndex(sentenceIdx) {
-//   if (sentenceIdx < sentences.length) {
-//     // execFile(
-//     //   process.execPath,
-//     //   [`${waysToAnalyze[analysisDone].file}`],
-//     //   {
-//     //     env: {
-//     //       idx: sentenceIdx,
-//     //       text:
-//     //         typeof sentences[sentenceIdx] === 'string'
-//     //           ? sentences[sentenceIdx]
-//     //           : sentences[sentenceIdx].text,
-//     //     },
-//     //   },
-//     //   handleProcessResponse(sentenceIdx)
-//     // );
-//   }
-// }
-
-
-
-
-
-// // 
-// // 
-// // 
-// function startProcessingInput({
-//   maxProcesses,
-// }) {
-//   for (let i = 0; i < maxProcesses; i++){
-//     // console.log('// - - - - - //')
-//     // console.log('startProcessingInput loop! idx',i)
-//     // console.log('// - - - - - //');
-//     processSentenceByIndex(i)
-//   }
-// }
-
-// startProcessingInput({ maxProcesses: HOW_MANY_PROCESSES });
