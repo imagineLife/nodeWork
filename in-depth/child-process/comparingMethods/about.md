@@ -19,5 +19,6 @@ PARALLEL CHILD_PROCESSES
 
 
 ## several files
-- `parent` runs a parent process & uses the `exec` method for executing child_processes
+- `parentExec` runs a parent process & uses the `exec` method for executing child_processes
 - `parentExecFile` runs a parent process & uses the `execFile` method for executing child_processes
+- `parentFork` runs a parent proces && uses the `fork` method for executing child_processes

@@ -2,7 +2,7 @@
   DIFFERENCES between this and the other exec+spawn examples
   - HERE the 2 analysis files are a bit different: they are "fork" files and include `process` code - they "know" they are processes
 */ 
-console.time('shebang')
+console.time('shebangTime')
 const { fork } = require('child_process');
 const sentences = require('./sentences')
 const waysToAnalyze = [
@@ -42,7 +42,7 @@ function killForks() {
   forks.forEach((f) => {
     f.send({ kill: true });
   });
-  console.timeEnd('shebang');
+  console.timeEnd('shebangTime');
 }
 
 
@@ -61,6 +61,7 @@ function checkAnalysisDone(sentenceIdx) {
   if (isDone) {
     console.log('DONE-ZO?!');
     killForks()
+    console.log(sentences.slice(sentences.length - 5, sentences.length -1));
     return;
   }
 
@@ -114,6 +115,8 @@ function processSentenceByIndex(sentenceIdx) {
 
 
 function startProcessingSentences() {
+  console.log(`processing ${sentences.length} senteces with ${forks.length} forks`)
+  
   for (let i = 0; i < forks.length; i++){
     processSentenceByIndex(i)
   }
