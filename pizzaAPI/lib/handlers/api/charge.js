@@ -33,8 +33,6 @@ charge.post = function(data,callback){
 
 	//log the DURATION of this charge post method
 	console.time('charge POST')
-
-	charge.callback = callback;
 	
 	//GET token from headers
 	const passedToken = typeof(data.headers.token) == 'string' ? data.headers.token : false;
@@ -93,9 +91,11 @@ charge.post = function(data,callback){
 			}
 
 			let logFileName = `${data.payload.email.split('@')[0]}-${Date.now()}`
-
-			charge.logString = JSON.stringify(logObject);
-			charge.logFileName = logFileName;
+			let reqContext = {
+				callback,
+				logString: JSON.stringify(logObject),
+				logFileName
+			}
 
 			/* 
 				interact with STRIPE API
@@ -114,8 +114,8 @@ charge.post = function(data,callback){
 				//if stripeID in payload
 				if(existingStripeID !== null){
 				
-					thisCust = {id: existingStripeID}
-					charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj, stripeAPIPrepData)
+					const thisCust = {id: existingStripeID}
+					charge.proceedWithStripeUser(thisCust, stripeCustomerDataObj, stripeAPIPrepData, reqContext)
 				
 				//Create New Stripe User
 				}else{
@@ -129,11 +129,11 @@ charge.post = function(data,callback){
 
 				        	// store the stripe user ID in node user data
 				        	doUsers.patch({email: data.payload.email, stripeID: customerObj.id}, (patchedData) => {return})
-				        	charge.proceedWithStripeUser(customerObj, stripeCustomerDataObj, stripeAPIPrepData)
+				        	charge.proceedWithStripeUser(customerObj, stripeCustomerDataObj, stripeAPIPrepData, reqContext)
 
 				        });
 				    } catch (error) {
-				       charge.callback(400, { Error: "Could not create a new customer" });
+				       callback(400, { Error: "Could not create a new customer" });
 				       return;
 				    }
 				} 
@@ -179,7 +179,7 @@ charge.makeStripeReq = (reqObj, reqStr) => {
     });
 }
 
-charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
+charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData, reqContext) => {
 	
   stripeCustDataObj.id = res.id;
 	stripeCustDataObj.source = (res.sources && res.sources.data && res.sources.data.length > 0 ) ? res.sources.data[0] : null
@@ -201,7 +201,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 		charge.makeStripeReq(stripeAPIPrepData, sourceString).then(stripeSource => {
 			
 			stripeCustDataObj.source = stripeSource
-			charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj)
+			charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj, reqContext)
 
 		})
 	}
@@ -210,7 +210,7 @@ charge.proceedWithStripeUser = (res, stripeCustDataObj, stripeAPIPrepData) => {
 	//if stripe source IS present
 	//	 charge the customer
 	if(stripeCustDataObj.source !== null) {
-		charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj);
+		charge.chargeStripeCustomer(stripeAPIPrepData, stripeCustDataObj, reqContext);
 
 		//get firstName from user data
 	}
@@ -227,7 +227,7 @@ charge.prepChargeReqStr = (data) => {
 	return queryString.stringify(obj);
 }
 
-charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
+charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj, reqContext) => {
 	stripeAPIPrepData = {
 		path: "/v1/charges",
 		method: "POST"
@@ -246,31 +246,31 @@ charge.chargeStripeCustomer  = (stripeAPIPrepData, stripeCustDataObj) => {
         		text: `Thanks for your order of $${(stripeCustDataObj.cartTotal/100).toFixed(2)}`
         	}
 
-        	doMail.send(mailObj).then(mailRes => {
+	        	doMail.send(mailObj).then(mailRes => {
 
-        		//append the logFile to the file
-						logsLib.append('charges', charge.logFileName, charge.logString, (err)=> {
+	        		//append the logFile to the file
+						logsLib.append('charges', reqContext.logFileName, reqContext.logString, (err)=> {
 							if(err){
 								console.log('Logging-to-file FAILED')
-								return charge.callback(200, { Success: "email sent! :) " });
+								return reqContext.callback(200, { Success: "email sent! :) " });
 							}
 							console.log('Logging-to-file SUCCEEDED!!')
-							return charge.callback(200, { Success: "email sent! :) " });
+							return reqContext.callback(200, { Success: "email sent! :) " });
 						})
-        		
-        	}).catch(mailErr => {
-        		console.log(mailErr)
-        		charge.callback(400, {'MailErr': mailErr})
-        	})
+	        		
+	        	}).catch(mailErr => {
+	        		console.log(mailErr)
+	        		reqContext.callback(400, {'MailErr': mailErr})
+	        	})
         })
         .catch(err => {
         	console.log('chargeStripeCustomer err')
         	console.log(err)
         	
-        	charge.callback(400, { Error: "Error charging" });	
+        	reqContext.callback(400, { Error: "Error charging" });	
         });
     } catch (error) {
-        charge.callback(400, { Error: "Could not charge" });
+        reqContext.callback(400, { Error: "Could not charge" });
         return;
     }
 }

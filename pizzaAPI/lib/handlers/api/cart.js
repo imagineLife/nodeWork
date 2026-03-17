@@ -100,7 +100,7 @@ doCart.put = function(data,callback){
 	const email = isEmailValid(data.queryStrObj.email)
 	
 	//check for optional fields
-	const cart = checkForLengthAndType(data.payload.cart)
+	const cart = Array.isArray(data.payload.cart) ? data.payload.cart : false;
 
 	//if email is invalid, Error 
 	if(!email){
@@ -112,6 +112,14 @@ doCart.put = function(data,callback){
 	if(!cart){
 		callback(400, {'Error': 'Missing updatable cart data'})
 		return;	
+	}
+
+	let validCartPrices = cart.map(itm => (itm && Number(itm.price) > 0) ? true : false);
+	validCartPrices = validCartPrices.every(itm => itm === true);
+
+	if(!validCartPrices){
+		callback(400, {'Error': 'Invalid cart data'})
+		return;
 	}
 
 	if(!data.headers.token){
@@ -127,7 +135,6 @@ doCart.put = function(data,callback){
 			callback(403, {'Error': 'Missing required token in header, or token invalid'})
 			return;
 		}
-		callback(200, {'MORE': 'need to update the code to update the cart'})
 
 		//lookup the cart
 		dataLib.read('cart', email, (err, cartData) => {
@@ -138,11 +145,13 @@ doCart.put = function(data,callback){
 				return;
 			}
 
+			cartData.cartData = cart;
+
 			//Store the newly updated cartData obj
 			dataLib.update('cart', email, cartData, (err) => {
 
 				if(!err){
-					return callback(200, {"Success!": `${cartData.firstName} ${cartData.lastName} updated successfully`})
+					return callback(200, {"Success!": `Cart for ${email} updated successfully`})
 				}else{
 					return callback(500, {'Error': 'Couldnt update this user with this info'})
 				}

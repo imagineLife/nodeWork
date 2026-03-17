@@ -117,7 +117,7 @@ doUsers.put = function(data,callback){
 
 	let updatableFields = [fn, ln, pw];
 	//if at least one other field exists to update
-	if(!updatableFields.some(itm => itm !== null)){
+	if(!updatableFields.some(itm => !!itm)){
 		return callback(400, {'Error': 'Missing updatable field'})
 	}
 
@@ -149,7 +149,7 @@ doUsers.put = function(data,callback){
 				userData.lastName = ln;
 			}
 			if(pw){
-				userData.passWord = helpers.hash(pw);
+				userData.hashedPW = helpers.hash(pw);
 			}
 
 			//Store the newly updated userData obj

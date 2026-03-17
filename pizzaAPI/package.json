@@ -1,0 +1,11 @@
+{
+  "name": "pizza-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test --test-concurrency=1",
+    "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage",
+    "test:coverage:90": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-lines=90"
+  }
+}

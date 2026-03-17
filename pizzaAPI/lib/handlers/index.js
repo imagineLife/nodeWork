@@ -103,6 +103,8 @@ routeHandlers.cart = (data, callback) => {
 
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doCart[data.method](data, callback);
+	}else{
+		return callback(405)
 	}
 
 }
@@ -114,6 +116,8 @@ routeHandlers.charge = (data, callback) => {
 
 	if(acceptableMethods.indexOf(data.method) > -1){
 		routeHandlers.doCharges[data.method](data, callback);
+	}else{
+		return callback(405)
 	}
 
 }

@@ -27,8 +27,8 @@ doTokens.post = (data, callback) => {
 	const eml = typeof(dataEmail) == 'string' && dataEmail.includes('@') && dataEmail.includes('.com') ? dataEmail.trim() : false;
 	const pw = checkForLengthAndType(data.payload.passWord);
 	
-	if(!eml && !pw){
-		callback(400,{'Error': 'Missing phone or pw'})
+	if(!eml || !pw){
+		callback(400,{'Error': 'Missing email or pw'})
 		return;
 	}
 
@@ -37,7 +37,7 @@ doTokens.post = (data, callback) => {
 
 		//sanity check
 		if(err || !userData){
-			callback(400, {'Error': 'Couldnt find that user'})
+			return callback(400, {'Error': 'Couldnt find that user'})
 		}
 
 		//hash pw to compare to STORED hashed pw

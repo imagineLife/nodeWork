@@ -70,7 +70,7 @@ logsLib.append = (optLogsFile, fileName, stringToAppend, callback) => {
 
 //list all the logs and OPTIONALLY include compressed logs
 logsLib.listLogs = (optLogFile, includeCompressedLogs, callback) => {
-	let dir = optLogsFile ? `${logsLib.baseDir}${optLogsFile}/` : `${logsLib.baseDir}`
+	let dir = optLogFile ? `${logsLib.baseDir}${optLogFile}/` : `${logsLib.baseDir}`
 
 	fs.readdir(dir, (err, res) => {
 		if(err || !res || !(res.length > 0)){
@@ -125,8 +125,8 @@ logsLib.compress = (optLogsFile, logID, newFileID, callback) => {
 				return callback(errTwo)
 			}
 
-			//SEND compressed data to dest file
-			fs.open(`${logsLib.baseDir}${destFile}`,'wx',(errThree, fileDesc) => {
+				//SEND compressed data to dest file
+				fs.open(`${dir}${destFile}`,'wx',(errThree, fileDesc) => {
 				
 				//WRITE to the destFile with base64 encoding
 				if(errThree || !fileDesc){

@@ -8,7 +8,6 @@
 const crypto = require('crypto');
 const config = require('./config');
 const https = require('https');
-const queryString = require('querystring');
 const path = require('path')
 const fs = require('fs')
 
