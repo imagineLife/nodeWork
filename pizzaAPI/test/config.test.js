@@ -49,3 +49,19 @@ test('config exports production when NODE_ENV matches prod (case-insensitive)', 
   assert.equal(config.httpPort, 5000);
   assert.equal(config.httpsPort, 5001);
 });
+
+test('config loader restores existing NODE_ENV value after import', () => {
+  const original = process.env.NODE_ENV;
+  process.env.NODE_ENV = 'staging';
+  try {
+    const config = loadConfigWithNodeEnv('qa');
+    assert.equal(config.friendlyEnvName, 'staging');
+    assert.equal(process.env.NODE_ENV, 'staging');
+  } finally {
+    if (typeof original === 'undefined') {
+      delete process.env.NODE_ENV;
+    } else {
+      process.env.NODE_ENV = original;
+    }
+  }
+});

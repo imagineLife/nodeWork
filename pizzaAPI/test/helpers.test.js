@@ -4,6 +4,7 @@ const { EventEmitter } = require('node:events');
 const https = require('node:https');
 
 const helpers = require('../lib/helpers');
+const config = require('../lib/config');
 
 function callNodeback(fn) {
   return new Promise((resolve, reject) => {
@@ -121,6 +122,34 @@ test('helpers template/rendering methods', async () => {
   assert.ok(staticAsset.data.length > 0);
 
   await assert.rejects(() => callNodeback((cb) => helpers.getStaticAsset('missing.file', cb)));
+});
+
+test('helpers.interpolate handles inherited keys and invalid input', () => {
+  const originalGlobalTemplate = config.globalTemplate;
+  const inheritedGlobal = { inheritedName: 'proto-value' };
+  config.globalTemplate = Object.assign(Object.create(inheritedGlobal), {
+    appName: 'Sall-ease Pizza'
+  });
+
+  try {
+    const inheritedData = Object.assign(Object.create({ inherited: 'skip-me' }), {
+      name: 'Casey'
+    });
+
+    const interpolated = helpers.interpolate(
+      'Hello {name} {inherited} {global.inheritedName} {global.appName}',
+      inheritedData
+    );
+
+    assert.match(interpolated, /Hello Casey/);
+    assert.match(interpolated, /\{inherited\}/);
+    assert.match(interpolated, /\{global.inheritedName\}/);
+    assert.match(interpolated, /Sall-ease Pizza/);
+
+    assert.equal(helpers.interpolate(null, null), '');
+  } finally {
+    config.globalTemplate = originalGlobalTemplate;
+  }
 });
 
 test('helpers.getFrontend success and error branches', async () => {

@@ -9,6 +9,7 @@ const envConfig = require('./config');
 const fs = require('fs');
 const legacyHandlers = require('./handlers/');
 const createLegacyRouter = require('../src/app/router');
+const { tokensRouteHandler } = require('../src/modules/tokens');
 const helpers = require('./helpers')
 const path = require('path');
 
@@ -49,7 +50,11 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 	serverObj.sharedServer(req,res)
 })
 
-serverObj.myRouter = createLegacyRouter(legacyHandlers);
+const useV2Tokens = process.env.USE_V2_TOKENS !== 'false';
+
+serverObj.myRouter = createLegacyRouter(legacyHandlers, {
+	tokensHandler: useV2Tokens ? tokensRouteHandler : legacyHandlers.tokens
+});
 
 //Sharing logic to create http & https servers
 serverObj.sharedServer = (req, res) => {

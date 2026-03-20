@@ -6,6 +6,8 @@
   "scripts": {
     "test": "node --test --test-concurrency=1",
     "test:coverage": "node --test --test-concurrency=1 --experimental-test-coverage",
-    "test:coverage:90": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-lines=90"
+    "test:coverage:90": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-lines=99 --test-coverage-branches=98 --test-coverage-functions=99",
+    "test:coverage:gate": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-lines=99 --test-coverage-branches=98 --test-coverage-functions=99",
+    "test:coverage:gate:app": "node --test --test-concurrency=1 --experimental-test-coverage --test-coverage-include=lib/** --test-coverage-include=src/** --test-coverage-exclude=test/** --test-coverage-lines=99 --test-coverage-branches=98 --test-coverage-functions=99"
   }
 }

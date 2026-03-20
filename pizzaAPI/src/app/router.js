@@ -1,12 +1,14 @@
-function createLegacyRouter(handlers) {
+function createLegacyRouter(handlers, options = {}) {
   if (!handlers || typeof handlers !== 'object') {
     throw new TypeError('handlers object is required');
   }
 
+  const tokensHandler = typeof options.tokensHandler === 'function' ? options.tokensHandler : handlers.tokens;
+
   return {
     '': handlers.doIndex,
     'api/users': handlers.users,
-    'api/tokens': handlers.tokens,
+    'api/tokens': tokensHandler,
     'api/menuItems': handlers.menuItems,
     'api/cart': handlers.cart,
     'api/charge': handlers.charge,

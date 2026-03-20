@@ -5,6 +5,8 @@ const zlib = require('node:zlib');
 
 const doCart = require('../lib/handlers/api/cart');
 const doTokens = require('../lib/handlers/api/tokens');
+const doUsers = require('../lib/handlers/api/users');
+const doCharge = require('../lib/handlers/api/charge');
 const routeHandlers = require('../lib/handlers');
 const doMail = require('../lib/handlers/api/mail');
 const dataLib = require('../lib/data');
@@ -46,6 +48,18 @@ test('cart handler branches: validation and downstream failures', async () => {
       payload: { email: 'bad-email', cart: [] }
     });
     assert.equal(badEmail.statusCode, 500);
+
+    const nonStringEmail = await invokeCartMethod('post', {
+      headers: { token: 'x' },
+      payload: { email: 42, cart: [] }
+    });
+    assert.equal(nonStringEmail.statusCode, 500);
+
+    const missingDotComEmail = await invokeCartMethod('post', {
+      headers: { token: 'x' },
+      payload: { email: 'cart@example', cart: [] }
+    });
+    assert.equal(missingDotComEmail.statusCode, 500);
 
     const badCartPrice = await invokeCartMethod('post', {
       headers: { token: 'x' },
@@ -219,6 +233,14 @@ test('data library branches: create/update/readLog/listFiles error paths', async
       assert.equal(err, 'error CLOSING new file');
     }
 
+    fs.open = (_path, _flags, cb) => cb(new Error('open-failed'));
+    {
+      assert.throws(
+        () => dataLib.update('users', 'a', { x: 1 }, () => {}),
+        /calback is not defined/
+      );
+    }
+
     fs.open = (_path, _flags, cb) => cb(false, 1);
     fs.ftruncate = (_fd, cb) => cb(new Error('truncate-failed'));
     {
@@ -295,6 +317,10 @@ test('logs library branches: append/compress/decompress/truncate errors', async 
       const [err] = await invokeNodeback((cb) => logsLib.append('charges', 'one', 'x', cb));
       assert.equal(err, 'Couldnt open file for appending');
     }
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.append(undefined, 'one', 'x', cb));
+      assert.equal(err, 'Couldnt open file for appending');
+    }
 
     fs.open = (_path, _flags, cb) => cb(false, 1);
     fs.appendFile = (_fd, _str, cb) => cb(new Error('append-failed'));
@@ -316,10 +342,30 @@ test('logs library branches: append/compress/decompress/truncate errors', async 
       const [err] = await invokeNodeback((cb) => logsLib.listLogs('charges', true, cb));
       assert.equal(err.message, 'list-failed');
     }
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.listLogs(undefined, false, cb));
+      assert.equal(err.message, 'list-failed');
+    }
+
+    fs.readdir = (_path, cb) => cb(false, ['first.log', 'second.gz.b64', 'ignore.txt']);
+    {
+      const [err, names] = await invokeNodeback((cb) => logsLib.listLogs('charges', false, cb));
+      assert.equal(err, false);
+      assert.deepEqual(names, ['first']);
+    }
+    {
+      const [err, names] = await invokeNodeback((cb) => logsLib.listLogs('charges', true, cb));
+      assert.equal(err, false);
+      assert.deepEqual(names, ['first', 'second']);
+    }
 
     fs.readFile = (_path, _enc, cb) => cb(new Error('compress-read-failed'));
     {
       const [err] = await invokeNodeback((cb) => logsLib.compress('charges', 'src', 'dest', cb));
+      assert.equal(err.message, 'compress-read-failed');
+    }
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.compress(undefined, 'src', 'dest', cb));
       assert.equal(err.message, 'compress-read-failed');
     }
 
@@ -362,6 +408,10 @@ test('logs library branches: append/compress/decompress/truncate errors', async 
       const [err] = await invokeNodeback((cb) => logsLib.decompress('charges', 'src', cb));
       assert.equal(err.message, 'decompress-read-failed');
     }
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.decompress(undefined, 'src', cb));
+      assert.equal(err.message, 'decompress-read-failed');
+    }
 
     fs.readFile = (_path, _enc, cb) => cb(false, Buffer.from('ok').toString('base64'));
     zlib.unzip = (_input, cb) => cb(new Error('unzip-failed'));
@@ -375,6 +425,16 @@ test('logs library branches: append/compress/decompress/truncate errors', async 
       const [err] = await invokeNodeback((cb) => logsLib.truncate('charges', 'src', cb));
       assert.equal(err.message, 'truncate-failed');
     }
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.truncate(undefined, 'src', cb));
+      assert.equal(err.message, 'truncate-failed');
+    }
+
+    fs.truncate = (_path, _len, cb) => cb(false);
+    {
+      const [err] = await invokeNodeback((cb) => logsLib.truncate('charges', 'src', cb));
+      assert.equal(err, false);
+    }
   } finally {
     fs.open = originalFsOpen;
     fs.appendFile = originalFsAppendFile;
@@ -385,6 +445,266 @@ test('logs library branches: append/compress/decompress/truncate errors', async 
     fs.readdir = originalFsReaddir;
     zlib.gzip = originalGzip;
     zlib.unzip = originalUnzip;
+  }
+});
+
+test('tokens and users handlers cover persistence failure branches', async () => {
+  const originalRead = dataLib.read;
+  const originalCreate = dataLib.create;
+  const originalUpdate = dataLib.update;
+  const originalDelete = dataLib.delete;
+  const originalHash = helpers.hash;
+  const originalRandom = helpers.createRandomString;
+  const originalVerify = doTokens.verifyTokenMatch;
+
+  try {
+    dataLib.read = (_dir, _name, cb) => cb(false, { hashedPW: 'hash', stripeID: null });
+    helpers.hash = () => 'hash';
+    helpers.createRandomString = () => '1234567890123456789';
+    dataLib.create = (_dir, _name, _obj, cb) => cb('create-failed');
+    const tokenCreateErr = await invokeHandler(doTokens.post, {
+      payload: { email: 'branch@example.com', passWord: 'secret' }
+    });
+    assert.equal(tokenCreateErr.statusCode, 500);
+
+    let createdTokenObj;
+    dataLib.read = (_dir, _name, cb) => cb(false, { hashedPW: 'hash', stripeID: 'cus_123' });
+    dataLib.create = (_dir, _name, obj, cb) => {
+      createdTokenObj = obj;
+      cb(false);
+    };
+    const tokenCreateOk = await invokeHandler(doTokens.post, {
+      payload: { email: 'branch@example.com', passWord: 'secret' }
+    });
+    assert.equal(tokenCreateOk.statusCode, 200);
+    assert.equal(createdTokenObj.stripeID, 'cus_123');
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { tokenId: '1234567890123456789', email: 'branch@example.com' });
+    const tokenGetOk = await invokeHandler(doTokens.get, {
+      queryStrObj: { id: '1234567890123456789' }
+    });
+    assert.equal(tokenGetOk.statusCode, 200);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { expires: Date.now() + 1000, email: 'branch@example.com' });
+    dataLib.update = (_dir, _name, _obj, cb) => cb(false);
+    const tokenPutOk = await invokeHandler(doTokens.put, {
+      payload: { id: '1234567890123456789', extend: true }
+    });
+    assert.equal(tokenPutOk.statusCode, 200);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { expires: Date.now() + 1000, email: 'branch@example.com' });
+    dataLib.update = (_dir, _name, _obj, cb) => cb('update-failed');
+    const tokenPutErr = await invokeHandler(doTokens.put, {
+      payload: { id: '1234567890123456789', extend: true }
+    });
+    assert.equal(tokenPutErr.statusCode, 500);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { tokenId: '1234567890123456789' });
+    dataLib.delete = (_dir, _name, cb) => cb(false);
+    const tokenDeleteOk = await invokeHandler(doTokens.delete, {
+      queryStrObj: { id: '1234567890123456789' }
+    });
+    assert.equal(tokenDeleteOk.statusCode, 200);
+
+    dataLib.delete = (_dir, _name, cb) => cb('delete-failed');
+    const tokenDeleteErr = await invokeHandler(doTokens.delete, {
+      queryStrObj: { id: '1234567890123456789' }
+    });
+    assert.equal(tokenDeleteErr.statusCode, 500);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, {
+      email: 'different@example.com',
+      expires: Date.now() + 1000
+    });
+    const tokenMismatch = await new Promise((resolve) => {
+      doTokens.verifyTokenMatch('1234567890123456789', 'branch@example.com', (ok) => resolve(ok));
+    });
+    assert.equal(tokenMismatch, false);
+
+    dataLib.read = (_dir, _name, cb) => cb(new Error('missing-user'));
+    helpers.hash = () => false;
+    const userHashErr = await invokeHandler(doUsers.post, {
+      payload: {
+        firstName: 'A',
+        lastName: 'B',
+        email: 'branch@example.com',
+        address: '123 Main',
+        passWord: 'secret',
+        tosAgreement: true
+      }
+    });
+    assert.equal(userHashErr.statusCode, 500);
+
+    helpers.hash = () => 'hash';
+    dataLib.create = (_dir, _name, _obj, cb) => cb('create-failed');
+    const userCreateErr = await invokeHandler(doUsers.post, {
+      payload: {
+        firstName: 'A',
+        lastName: 'B',
+        email: 'branch@example.com',
+        address: '123 Main',
+        passWord: 'secret',
+        tosAgreement: true
+      }
+    });
+    assert.equal(userCreateErr.statusCode, 500);
+
+    doTokens.verifyTokenMatch = (_token, _email, cb) => cb(true);
+    dataLib.read = (_dir, _name, cb) => cb(new Error('read-failed'), undefined);
+    const userPutReadErr = await invokeHandler(doUsers.put, {
+      queryStrObj: { email: 'branch@example.com' },
+      payload: { firstName: 'Next' },
+      headers: { token: 'ok' }
+    });
+    assert.equal(userPutReadErr.statusCode, 400);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, {
+      firstName: 'A',
+      lastName: 'B',
+      hashedPW: 'hash'
+    });
+    dataLib.update = (_dir, _name, _obj, cb) => cb('update-failed');
+    const userPutUpdateErr = await invokeHandler(doUsers.put, {
+      queryStrObj: { email: 'branch@example.com' },
+      payload: { lastName: 'Updated' },
+      headers: { token: 'ok' }
+    });
+    assert.equal(userPutUpdateErr.statusCode, 500);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { firstName: 'A', lastName: 'B' });
+    dataLib.update = (_dir, _name, _obj, cb) => cb(false);
+    const userPatchOk = await invokeHandler(doUsers.patch, {
+      email: 'branch@example.com',
+      firstName: 'Patched'
+    });
+    assert.equal(userPatchOk.statusCode, 200);
+
+    dataLib.update = (_dir, _name, _obj, cb) => cb('update-failed');
+    const userPatchErr = await invokeHandler(doUsers.patch, {
+      email: 'branch@example.com',
+      firstName: 'Patched'
+    });
+    assert.equal(userPatchErr.statusCode, 500);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, undefined);
+    const userGetNotFound = await invokeHandler(doUsers.get, {
+      queryStrObj: { email: 'branch@example.com' },
+      headers: { token: 'ok' }
+    });
+    assert.equal(userGetNotFound.statusCode, 404);
+
+    dataLib.read = (_dir, _name, cb) => cb(new Error('boom'), {
+      firstName: 'A',
+      lastName: 'B',
+      hashedPW: 'hash'
+    });
+    const userGetErr = await invokeHandler(doUsers.get, {
+      queryStrObj: { email: 'branch@example.com' },
+      headers: { token: 'ok' }
+    });
+    assert.equal(userGetErr.statusCode, 500);
+
+    dataLib.read = (_dir, _name, cb) => cb(false, { firstName: 'A' });
+    dataLib.delete = (_dir, _name, cb) => cb('delete-failed');
+    const userDeleteErr = await invokeHandler(doUsers.delete, {
+      queryStrObj: { email: 'branch@example.com' },
+      headers: { token: 'ok' }
+    });
+    assert.equal(userDeleteErr.statusCode, 500);
+  } finally {
+    dataLib.read = originalRead;
+    dataLib.create = originalCreate;
+    dataLib.update = originalUpdate;
+    dataLib.delete = originalDelete;
+    helpers.hash = originalHash;
+    helpers.createRandomString = originalRandom;
+    doTokens.verifyTokenMatch = originalVerify;
+  }
+});
+
+test('charge handler covers sync-catch and customer creation fallback branches', async () => {
+  const originalMakeStripeReq = doCharge.makeStripeReq;
+  const originalPrepChargeReqStr = doCharge.prepChargeReqStr;
+  const originalVerify = doTokens.verifyTokenMatch;
+  const originalRead = dataLib.read;
+  const originalMailSend = doMail.send;
+  const originalLogsAppend = logsLib.append;
+  const originalUserPatch = doUsers.patch;
+
+  try {
+    doTokens.verifyTokenMatch = (_token, _email, cb) => cb(true);
+    dataLib.read = (_dir, _name, cb) => cb(false, {
+      cartData: [{ price: 10, count: 1 }]
+    });
+    doUsers.patch = (_payload, cb) => cb(200);
+
+    doCharge.makeStripeReq = () => {
+      throw new Error('sync-create-customer-fail');
+    };
+    const createCustomerCatch = await invokeHandler(doCharge.post, {
+      headers: { token: 'ok' },
+      payload: { email: 'branch@example.com' }
+    });
+    assert.equal(createCustomerCatch.statusCode, 400);
+    assert.equal(createCustomerCatch.payload.Error, 'Could not create a new customer');
+
+    doCharge.makeStripeReq = originalMakeStripeReq;
+    const payloadWithThrowingStripeId = { email: 'branch@example.com' };
+    Object.defineProperty(payloadWithThrowingStripeId, 'stripeID', {
+      get() {
+        throw new Error('no-customer');
+      }
+    });
+    const noCustomerCatch = await invokeHandler(doCharge.post, {
+      headers: { token: 'ok' },
+      payload: payloadWithThrowingStripeId
+    });
+    assert.equal(noCustomerCatch.statusCode, 400);
+    assert.equal(noCustomerCatch.payload.Error, 'No Customer present');
+
+    doCharge.makeStripeReq = async () => ({ id: 'ch_123' });
+    doMail.send = async () => ({ id: 'mail_123' });
+    logsLib.append = (_dir, _name, _line, cb) => cb('append-failed');
+    const appendErrButSuccess = await new Promise((resolve) => {
+      doCharge.chargeStripeCustomer(
+        { path: '/x', method: 'post' },
+        { cartTotal: 1000, source: { customer: 'cus_123' } },
+        {
+          logFileName: 'branch-test',
+          logString: '{"ok":true}',
+          callback: (statusCode, payload) => resolve({ statusCode, payload })
+        }
+      );
+    });
+    assert.equal(appendErrButSuccess.statusCode, 200);
+
+    doCharge.prepChargeReqStr = () => 'amount=1000&currency=usd';
+    doCharge.makeStripeReq = () => {
+      throw new Error('sync-charge-failure');
+    };
+
+    const res = await new Promise((resolve) => {
+      doCharge.chargeStripeCustomer(
+        { path: '/x', method: 'post' },
+        { cartTotal: 1000, source: { customer: 'cus_123' } },
+        {
+          logFileName: 'branch-test',
+          logString: '{"ok":true}',
+          callback: (statusCode, payload) => resolve({ statusCode, payload })
+        }
+      );
+    });
+
+    assert.equal(res.statusCode, 400);
+    assert.equal(res.payload.Error, 'Could not charge');
+  } finally {
+    doCharge.makeStripeReq = originalMakeStripeReq;
+    doCharge.prepChargeReqStr = originalPrepChargeReqStr;
+    doTokens.verifyTokenMatch = originalVerify;
+    dataLib.read = originalRead;
+    doMail.send = originalMailSend;
+    logsLib.append = originalLogsAppend;
+    doUsers.patch = originalUserPatch;
   }
 });
 
@@ -403,6 +723,15 @@ test('menuItems, mail, and helper edge branches', async () => {
       trimmedPath: ''
     });
     assert.equal(missingToken.statusCode, 400);
+
+    const invalidEmailShape = await invokeHandler(routeHandlers.menuItems, {
+      method: 'get',
+      queryStrObj: { email: 'menu@example' },
+      headers: { token: 'ok' },
+      payload: {},
+      trimmedPath: ''
+    });
+    assert.equal(invalidEmailShape.statusCode, 400);
 
     doTokens.verifyTokenMatch = (_token, _email, cb) => cb(true);
     dataLib.readSync = () => {

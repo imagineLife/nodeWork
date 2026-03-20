@@ -5,12 +5,6 @@ const doTokens = require('./tokens')
 const u = require('util')
 const debug = u.debuglog('CART')
 
-//request data checker fn
-function checkForLengthAndType(data){
-	let res = typeof(data) == 'string' && data.trim().length > 0 ? data.trim() : false;
-	return res
-}
-
 const isEmailValid = str => typeof(str) == 'string' && str.includes('.com') && str.includes('@') ? str.trim() : false;
 
 //deals with cart

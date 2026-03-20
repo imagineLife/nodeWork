@@ -45,35 +45,31 @@ test('frontend handlers call helpers.getFrontend with expected templates on GET'
 });
 
 test('frontend handlers return 405 when method is not allowed', async () => {
-  await new Promise((resolve) => {
-    frontendHandlers.indexHandler(makeData('post'), (statusCode, _payload, contentType) => {
-      assert.equal(statusCode, 405);
-      assert.equal(contentType, 'html');
-      resolve();
-    });
-  });
+  const originalGetFrontend = helpers.getFrontend;
+  helpers.getFrontend = () => {};
 
-  await new Promise((resolve) => {
-    frontendHandlers.accountEditHandler(makeData('post'), (statusCode, _payload, contentType) => {
-      assert.equal(statusCode, 405);
-      assert.equal(contentType, 'html');
-      resolve();
-    });
-  });
+  const handlers = [
+    frontendHandlers.indexHandler,
+    frontendHandlers.accountCreateHandler,
+    frontendHandlers.accountEditHandler,
+    frontendHandlers.sessionCreateHandler,
+    frontendHandlers.sessionDeletedHandler,
+    frontendHandlers.checkoutHandler,
+    frontendHandlers.cartViewHandler,
+    frontendHandlers.menuHandler
+  ];
 
-  await new Promise((resolve) => {
-    frontendHandlers.sessionCreateHandler(makeData('post'), (statusCode, _payload, contentType) => {
-      assert.equal(statusCode, 405);
-      assert.equal(contentType, 'html');
-      resolve();
-    });
-  });
-
-  await new Promise((resolve) => {
-    frontendHandlers.sessionDeletedHandler(makeData('post'), (statusCode, _payload, contentType) => {
-      assert.equal(statusCode, 405);
-      assert.equal(contentType, 'html');
-      resolve();
-    });
-  });
+  try {
+    for (const handler of handlers) {
+      await new Promise((resolve) => {
+        handler(makeData('post'), (statusCode, _payload, contentType) => {
+          assert.equal(statusCode, 405);
+          assert.equal(contentType, 'html');
+          resolve();
+        });
+      });
+    }
+  } finally {
+    helpers.getFrontend = originalGetFrontend;
+  }
 });

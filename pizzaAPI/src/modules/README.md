@@ -2,10 +2,10 @@
 
 This directory is the Phase 2 landing zone for modularized API features.
 
-Planned first migrations:
+Migration status:
 
-- `tokens`
-- `users`
+- `tokens`: scaffolded in `src/modules/tokens` and wired in router
+- `users`: planned next
 
 Each module will be split into:
 

@@ -43,6 +43,17 @@ test('createLegacyRouter maps all legacy routes', () => {
   assert.equal(router['session/deleted'], handlers.sessionDeleted);
   assert.equal(router['favicon.ico'], handlers.favicon);
   assert.equal(router['public'], handlers.public);
+
+  assert.doesNotThrow(() => router['']());
+});
+
+test('createLegacyRouter supports tokens route override', () => {
+  const handlers = makeHandlers();
+  const tokensOverride = () => {};
+  const router = createLegacyRouter(handlers, { tokensHandler: tokensOverride });
+
+  assert.equal(router['api/tokens'], tokensOverride);
+  assert.doesNotThrow(() => router['api/tokens']());
 });
 
 test('createLegacyRouter notFound route returns 404', async () => {
