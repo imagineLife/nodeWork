@@ -7,7 +7,8 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const envConfig = require('./config');
 const fs = require('fs');
-const routeHandlers = require('./handlers/');
+const legacyHandlers = require('./handlers/');
+const createLegacyRouter = require('../src/app/router');
 const helpers = require('./helpers')
 const path = require('path');
 
@@ -48,24 +49,7 @@ serverObj.httpsServer = https.createServer(serverObj.httpsServerOptions, (req, r
 	serverObj.sharedServer(req,res)
 })
 
-serverObj.myRouter = {
-	'': routeHandlers.doIndex,
-	'api/users': routeHandlers.users,
-	'api/tokens' : routeHandlers.tokens,
-	'api/menuItems' : routeHandlers.menuItems,
-	'api/cart' : routeHandlers.cart,
-	'api/charge': routeHandlers.charge,
-	'account/create': routeHandlers.accountCreate,
-	'account/edit': routeHandlers.accountEdit,
-	'menu': routeHandlers.menu,
-	'cart': routeHandlers.cartView,
-	'checkout': routeHandlers.checkout,
-	"session/create" : routeHandlers.sessionCreate,
-  "session/deleted" : routeHandlers.sessionDeleted,
- 'favicon.ico': routeHandlers.favicon,
- 'public': routeHandlers.public,
-	'notFound' : function(data, callback){ callback(404) }
-}
+serverObj.myRouter = createLegacyRouter(legacyHandlers);
 
 //Sharing logic to create http & https servers
 serverObj.sharedServer = (req, res) => {
@@ -104,9 +88,9 @@ serverObj.sharedServer = (req, res) => {
 		curIncomingString += decoder.end();
 		
 		//choose the handler this request should go to
-		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : routeHandlers.notFound;
+		let chosenHandler = typeof(serverObj.myRouter[trimmedPathTxt]) !== 'undefined' ? serverObj.myRouter[trimmedPathTxt] : legacyHandlers.notFound;
 		
-		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? routeHandlers.public : chosenHandler;
+		chosenHandler = trimmedPathTxt.indexOf('public') > -1 ? legacyHandlers.public : chosenHandler;
 
 		debug('\x1b[32m%s\x1b[0m', `handling ${chosenHandler}`)
 		// object to send to the handler

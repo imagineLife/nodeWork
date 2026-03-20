@@ -445,10 +445,10 @@ app.loadAccountEditPage = function(){
     document.querySelector("#accountEdit1 .lastNameInput").value = responsePayload.lastName;
     document.querySelector("#accountEdit1 .displayEmailInput").value = responsePayload.email;
 
-    // Put the hidden phone field into both forms
-    var hiddenPhoneInputs = document.querySelectorAll("input.hiddenEmail");
-    for(var i = 0; i < hiddenPhoneInputs.length; i++){
-        hiddenPhoneInputs[i].value = responsePayload.phone;
+    // Put the hidden email field into both forms
+    var hiddenEmailInputs = document.querySelectorAll("input.hiddenEmailInput");
+    for(var i = 0; i < hiddenEmailInputs.length; i++){
+        hiddenEmailInputs[i].value = responsePayload.email;
     }
   });
 };
